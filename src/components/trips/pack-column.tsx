@@ -145,6 +145,7 @@ export function PackColumn({ pack, categories, tripId, checklistMode = false }: 
             onRemove={handleRemove}
             checklistMode={checklistMode}
             onToggleChecked={handleToggleChecked}
+            unit={unit}
           />
         ))}
 
@@ -155,6 +156,7 @@ export function PackColumn({ pack, categories, tripId, checklistMode = false }: 
             onRemove={handleRemove}
             checklistMode={checklistMode}
             onToggleChecked={handleToggleChecked}
+            unit={unit}
           />
         )}
       </div>
@@ -200,12 +202,14 @@ function CategoryGroup({
   onRemove,
   checklistMode,
   onToggleChecked,
+  unit,
 }: {
   category: any;
   items: any[];
   onRemove: (packItemId: string, itemName: string) => void;
   checklistMode: boolean;
   onToggleChecked: (packItemId: string, checked: boolean) => void;
+  unit: "imperial" | "metric";
 }) {
   return (
     <div
