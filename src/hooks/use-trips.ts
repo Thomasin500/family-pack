@@ -1,0 +1,63 @@
+"use client";
+
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { fetchApi } from "@/lib/fetch";
+
+export function useTrips() {
+  return useQuery({
+    queryKey: ["trips"],
+    queryFn: () => fetchApi<any[]>("/api/trips"),
+  });
+}
+
+export function useTrip(id: string) {
+  return useQuery({
+    queryKey: ["trip", id],
+    queryFn: () => fetchApi<any>(`/api/trips/${id}`),
+    enabled: !!id,
+  });
+}
+
+export function useCreateTrip() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: Record<string, unknown>) =>
+      fetchApi("/api/trips", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["trips"] });
+    },
+  });
+}
+
+export function useUpdateTrip() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: { id: string } & Record<string, unknown>) =>
+      fetchApi(`/api/trips/${data.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      }),
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["trips"] });
+      queryClient.invalidateQueries({ queryKey: ["trip", variables.id] });
+    },
+  });
+}
+
+export function useDeleteTrip() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) =>
+      fetchApi(`/api/trips/${id}`, {
+        method: "DELETE",
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["trips"] });
+    },
+  });
+}

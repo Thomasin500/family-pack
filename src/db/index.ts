@@ -1,8 +1,15 @@
+import { existsSync } from "fs";
 import { drizzle as drizzleNeon } from "drizzle-orm/neon-http";
 import { drizzle as drizzlePg } from "drizzle-orm/node-postgres";
 import { neon } from "@neondatabase/serverless";
 import { Pool } from "pg";
 import * as schema from "./schema";
+
+// Load .env.local if running outside Next.js (e.g. seed scripts, drizzle-kit)
+if (!process.env.DATABASE_URL && existsSync(".env.local")) {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  require("dotenv").config({ path: ".env.local" });
+}
 
 function createDb() {
   const url = process.env.DATABASE_URL;
