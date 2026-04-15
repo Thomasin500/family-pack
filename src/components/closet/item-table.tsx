@@ -1,15 +1,6 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableFooter,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,7 +9,7 @@ import { useUpdateItem, useDeleteItem } from "@/hooks/use-items";
 import { useItemHistory } from "@/hooks/use-item-history";
 import { getVeterancyLevel, getVeterancyColor } from "@/lib/gear-veterancy";
 import { useWeightUnit } from "@/components/providers/weight-unit-provider";
-import { Pencil, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 interface Item {
@@ -49,14 +40,10 @@ interface ItemTableProps {
   readOnly?: boolean;
 }
 
-function getItemType(item: Item): {
-  label: string;
-  short: string;
-  variant: "default" | "secondary" | "outline";
-} {
-  if (item.isWorn) return { label: "Worn", short: "W", variant: "secondary" };
-  if (item.isConsumable) return { label: "Consumable", short: "C", variant: "outline" };
-  return { label: "Base", short: "B", variant: "default" };
+function getItemType(item: Item): { label: string; variant: "default" | "muted" | "outline" } {
+  if (item.isWorn) return { label: "Worn", variant: "default" };
+  if (item.isConsumable) return { label: "Consumable", variant: "outline" };
+  return { label: "Carried", variant: "muted" };
 }
 
 function InlineEditName({ item, onSave }: { item: Item; onSave: (value: string) => void }) {
@@ -83,14 +70,10 @@ function InlineEditName({ item, onSave }: { item: Item; onSave: (value: string) 
 
   if (!editing) {
     return (
-      <button
-        type="button"
-        className="text-left hover:underline decoration-dashed underline-offset-4 cursor-text"
-        onClick={startEditing}
-      >
-        <div className="font-medium">{item.name}</div>
+      <button type="button" className="text-left cursor-text group/name" onClick={startEditing}>
+        <div className="font-bold text-foreground">{item.name}</div>
         {(item.brand || item.model) && (
-          <div className="text-xs text-muted-foreground">
+          <div className="text-xs text-outline">
             {[item.brand, item.model].filter(Boolean).join(" ")}
           </div>
         )}
@@ -157,7 +140,7 @@ function InlineEditWeight({
     return (
       <button
         type="button"
-        className="tabular-nums hover:underline decoration-dashed underline-offset-4 cursor-text"
+        className="font-mono tabular-nums text-on-surface-variant cursor-text"
         onClick={startEditing}
       >
         {displayWeight(item.weightGrams, unit)}
@@ -181,7 +164,7 @@ function InlineEditWeight({
           if (e.key === "Escape") setEditing(false);
         }}
       />
-      <span className="text-xs text-muted-foreground">{unit === "metric" ? "g" : "oz"}</span>
+      <span className="text-xs text-outline">{unit === "metric" ? "g" : "oz"}</span>
     </div>
   );
 }
@@ -194,10 +177,10 @@ export function ItemTable({ items, categories, readOnly = false }: ItemTableProp
 
   if (items.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-12 text-center">
-        <div className="mb-3 rounded-full bg-muted p-3">
+      <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-outline-variant/30 py-16 text-center">
+        <div className="mb-3 rounded-full bg-surface-high p-3">
           <svg
-            className="size-6 text-muted-foreground"
+            className="size-6 text-outline"
             fill="none"
             viewBox="0 0 24 24"
             strokeWidth={1.5}
@@ -210,15 +193,14 @@ export function ItemTable({ items, categories, readOnly = false }: ItemTableProp
             />
           </svg>
         </div>
-        <p className="font-medium mb-1">No gear yet</p>
-        <p className="text-sm text-muted-foreground">
+        <p className="font-bold mb-1">No gear yet</p>
+        <p className="text-sm text-outline">
           Add your first piece of gear to start tracking weights.
         </p>
       </div>
     );
   }
 
-  // Sort categories by sortOrder and group items
   const sortedCategories = [...categories].sort((a, b) => a.sortOrder - b.sortOrder);
   const categoryMap = new Map(categories.map((c) => [c.id, c]));
 
@@ -229,7 +211,6 @@ export function ItemTable({ items, categories, readOnly = false }: ItemTableProp
     }))
     .filter((g) => g.items.length > 0);
 
-  // Items with no category or unknown category
   const uncategorized = items.filter((i) => !i.categoryId || !categoryMap.has(i.categoryId));
   if (uncategorized.length > 0) {
     grouped.push({
@@ -243,52 +224,30 @@ export function ItemTable({ items, categories, readOnly = false }: ItemTableProp
     });
   }
 
-  const grandTotal = items.reduce((s, i) => s + (i.weightGrams ?? 0), 0);
-
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead className="w-[40%]">Name</TableHead>
-          <TableHead className="w-[20%]">Weight</TableHead>
-          <TableHead className="w-[15%]">Type</TableHead>
-          {!readOnly && <TableHead className="w-[25%] text-right">Actions</TableHead>}
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {grouped.map(({ category, items: catItems }) => {
-          const subtotal = catItems.reduce((s, i) => s + (i.weightGrams ?? 0), 0);
-          return (
-            <CategoryGroup
-              key={category.id}
-              category={category}
-              items={catItems}
-              subtotal={subtotal}
-              readOnly={readOnly}
-              unit={unit}
-              itemHistory={itemHistory}
-              onUpdateName={(id, name) => updateItem.mutate({ id, name })}
-              onUpdateWeight={(id, weightGrams) => updateItem.mutate({ id, weightGrams })}
-              onDelete={(id) => deleteItem.mutate(id)}
-            />
-          );
-        })}
-      </TableBody>
-      <TableFooter>
-        <TableRow>
-          <TableCell className="font-semibold">Total</TableCell>
-          <TableCell className="font-semibold tabular-nums">
-            {displayWeight(grandTotal, unit)}
-          </TableCell>
-          <TableCell />
-          {!readOnly && <TableCell />}
-        </TableRow>
-      </TableFooter>
-    </Table>
+    <div className="space-y-8">
+      {grouped.map(({ category, items: catItems }) => {
+        const subtotal = catItems.reduce((s, i) => s + (i.weightGrams ?? 0), 0);
+        return (
+          <CategorySection
+            key={category.id}
+            category={category}
+            items={catItems}
+            subtotal={subtotal}
+            readOnly={readOnly}
+            unit={unit}
+            itemHistory={itemHistory}
+            onUpdateName={(id, name) => updateItem.mutate({ id, name })}
+            onUpdateWeight={(id, weightGrams) => updateItem.mutate({ id, weightGrams })}
+            onDelete={(id) => deleteItem.mutate(id)}
+          />
+        );
+      })}
+    </div>
   );
 }
 
-function CategoryGroup({
+function CategorySection({
   category,
   items,
   subtotal,
@@ -310,105 +269,91 @@ function CategoryGroup({
   onDelete: (id: string) => void;
 }) {
   return (
-    <>
-      {/* Category header row */}
-      <TableRow className="bg-muted/30 hover:bg-muted/30">
-        <TableCell
-          colSpan={readOnly ? 3 : 4}
-          className="py-1.5"
-          style={{ borderLeft: `4px solid ${category.color}` }}
+    <section className="relative overflow-hidden rounded-xl bg-card p-6">
+      {/* Category color bar */}
+      <div
+        className="absolute left-0 top-0 bottom-0 w-1.5"
+        style={{ backgroundColor: category.color }}
+      />
+
+      {/* Category header */}
+      <div className="mb-4 flex items-end justify-between pl-2">
+        <h2
+          className="text-xs font-bold uppercase tracking-[0.2em]"
+          style={{ color: category.color }}
         >
-          <div className="flex items-center gap-2">
-            <span
-              className="inline-block size-2.5 rounded-full"
-              style={{ backgroundColor: category.color }}
-            />
-            <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              {category.name}
-            </span>
-            <span className="ml-auto text-xs tabular-nums text-muted-foreground">
-              {displayWeight(subtotal, unit)}
-            </span>
-          </div>
-        </TableCell>
-      </TableRow>
+          {category.name}
+        </h2>
+        <span className="font-mono text-xs text-outline">
+          {items.length} {items.length === 1 ? "ITEM" : "ITEMS"} &bull;{" "}
+          {displayWeight(subtotal, unit).toUpperCase()}
+        </span>
+      </div>
 
       {/* Item rows */}
-      {items.map((item) => {
-        const type = getItemType(item);
-        return (
-          <TableRow key={item.id} style={{ borderLeft: `4px solid ${category.color}` }}>
-            <TableCell>
-              {readOnly ? (
-                <div>
-                  <div className="font-medium">{item.name}</div>
-                  {(item.brand || item.model) && (
-                    <div className="text-xs text-muted-foreground">
-                      {[item.brand, item.model].filter(Boolean).join(" ")}
+      <div className="space-y-1">
+        {items.map((item, idx) => {
+          const type = getItemType(item);
+          const tripCount = itemHistory?.[item.id] ?? 0;
+          const level = getVeterancyLevel(tripCount);
+
+          return (
+            <div
+              key={item.id}
+              className={`group flex items-center justify-between rounded-lg p-3 transition-colors hover:bg-surface-bright ${
+                idx % 2 === 0 ? "bg-transparent" : "bg-background/40"
+              }`}
+            >
+              <div className="flex flex-1 items-center gap-4">
+                {/* Name + brand */}
+                <div className="flex-1">
+                  {readOnly ? (
+                    <div>
+                      <div className="font-bold">{item.name}</div>
+                      {(item.brand || item.model) && (
+                        <div className="text-xs text-outline">
+                          {[item.brand, item.model].filter(Boolean).join(" ")}
+                        </div>
+                      )}
                     </div>
+                  ) : (
+                    <InlineEditName item={item} onSave={(name) => onUpdateName(item.id, name)} />
                   )}
                 </div>
-              ) : (
-                <InlineEditName item={item} onSave={(name) => onUpdateName(item.id, name)} />
-              )}
-            </TableCell>
-            <TableCell>
-              {readOnly ? (
-                <span className="tabular-nums">{displayWeight(item.weightGrams, unit)}</span>
-              ) : (
-                <InlineEditWeight
-                  item={item}
-                  unit={unit}
-                  onSave={(grams) => onUpdateWeight(item.id, grams)}
-                />
-              )}
-            </TableCell>
-            <TableCell>
-              <div className="flex items-center gap-1.5">
-                <Badge
-                  variant={type.variant}
-                  className={
-                    type.short === "W"
-                      ? "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 border-transparent"
-                      : type.short === "C"
-                        ? "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300 border-transparent"
-                        : ""
-                  }
-                >
-                  {type.short}
-                </Badge>
-                {itemHistory &&
-                  (() => {
-                    const tripCount = itemHistory[item.id] ?? 0;
-                    const level = getVeterancyLevel(tripCount);
-                    if (level === "New") return null;
-                    return (
-                      <span
-                        className={`text-[10px] font-medium ${getVeterancyColor(level)}`}
-                        title={`${tripCount} trip${tripCount !== 1 ? "s" : ""}`}
-                      >
-                        {level}
-                      </span>
-                    );
-                  })()}
+
+                {/* Badges */}
+                <div className="hidden items-center gap-1.5 md:flex">
+                  <Badge variant={type.variant}>{type.label}</Badge>
+                  {level !== "New" && (
+                    <Badge variant="outline">
+                      <span className={getVeterancyColor(level)}>{level}</span>
+                    </Badge>
+                  )}
+                </div>
               </div>
-            </TableCell>
-            {!readOnly && (
-              <TableCell className="text-right">
-                <div className="flex justify-end gap-1">
+
+              {/* Weight */}
+              <div className="flex items-center gap-3">
+                <div className="text-right">
+                  {readOnly ? (
+                    <span className="font-mono tabular-nums text-on-surface-variant">
+                      {displayWeight(item.weightGrams, unit)}
+                    </span>
+                  ) : (
+                    <InlineEditWeight
+                      item={item}
+                      unit={unit}
+                      onSave={(grams) => onUpdateWeight(item.id, grams)}
+                    />
+                  )}
+                </div>
+
+                {/* Delete (hover only) */}
+                {!readOnly && (
                   <Button
                     variant="ghost"
                     size="icon-xs"
-                    onClick={() => {
-                      /* edit opens inline, no-op here for now */
-                    }}
-                    aria-label="Edit item"
-                  >
-                    <Pencil className="size-3" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon-xs"
+                    className="opacity-0 group-hover:opacity-100 transition-opacity"
                     onClick={() => {
                       toast(`Delete "${item.name}"?`, {
                         action: {
@@ -422,12 +367,12 @@ function CategoryGroup({
                   >
                     <Trash2 className="size-3 text-destructive" />
                   </Button>
-                </div>
-              </TableCell>
-            )}
-          </TableRow>
-        );
-      })}
-    </>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </section>
   );
 }

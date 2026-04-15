@@ -50,7 +50,21 @@
       "Bash(curl -s \"https://api.github.com/repos/carrylessnet/carryless/git/trees/main?recursive=1\")",
       "Bash(python3 -c \" import json, sys data = json.load\\(sys.stdin\\) for item in data.get\\('tree', []\\): p = item['path'] if any\\(x in p.lower\\(\\) for x in ['seed', 'data', 'csv', 'json', 'gear', 'catalog', 'product', 'item']\\): print\\(p\\) \")",
       "Bash(curl -s \"https://raw.githubusercontent.com/benhoneywill/hikerherd/main/db/seeds.ts\")",
-      "Bash(curl -s -w \"\\\\n---HTTP_STATUS:%{http_code}---\" \"https://api.github.com/search/repositories?q=packflare+OR+packfire+gear&sort=stars&per_page=5\")"
+      "Bash(curl -s -w \"\\\\n---HTTP_STATUS:%{http_code}---\" \"https://api.github.com/search/repositories?q=packflare+OR+packfire+gear&sort=stars&per_page=5\")",
+      "WebFetch(domain:moonchild.ai)",
+      "WebFetch(domain:studio.moonchild.ai)",
+      "WebFetch(domain:designtools.fyi)",
+      "WebFetch(domain:medium.com)",
+      "WebFetch(domain:makinah.ai)",
+      "Bash(python3 -c \"import openpyxl; print\\('openpyxl available'\\)\")",
+      "Bash(node *)",
+      "Bash(npx tsx *)",
+      "Bash(cp \"/var/folders/fv/xvnxjpps3hx7hct54nh6td4m0000gn/T/TemporaryItems/NSIRD_screencaptureui_mSncPV/Screenshot 2026-04-15 at 12.35.58 PM.png\" /Users/thomasfreeman/GitHub/family-pack/design-exports/round5-overview.png)",
+      "Bash(cp \"/Users/thomasfreeman/Desktop/Screenshot 2026-04-15 at 12.29.38 PM.png\" /Users/thomasfreeman/GitHub/family-pack/design-exports/round4-overview.png)",
+      "Bash(wc -l /Users/thomasfreeman/GitHub/family-pack/src/components/**/*.tsx)",
+      "Bash(npx tsc *)",
+      "Bash(timeout 15 npx next build)",
+      "Bash(npx next *)"
     ]
   }
 }

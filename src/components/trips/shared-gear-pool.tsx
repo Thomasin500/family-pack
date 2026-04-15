@@ -42,30 +42,31 @@ export function SharedGearPool({ items, packs, tripId }: SharedGearPoolProps) {
   }
 
   return (
-    <div className="rounded-xl border-2 border-dashed border-muted-foreground/25 p-4">
-      <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-2">
-          <Package className="size-4 text-muted-foreground" />
-          <h3 className="text-sm font-semibold">Shared Gear Pool</h3>
-          {items.length > 0 && (
-            <Badge variant="secondary" className="text-xs">
-              {items.length}
-            </Badge>
-          )}
-        </div>
-        <Button variant="outline" size="sm" onClick={openAddDialog}>
+    <div className="rounded-2xl bg-card p-6 border border-outline-variant/10">
+      <div className="flex items-center justify-between mb-6">
+        <h3 className="text-lg font-bold flex items-center gap-2">
+          <Package className="size-5 text-primary-container" />
+          Shared Gear Pool
+        </h3>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={openAddDialog}
+          className="text-primary hover:underline font-bold"
+        >
           <Plus className="size-3.5" data-icon="inline-start" />
-          Add from closet
+          Add Shared Gear
         </Button>
       </div>
 
       {items.length === 0 ? (
-        <p className="text-sm text-muted-foreground text-center py-4">
-          No unassigned shared gear. Add items from the closet or all shared items have been
-          assigned.
-        </p>
+        <div className="flex items-center justify-center rounded-xl border-2 border-dashed border-outline-variant/30 py-8">
+          <span className="text-xs font-bold text-outline uppercase tracking-widest">
+            All shared gear assigned
+          </span>
+        </div>
       ) : (
-        <div className="space-y-1.5">
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {items.map((item: any) => (
             <SharedItemRow
               key={item.id}
@@ -113,27 +114,27 @@ function SharedItemRow({
     }
   }
 
-  // If only one pack, show a direct assign button
   if (packs.length === 1) {
     return (
-      <div className="flex items-center gap-2 py-1">
-        <span className="text-sm truncate flex-1 min-w-0">{item.name}</span>
-        <span className="text-xs font-mono tabular-nums text-muted-foreground shrink-0">
-          {displayWeight(item.weightGrams ?? 0, unit)}
-        </span>
-        <Button variant="outline" size="xs" onClick={() => onAssign(item.id, packs[0].id)}>
-          Add
-        </Button>
+      <div className="flex items-center gap-4 rounded-xl bg-surface-high p-4 hover:bg-surface-bright transition-colors">
+        <div>
+          <div className="text-sm font-bold">{item.name}</div>
+          <div className="text-xs text-outline font-mono tabular-nums">
+            {displayWeight(item.weightGrams ?? 0, unit)}
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="flex items-center gap-2 py-1">
-      <span className="text-sm truncate flex-1 min-w-0">{item.name}</span>
-      <span className="text-xs font-mono tabular-nums text-muted-foreground shrink-0">
-        {displayWeight(item.weightGrams ?? 0, unit)}
-      </span>
+    <div className="flex items-center gap-4 rounded-xl bg-surface-high p-4 hover:bg-surface-bright transition-colors">
+      <div className="flex-1">
+        <div className="text-sm font-bold">{item.name}</div>
+        <div className="text-xs text-outline font-mono tabular-nums">
+          {displayWeight(item.weightGrams ?? 0, unit)}
+        </div>
+      </div>
       <div className="flex items-center gap-1 shrink-0">
         <Select value={selectedPackId} onValueChange={setSelectedPackId}>
           <SelectTrigger className="h-7 w-28 text-xs">

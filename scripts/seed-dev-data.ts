@@ -74,16 +74,16 @@ async function main() {
   // ── Categories ──
   console.log("Creating categories...");
   const categoryDefs = [
-    { name: "Big Four", color: "#ef4444", sortOrder: 0 },
-    { name: "Shelter", color: "#f97316", sortOrder: 1 },
-    { name: "Sleep", color: "#8b5cf6", sortOrder: 2 },
-    { name: "Clothing", color: "#3b82f6", sortOrder: 3 },
-    { name: "Kitchen & Food", color: "#22c55e", sortOrder: 4 },
-    { name: "Water", color: "#06b6d4", sortOrder: 5 },
-    { name: "Tools & Utility", color: "#a3a3a3", sortOrder: 6 },
+    { name: "Big Four", color: "#6B9E6B", sortOrder: 0 },
+    { name: "Shelter", color: "#6B9E6B", sortOrder: 1 },
+    { name: "Sleep", color: "#3a86ff", sortOrder: 2 },
+    { name: "Clothing", color: "#9b59b6", sortOrder: 3 },
+    { name: "Kitchen & Food", color: "#ea6b1e", sortOrder: 4 },
+    { name: "Water", color: "#3a86ff", sortOrder: 5 },
+    { name: "Tools & Utility", color: "#8b9388", sortOrder: 6 },
     { name: "Fishing", color: "#14b8a6", sortOrder: 7 },
     { name: "Electronics", color: "#eab308", sortOrder: 8 },
-    { name: "Pet Gear", color: "#ec4899", sortOrder: 9 },
+    { name: "Pet Gear", color: "#8B6914", sortOrder: 9 },
   ] as const;
 
   const insertedCategories = await db
@@ -99,9 +99,7 @@ async function main() {
     .returning();
 
   // Build a lookup by name
-  const cat = Object.fromEntries(
-    insertedCategories.map((c) => [c.name, c])
-  );
+  const cat = Object.fromEntries(insertedCategories.map((c) => [c.name, c]));
 
   // ── Items ──
   console.log("Creating items...");
@@ -401,11 +399,7 @@ async function main() {
 
   await db
     .insert(tripPackItems)
-    .values([
-      ...thomasPackItemValues,
-      ...partnerPackItemValues,
-      ...birchPackItemValues,
-    ]);
+    .values([...thomasPackItemValues, ...partnerPackItemValues, ...birchPackItemValues]);
 
   console.log("Done — dev data seeded successfully.");
   console.log(`  Household: ${household.name} (${household.id})`);

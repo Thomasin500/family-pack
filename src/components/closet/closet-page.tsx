@@ -30,15 +30,12 @@ export function ClosetPage() {
   const items = allItems ?? [];
   const cats = categories ?? [];
 
-  // Determine the "current user" (first member) and partner (second member)
   const currentUser = members[0];
   const partner = members[1];
 
-  // Set default tab when data loads
   const defaultTab = currentUser?.id ?? "shared";
   const tab = activeTab || defaultTab;
 
-  // Build tab definitions
   const tabs = useMemo(() => {
     const result: {
       id: string;
@@ -51,7 +48,7 @@ export function ClosetPage() {
     if (currentUser) {
       result.push({
         id: currentUser.id,
-        label: currentUser.name ?? "Mine",
+        label: "Mine",
         ownerType: "personal",
         ownerId: currentUser.id,
         readOnly: false,
@@ -68,6 +65,19 @@ export function ClosetPage() {
       });
     }
 
+    // Add pet members
+    members
+      .filter((m: any) => m.role === "pet")
+      .forEach((pet: any) => {
+        result.push({
+          id: pet.id,
+          label: pet.name ?? "Pet",
+          ownerType: "personal",
+          ownerId: pet.id,
+          readOnly: false,
+        });
+      });
+
     result.push({
       id: "shared",
       label: "Shared",
@@ -77,14 +87,13 @@ export function ClosetPage() {
     });
 
     return result;
-  }, [currentUser, partner]);
+  }, [currentUser, partner, members]);
 
-  // Active tab definition (used for header button visibility + dialog defaults)
   const activeTabDef = tabs.find((t) => t.id === tab) ?? tabs[0];
 
   if (householdLoading || itemsLoading || categoriesLoading) {
     return (
-      <div className="mx-auto max-w-5xl p-6">
+      <div className="mx-auto max-w-7xl p-6">
         <div className="flex items-center justify-center py-20">
           <p className="text-muted-foreground">Loading gear closet...</p>
         </div>
@@ -93,43 +102,49 @@ export function ClosetPage() {
   }
 
   return (
-    <div className="mx-auto max-w-5xl p-6">
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-bold tracking-tight">Gear Closet</h1>
-        {activeTabDef && !activeTabDef.readOnly && (
-          <Button onClick={() => setDialogOpen(true)}>
-            <Plus className="size-4" data-icon="inline-start" />
-            Add Item
-          </Button>
-        )}
-      </div>
-
-      <div className="relative mb-4">
-        <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-        <Input
-          placeholder="Search gear..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="pl-9"
-        />
+    <div className="mx-auto max-w-7xl px-6 py-8 pb-48">
+      <div className="mb-8">
+        <h1 className="text-4xl font-extrabold tracking-tight mb-8">Gear Closet</h1>
       </div>
 
       <Tabs value={tab} onValueChange={setActiveTab}>
-        <TabsList>
-          {tabs.map((t) => {
-            const count =
-              t.ownerType === "shared"
-                ? items.filter((i: any) => i.ownerType === "shared").length
-                : items.filter((i: any) => i.ownerType === "personal" && i.ownerId === t.ownerId)
-                    .length;
-            return (
-              <TabsTrigger key={t.id} value={t.id}>
-                {t.label}
-                {count > 0 && ` (${count})`}
-              </TabsTrigger>
-            );
-          })}
-        </TabsList>
+        <div className="flex items-center justify-between mb-8">
+          <TabsList>
+            {tabs.map((t) => {
+              const count =
+                t.ownerType === "shared"
+                  ? items.filter((i: any) => i.ownerType === "shared").length
+                  : items.filter((i: any) => i.ownerType === "personal" && i.ownerId === t.ownerId)
+                      .length;
+              return (
+                <TabsTrigger key={t.id} value={t.id}>
+                  {t.label}
+                  {count > 0 && <span className="ml-1 text-outline">({count})</span>}
+                </TabsTrigger>
+              );
+            })}
+          </TabsList>
+
+          {activeTabDef && !activeTabDef.readOnly && (
+            <Button
+              onClick={() => setDialogOpen(true)}
+              className="bg-gradient-to-br from-primary-container to-primary text-on-primary-container font-bold rounded-xl hover:brightness-110 active:scale-95 transition-all"
+            >
+              <Plus className="size-4" data-icon="inline-start" />
+              Add Item
+            </Button>
+          )}
+        </div>
+
+        <div className="relative mb-6">
+          <Search className="absolute left-4 top-1/2 size-4 -translate-y-1/2 text-outline" />
+          <Input
+            placeholder="Search gear..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-10 bg-surface-low rounded-xl border-none"
+          />
+        </div>
 
         {tabs.map((t) => {
           const ownerItems =
@@ -149,14 +164,26 @@ export function ClosetPage() {
             : ownerItems;
           return (
             <TabsContent key={t.id} value={t.id}>
-              <div className="mt-4 space-y-4">
-                <WeightSummary items={tabItems} />
+              <div className="space-y-8">
                 <ItemTable items={tabItems} categories={cats} readOnly={t.readOnly} />
               </div>
             </TabsContent>
           );
         })}
       </Tabs>
+
+      {/* Sticky weight summary footer */}
+      {activeTabDef && (
+        <WeightSummary
+          items={
+            activeTabDef.ownerType === "shared"
+              ? items.filter((i: any) => i.ownerType === "shared")
+              : items.filter(
+                  (i: any) => i.ownerType === "personal" && i.ownerId === activeTabDef.ownerId
+                )
+          }
+        />
+      )}
 
       <AddItemDialog
         open={dialogOpen}

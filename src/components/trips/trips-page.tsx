@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTrips, useDuplicateTrip } from "@/hooks/use-trips";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { NewTripDialog } from "./new-trip-dialog";
@@ -28,13 +27,13 @@ export function TripsPage() {
 
   if (isLoading) {
     return (
-      <div className="mx-auto max-w-4xl p-6">
-        <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold">Trips</h1>
+      <div className="mx-auto max-w-7xl px-6 py-8">
+        <div className="flex items-center justify-between mb-8">
+          <h1 className="text-4xl font-extrabold tracking-tight">Trips</h1>
         </div>
         <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-36 rounded-xl border bg-muted/40 animate-pulse" />
+            <div key={i} className="h-36 rounded-xl bg-card animate-pulse" />
           ))}
         </div>
       </div>
@@ -42,66 +41,68 @@ export function TripsPage() {
   }
 
   return (
-    <div className="mx-auto max-w-4xl p-6">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold">Trips</h1>
-        <Button onClick={() => setDialogOpen(true)}>
+    <div className="mx-auto max-w-7xl px-6 py-8">
+      <div className="flex items-center justify-between mb-8">
+        <h1 className="text-4xl font-extrabold tracking-tight">Trips</h1>
+        <Button
+          onClick={() => setDialogOpen(true)}
+          className="bg-gradient-to-br from-primary-container to-primary text-on-primary-container font-bold rounded-xl hover:brightness-110 active:scale-95 transition-all"
+        >
           <Plus className="size-4" data-icon="inline-start" />
           New Trip
         </Button>
       </div>
 
       {!trips || trips.length === 0 ? (
-        <Card className="py-16">
-          <CardContent className="flex flex-col items-center justify-center text-center">
-            <div className="mb-4 rounded-full bg-muted p-4">
-              <MapPin className="size-8 text-muted-foreground" />
-            </div>
-            <p className="text-lg font-medium mb-1">No trips yet.</p>
-            <p className="text-muted-foreground text-sm mb-4">Plan your first adventure!</p>
-            <Button onClick={() => setDialogOpen(true)}>
-              <Plus className="size-4" data-icon="inline-start" />
-              New Trip
-            </Button>
-          </CardContent>
-        </Card>
+        <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-outline-variant/30 py-20 text-center">
+          <div className="mb-4 rounded-full bg-surface-high p-4">
+            <MapPin className="size-8 text-outline" />
+          </div>
+          <p className="text-lg font-bold mb-1">No trips yet</p>
+          <p className="text-outline text-sm mb-4">Plan your first adventure.</p>
+          <Button
+            onClick={() => setDialogOpen(true)}
+            className="bg-gradient-to-br from-primary-container to-primary text-on-primary-container font-bold rounded-xl hover:brightness-110 active:scale-95 transition-all"
+          >
+            <Plus className="size-4" data-icon="inline-start" />
+            New Trip
+          </Button>
+        </div>
       ) : (
-        <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
+        <div className="grid gap-6 grid-cols-1 md:grid-cols-2">
           {trips.map((trip: any) => (
-            <Card
+            <div
               key={trip.id}
-              className="cursor-pointer transition-colors hover:bg-muted/50"
+              className="cursor-pointer rounded-xl bg-card border border-outline-variant/10 p-6 transition-colors hover:bg-surface-high"
               onClick={() => router.push(`/app/trips/${trip.id}`)}
             >
-              <CardHeader className="pb-2">
-                <div className="flex items-start justify-between gap-2">
-                  <CardTitle className="text-base">{trip.name}</CardTitle>
-                  {trip.season && (
-                    <Badge variant="secondary" className="text-xs capitalize shrink-0">
-                      {trip.season}
-                    </Badge>
-                  )}
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-2">
+              <div className="flex items-start justify-between gap-2 mb-3">
+                <h3 className="text-lg font-bold">{trip.name}</h3>
+                {trip.season && (
+                  <Badge variant="muted" className="capitalize shrink-0">
+                    {trip.season}
+                  </Badge>
+                )}
+              </div>
+              <div className="space-y-2">
                 {trip.location && (
-                  <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                  <div className="flex items-center gap-1.5 text-sm text-outline">
                     <MapPin className="size-3.5" />
                     <span>{trip.location}</span>
                   </div>
                 )}
                 {(trip.startDate || trip.endDate) && (
-                  <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                  <div className="flex items-center gap-1.5 text-sm text-outline">
                     <Calendar className="size-3.5" />
                     <span>
                       {trip.startDate && formatDate(trip.startDate)}
-                      {trip.startDate && trip.endDate && " - "}
+                      {trip.startDate && trip.endDate && " \u2013 "}
                       {trip.endDate && formatDate(trip.endDate)}
                     </span>
                   </div>
                 )}
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                <div className="flex items-center justify-between pt-2">
+                  <div className="flex items-center gap-1.5 text-sm text-outline">
                     <Users className="size-3.5" />
                     <span>
                       {trip.members?.length ?? 0}{" "}
@@ -114,12 +115,13 @@ export function TripsPage() {
                     onClick={(e) => handleDuplicate(e, trip.id)}
                     disabled={duplicateTrip.isPending}
                     title="Duplicate trip"
+                    className="text-outline hover:text-primary"
                   >
                     <Copy className="size-3.5" />
                   </Button>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           ))}
         </div>
       )}

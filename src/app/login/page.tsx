@@ -1,19 +1,13 @@
 import { signIn } from "@/lib/auth";
-import Image from "next/image";
 
 export default function LoginPage() {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center px-4">
+    <div className="flex min-h-screen flex-col items-center justify-center px-4 bg-background">
       <div className="text-center max-w-md">
-        <Image
-          src="/logo.webp"
-          alt="Family Pack"
-          width={64}
-          height={64}
-          className="mx-auto mb-6 rounded-xl"
-        />
-        <h1 className="text-3xl font-bold tracking-tight mb-2">Family Pack</h1>
-        <p className="text-muted-foreground mb-8">
+        <h1 className="text-4xl font-extrabold tracking-tight mb-2 text-primary-container">
+          Family Pack
+        </h1>
+        <p className="text-on-surface-variant mb-8">
           Backpacking gear management for couples, families, and pets.
         </p>
         <form
@@ -24,7 +18,7 @@ export default function LoginPage() {
         >
           <button
             type="submit"
-            className="inline-flex items-center gap-2 rounded-lg bg-neutral-900 px-6 py-3 text-sm font-medium text-white hover:bg-neutral-700 dark:bg-neutral-100 dark:text-neutral-900 dark:hover:bg-neutral-300 transition-colors"
+            className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-br from-primary-container to-primary px-6 py-3 text-sm font-bold text-on-primary-container hover:brightness-110 active:scale-95 transition-all"
           >
             <svg className="size-4" viewBox="0 0 24 24">
               <path

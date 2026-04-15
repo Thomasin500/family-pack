@@ -1,7 +1,6 @@
 "use client";
 
 import { useRemoveFromPack } from "@/hooks/use-trip-pack-items";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { displayWeight, bodyWeightPercent } from "@/lib/weight";
@@ -28,7 +27,6 @@ export function PackColumn({ pack, categories, tripId, checklistMode = false }: 
   const user = pack.user;
   const packItems: any[] = pack.packItems ?? [];
 
-  // Group items by category
   const categoryMap = new Map<string, { category: any; items: any[] }>();
   const uncategorized: any[] = [];
 
@@ -46,12 +44,10 @@ export function PackColumn({ pack, categories, tripId, checklistMode = false }: 
     }
   }
 
-  // Sort categories by sortOrder
   const sortedCategories = Array.from(categoryMap.values()).sort(
     (a, b) => (a.category.sortOrder ?? 0) - (b.category.sortOrder ?? 0)
   );
 
-  // Weight calculations
   let baseWeight = 0;
   let totalCarried = 0;
   let skinOut = 0;
@@ -91,40 +87,39 @@ export function PackColumn({ pack, categories, tripId, checklistMode = false }: 
   }
 
   return (
-    <div className="rounded-xl border bg-card text-card-foreground shadow-sm flex flex-col">
+    <div className="flex flex-col rounded-xl bg-card border border-outline-variant/10">
       {/* Person Header */}
-      <div className="flex items-center gap-3 px-4 py-3 border-b">
-        <Avatar className="size-8">
-          <AvatarImage src={user?.image ?? undefined} alt={user?.name ?? ""} />
-          <AvatarFallback className="text-xs">
-            {(user?.name ?? "?").charAt(0).toUpperCase()}
-          </AvatarFallback>
-        </Avatar>
-        <div className="min-w-0">
-          <p className="text-sm font-semibold truncate">{user?.name}</p>
-          <p className="text-xs text-muted-foreground capitalize">{user?.role}</p>
+      <div className="flex items-center gap-3 px-4 py-3 border-b border-outline-variant/10">
+        <div className="flex size-8 items-center justify-center rounded-full bg-primary-container/20 text-primary text-xs font-bold">
+          {user?.role === "pet" ? "🐾" : (user?.name ?? "?").charAt(0).toUpperCase()}
         </div>
-        <div className="ml-auto flex items-center gap-1.5">
+        <div className="min-w-0 flex-1">
+          <h2 className="text-base font-bold truncate">{user?.name}&apos;s Pack</h2>
+        </div>
+        <div className="flex items-center gap-2">
           <Button
             variant="ghost"
             size="icon-xs"
             onClick={() => setLoadoutOpen(true)}
             title="View loadout"
+            className="text-outline hover:text-primary"
           >
             <Backpack className="size-3.5" />
           </Button>
-          <p className="text-xs text-muted-foreground">
-            {checklistMode
-              ? `${checkedCount}/${packItems.length} packed`
-              : `${packItems.length} ${packItems.length === 1 ? "item" : "items"}`}
-          </p>
+          {checklistMode && packItems.length > 0 && (
+            <Badge variant="default">
+              {checkedCount}/{packItems.length}
+            </Badge>
+          )}
         </div>
       </div>
+
+      {/* Checklist progress bar */}
       {checklistMode && packItems.length > 0 && (
-        <div className="px-4 pb-2">
-          <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
+        <div className="px-4 py-2">
+          <div className="h-1.5 w-full rounded-full bg-surface-high overflow-hidden">
             <div
-              className="h-full rounded-full bg-green-500 transition-all duration-300"
+              className="h-full rounded-full bg-primary transition-all duration-300"
               style={{ width: `${(checkedCount / packItems.length) * 100}%` }}
             />
           </div>
@@ -132,9 +127,13 @@ export function PackColumn({ pack, categories, tripId, checklistMode = false }: 
       )}
 
       {/* Items by Category */}
-      <div className="flex-1 overflow-y-auto px-2 py-2 space-y-1">
+      <div className="flex-1 overflow-y-auto p-3 space-y-3">
         {packItems.length === 0 && (
-          <p className="text-sm text-muted-foreground text-center py-8">No gear added yet</p>
+          <div className="flex items-center justify-center rounded-lg border-2 border-dashed border-outline-variant/10 py-12">
+            <span className="text-xs font-bold text-outline uppercase tracking-widest">
+              Drop gear here
+            </span>
+          </div>
         )}
 
         {sortedCategories.map(({ category, items }) => (
@@ -161,34 +160,40 @@ export function PackColumn({ pack, categories, tripId, checklistMode = false }: 
         )}
       </div>
 
-      {/* Weight Summary */}
-      <div className="border-t px-4 py-2.5 space-y-1 bg-muted/30">
-        <div className="flex justify-between text-xs">
-          <span className="text-muted-foreground">Base weight</span>
-          <span className="font-mono tabular-nums">{displayWeight(baseWeight, unit)}</span>
+      {/* Weight Summary Footer */}
+      <div className="grid grid-cols-2 gap-2 p-3 border-t border-outline-variant/10">
+        <div className="rounded-lg bg-surface-low p-3">
+          <div className="text-[10px] font-bold uppercase text-outline">Base Weight</div>
+          <div className="text-lg font-extrabold tabular-nums">
+            {displayWeight(baseWeight, unit)}
+          </div>
         </div>
-        <div className="flex justify-between text-xs">
-          <span className="text-muted-foreground">Total carried</span>
-          <span className="font-mono tabular-nums">{displayWeight(totalCarried, unit)}</span>
+        <div className="rounded-lg bg-surface-low p-3">
+          <div className="text-[10px] font-bold uppercase text-outline">Total Carried</div>
+          <div className="text-lg font-extrabold tabular-nums">
+            {displayWeight(totalCarried, unit)}
+          </div>
         </div>
-        <div className="flex justify-between text-xs font-medium">
-          <span>Skin-out</span>
-          <span className="font-mono tabular-nums">{displayWeight(skinOut, unit)}</span>
+        <div className="rounded-lg bg-surface-low p-3">
+          <div className="text-[10px] font-bold uppercase text-outline">Skin-Out</div>
+          <div className="text-lg font-extrabold tabular-nums">{displayWeight(skinOut, unit)}</div>
         </div>
-        {user?.bodyWeightKg &&
-          user.bodyWeightKg > 0 &&
-          (() => {
-            const percent = bodyWeightPercent(totalCarried, user.bodyWeightKg);
-            const warning = getCarryWarning(percent, user.role ?? "adult");
-            return (
-              <div className="flex justify-between text-xs">
-                <span className="text-muted-foreground">% body weight</span>
-                <span className={`font-mono tabular-nums font-medium ${warning.color}`}>
-                  {percent.toFixed(1)}% · {warning.label}
-                </span>
-              </div>
-            );
-          })()}
+        <div className="rounded-lg bg-surface-low p-3">
+          <div className="text-[10px] font-bold uppercase text-outline">% Body Wt</div>
+          {user?.bodyWeightKg && user.bodyWeightKg > 0 ? (
+            (() => {
+              const percent = bodyWeightPercent(totalCarried, user.bodyWeightKg);
+              const warning = getCarryWarning(percent, user.role ?? "adult");
+              return (
+                <div className={`text-lg font-extrabold tabular-nums ${warning.color}`}>
+                  {percent.toFixed(1)}%
+                </div>
+              );
+            })()
+          ) : (
+            <div className="text-lg font-extrabold tabular-nums text-outline">--</div>
+          )}
+        </div>
       </div>
 
       <LoadoutModal open={loadoutOpen} onOpenChange={setLoadoutOpen} pack={pack} />
@@ -213,31 +218,26 @@ function CategoryGroup({
 }) {
   return (
     <div
-      className="border-l-4 rounded-r-md pl-2.5 py-1"
+      className="rounded-lg bg-surface-low p-3 border-l-4"
       style={{ borderLeftColor: category.color ?? "#6b7280" }}
     >
-      <p className="text-xs font-medium text-muted-foreground mb-0.5 flex items-center gap-1.5">
-        <span
-          className="size-2 rounded-full inline-block"
-          style={{ backgroundColor: category.color ?? "#6b7280" }}
-        />
+      <p className="text-[10px] font-bold uppercase tracking-widest text-outline mb-2">
         {category.name}
       </p>
-      <div className="space-y-0.5">
+      <div className="space-y-1">
         {items.map((pi: any) => {
           const item = pi.item;
           if (!item) return null;
           const isWorn = pi.isWornOverride ?? item.isWorn ?? false;
           const isConsumable = pi.isConsumableOverride ?? item.isConsumable ?? false;
           const isShared = item.ownerType === "shared";
-          const isBorrowed = pi.isBorrowed ?? false;
           const weight = (item.weightGrams ?? 0) * (pi.quantity ?? 1);
 
           return (
             <div
               key={pi.id}
-              className={`flex items-center gap-1.5 group py-0.5 pr-1 ${
-                checklistMode && pi.isChecked ? "opacity-50" : ""
+              className={`flex items-center gap-2 group rounded-lg p-1.5 hover:bg-surface-bright transition-colors ${
+                checklistMode && pi.isChecked ? "opacity-40" : ""
               }`}
             >
               {checklistMode && (
@@ -248,37 +248,17 @@ function CategoryGroup({
                 />
               )}
               <span
-                className={`text-sm truncate flex-1 min-w-0 ${
+                className={`text-sm font-medium truncate flex-1 min-w-0 ${
                   checklistMode && pi.isChecked ? "line-through" : ""
                 }`}
               >
                 {item.name}
               </span>
-              <div className="flex items-center gap-1 shrink-0">
-                {pi.quantity > 1 && (
-                  <span className="text-xs text-muted-foreground">x{pi.quantity}</span>
-                )}
-                {isWorn && (
-                  <Badge variant="outline" className="px-1 py-0 text-[10px] leading-tight">
-                    W
-                  </Badge>
-                )}
-                {isConsumable && (
-                  <Badge variant="outline" className="px-1 py-0 text-[10px] leading-tight">
-                    C
-                  </Badge>
-                )}
-                {isShared && (
-                  <Badge variant="outline" className="px-1 py-0 text-[10px] leading-tight">
-                    &#9733;
-                  </Badge>
-                )}
-                {isBorrowed && (
-                  <Badge variant="outline" className="px-1 py-0 text-[10px] leading-tight">
-                    &#8593;
-                  </Badge>
-                )}
-                <span className="text-xs font-mono tabular-nums text-muted-foreground w-16 text-right">
+              <div className="flex items-center gap-1.5 shrink-0">
+                {isShared && <Badge variant="secondary">Shared</Badge>}
+                {isWorn && <Badge variant="default">Worn</Badge>}
+                {isConsumable && <Badge variant="outline">C</Badge>}
+                <span className="text-xs font-mono tabular-nums text-on-surface-variant w-16 text-right">
                   {displayWeight(weight, unit)}
                 </span>
                 <Button

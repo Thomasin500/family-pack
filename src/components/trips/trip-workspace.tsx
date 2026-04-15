@@ -94,52 +94,60 @@ export function TripWorkspace({ tripId }: TripWorkspaceProps) {
   return (
     <div className="flex flex-col min-h-screen">
       {/* Header */}
-      <div className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-10">
-        <div className="px-4 py-3 sm:px-6">
-          <div className="flex items-center gap-3 mb-1">
-            <Link href="/app/trips">
-              <Button variant="ghost" size="icon-sm">
-                <ArrowLeft className="size-4" />
-              </Button>
-            </Link>
-            <h1 className="text-xl font-bold truncate">{trip.name}</h1>
-            {trip.season && (
-              <Badge variant="secondary" className="capitalize shrink-0">
-                {trip.season}
-              </Badge>
-            )}
-            <Button
-              variant={checklistMode ? "default" : "outline"}
-              size="sm"
-              onClick={() => setChecklistMode(!checklistMode)}
-              className="gap-1.5 ml-auto shrink-0"
-            >
-              <ClipboardCheck className="size-3.5" />
-              <span className="hidden sm:inline">Checklist</span>
-            </Button>
-          </div>
-          <div className="flex items-center gap-4 ml-10 text-sm text-muted-foreground">
-            {trip.location && (
-              <span className="flex items-center gap-1">
-                <MapPin className="size-3.5" />
-                {trip.location}
-              </span>
-            )}
-            {trip.startDate && (
-              <span className="flex items-center gap-1">
-                <Calendar className="size-3.5" />
-                {formatDate(trip.startDate)}
-                {trip.endDate && ` - ${formatDate(trip.endDate)}`}
-              </span>
-            )}
-            {trip.terrain && <span className="capitalize">{trip.terrain}</span>}
+      <div className="border-b border-outline-variant/10 bg-surface-low sticky top-16 z-10">
+        <div className="px-6 py-4 max-w-7xl mx-auto">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div>
+              <nav className="flex items-center gap-2 text-outline text-xs mb-1 uppercase tracking-widest font-semibold">
+                <Link href="/app/trips" className="hover:text-primary transition-colors">
+                  Trips
+                </Link>
+                <span>&rsaquo;</span>
+                <span className="text-foreground">{trip.name}</span>
+              </nav>
+              <h1 className="text-3xl font-extrabold tracking-tight">{trip.name}</h1>
+              <div className="flex items-center gap-4 mt-1 text-sm text-outline">
+                {trip.location && (
+                  <span className="flex items-center gap-1">
+                    <MapPin className="size-3.5" />
+                    {trip.location}
+                  </span>
+                )}
+                {trip.startDate && (
+                  <span className="flex items-center gap-1">
+                    <Calendar className="size-3.5" />
+                    {formatDate(trip.startDate)}
+                    {trip.endDate && ` \u2013 ${formatDate(trip.endDate)}`}
+                  </span>
+                )}
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 bg-card rounded-full px-4 py-2">
+                <span className="text-xs font-bold uppercase tracking-wider text-outline">
+                  Checklist
+                </span>
+                <button
+                  onClick={() => setChecklistMode(!checklistMode)}
+                  className={`relative w-10 h-5 rounded-full transition-colors ${
+                    checklistMode ? "bg-primary" : "bg-surface-highest"
+                  }`}
+                >
+                  <div
+                    className={`absolute top-0.5 w-4 h-4 rounded-full bg-foreground transition-transform ${
+                      checklistMode ? "translate-x-5" : "translate-x-0.5"
+                    }`}
+                  />
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Pack Columns */}
-      <div className="flex-1 px-4 py-6 sm:px-6">
-        <div className={`grid gap-4 ${gridClass}`}>
+      <div className="flex-1 px-6 py-8 max-w-7xl mx-auto">
+        <div className={`grid gap-8 ${gridClass}`}>
           {packs.map((pack: any) => (
             <PackColumn
               key={pack.id}
@@ -152,29 +160,10 @@ export function TripWorkspace({ tripId }: TripWorkspaceProps) {
         </div>
 
         {/* Shared Gear Pool */}
-        <div className="mt-6">
+        <div className="mt-8">
           <SharedGearPool items={sharedItems} packs={packs} tripId={tripId} />
         </div>
       </div>
-
-      {/* Weight Summary Bar */}
-      {packWeights.length > 0 && (
-        <div className="sticky bottom-0 border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-          <div className="px-4 py-2.5 sm:px-6 flex items-center gap-6 overflow-x-auto">
-            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide shrink-0">
-              Total Weight
-            </span>
-            {packWeights.map((pw) => (
-              <div key={pw.userId} className="flex items-center gap-2 shrink-0">
-                <span className="text-sm font-medium">{pw.userName}</span>
-                <span className="text-sm font-mono tabular-nums text-muted-foreground">
-                  {displayWeight(pw.totalGrams, unit)}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
     </div>
   );
 }

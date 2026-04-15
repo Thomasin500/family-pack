@@ -2,6 +2,7 @@
 
 import { displayWeight } from "@/lib/weight";
 import { useWeightUnit } from "@/components/providers/weight-unit-provider";
+import { Badge } from "@/components/ui/badge";
 
 interface Item {
   id: string;
@@ -25,46 +26,47 @@ export function WeightSummary({ items }: WeightSummaryProps) {
   const consumableWeight = items
     .filter((i) => i.isConsumable)
     .reduce((sum, i) => sum + (i.weightGrams ?? 0), 0);
-  const totalWeight = baseWeight + wornWeight + consumableWeight;
+  const totalCarried = baseWeight + consumableWeight;
+  const skinOut = totalCarried + wornWeight;
 
   return (
-    <div className="flex flex-wrap items-center gap-4 rounded-lg border px-4 py-3 text-sm">
-      <div className="flex items-center gap-2">
-        <span className="inline-block size-2.5 rounded-full bg-foreground/70" />
-        <span className="text-muted-foreground">Base</span>
-        <span className="font-medium">
-          {displayWeight(baseWeight, unit)}
-        </span>
+    <footer className="fixed bottom-0 left-0 right-0 z-50 border-t border-outline-variant/10 bg-surface-highest/90 backdrop-blur-xl">
+      <div className="mx-auto max-w-7xl px-6 py-5">
+        <div className="flex flex-wrap items-center justify-between gap-6">
+          <div className="flex flex-wrap items-center gap-8">
+            <div className="flex flex-col">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-outline">
+                Base Weight
+              </span>
+              <span className="text-lg font-extrabold tabular-nums text-primary">
+                {displayWeight(baseWeight, unit)}
+              </span>
+            </div>
+
+            <div className="hidden h-8 w-px bg-outline-variant/20 md:block" />
+
+            <div className="flex flex-col">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-outline">
+                Carried
+              </span>
+              <span className="text-lg font-extrabold tabular-nums">
+                {displayWeight(totalCarried, unit)}
+              </span>
+            </div>
+
+            <div className="hidden h-8 w-px bg-outline-variant/20 md:block" />
+
+            <div className="flex flex-col">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-outline">
+                Skin-Out
+              </span>
+              <span className="text-lg font-extrabold tabular-nums">
+                {displayWeight(skinOut, unit)}
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
-
-      <div className="text-border">|</div>
-
-      <div className="flex items-center gap-2">
-        <span className="inline-block size-2.5 rounded-full bg-blue-500" />
-        <span className="text-muted-foreground">Worn</span>
-        <span className="font-medium text-blue-600 dark:text-blue-400">
-          {displayWeight(wornWeight, unit)}
-        </span>
-      </div>
-
-      <div className="text-border">|</div>
-
-      <div className="flex items-center gap-2">
-        <span className="inline-block size-2.5 rounded-full bg-amber-500" />
-        <span className="text-muted-foreground">Consumable</span>
-        <span className="font-medium text-amber-600 dark:text-amber-400">
-          {displayWeight(consumableWeight, unit)}
-        </span>
-      </div>
-
-      <div className="text-border">|</div>
-
-      <div className="flex items-center gap-2">
-        <span className="text-muted-foreground">Total</span>
-        <span className="font-semibold">
-          {displayWeight(totalWeight, unit)}
-        </span>
-      </div>
-    </div>
+    </footer>
   );
 }

@@ -1,15 +1,14 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { signOutAction } from "@/app/app/actions";
 import { cn } from "@/lib/utils";
-import { LogOut, Scale, Sun, Moon } from "lucide-react";
+import { LogOut, Sun, Moon } from "lucide-react";
 import { useWeightUnit } from "@/components/providers/weight-unit-provider";
-import { useState } from "react";
 
 interface NavBarProps {
   user: {
@@ -32,7 +31,7 @@ export function NavBar({ user }: NavBarProps) {
     if (typeof document !== "undefined") {
       return document.documentElement.classList.contains("dark");
     }
-    return false;
+    return true;
   });
 
   function toggleDark() {
@@ -52,21 +51,16 @@ export function NavBar({ user }: NavBarProps) {
     : "?";
 
   return (
-    <header className="border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4">
-        <div className="flex items-center gap-6">
+    <header className="sticky top-0 z-50 bg-background">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
+        <div className="flex items-center gap-8">
           <Link href="/app" className="flex items-center gap-2">
-            <Image
-              src="/logo.webp"
-              alt="Family Pack"
-              width={32}
-              height={32}
-              className="rounded-lg"
-            />
-            <span className="text-lg font-semibold tracking-tight">Family Pack</span>
+            <span className="text-xl font-bold tracking-tight text-primary-container">
+              Family Pack
+            </span>
           </Link>
 
-          <nav className="hidden items-center gap-1 sm:flex">
+          <nav className="hidden items-center gap-6 sm:flex">
             {navLinks.map((link) => {
               const isActive =
                 link.href === "/app" ? pathname === "/app" : pathname.startsWith(link.href);
@@ -76,10 +70,10 @@ export function NavBar({ user }: NavBarProps) {
                   key={link.href}
                   href={link.href}
                   className={cn(
-                    "rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
+                    "text-sm font-medium tracking-tight transition-colors",
                     isActive
-                      ? "bg-muted text-foreground"
-                      : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                      ? "font-bold text-primary border-b-2 border-primary-container pb-1"
+                      : "text-outline hover:text-primary"
                   )}
                 >
                   {link.label}
@@ -90,39 +84,68 @@ export function NavBar({ user }: NavBarProps) {
         </div>
 
         <div className="flex items-center gap-3">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={toggle}
-            className="gap-1.5 font-mono text-xs tabular-nums"
-            title="Toggle weight units"
-          >
-            <Scale className="size-3.5" />
-            {unit === "imperial" ? "oz/lb" : "g/kg"}
-          </Button>
+          {/* Imperial / Metric segmented toggle */}
+          <div className="flex rounded-full bg-surface-high p-1">
+            <button
+              onClick={unit === "metric" ? toggle : undefined}
+              className={cn(
+                "rounded-full px-3 py-1 text-xs font-bold transition-all",
+                unit === "imperial"
+                  ? "bg-primary-container text-on-primary-container"
+                  : "text-outline hover:text-foreground"
+              )}
+            >
+              Imperial
+            </button>
+            <button
+              onClick={unit === "imperial" ? toggle : undefined}
+              className={cn(
+                "rounded-full px-3 py-1 text-xs font-bold transition-all",
+                unit === "metric"
+                  ? "bg-primary-container text-on-primary-container"
+                  : "text-outline hover:text-foreground"
+              )}
+            >
+              Metric
+            </button>
+          </div>
 
+          {/* Dark / Light toggle */}
           <Button
             variant="ghost"
             size="icon"
             onClick={toggleDark}
-            title="Toggle dark mode"
-            className="size-8"
+            title={dark ? "Switch to light mode" : "Switch to dark mode"}
+            className="size-8 text-outline hover:text-foreground"
           >
-            {dark ? <Sun className="size-3.5" /> : <Moon className="size-3.5" />}
+            {dark ? <Sun className="size-4" /> : <Moon className="size-4" />}
           </Button>
 
+          <Link href="/app/trips">
+            <Button
+              size="sm"
+              className="bg-gradient-to-br from-primary-container to-primary text-on-primary-container font-bold rounded-xl hover:brightness-110 active:scale-95 transition-all"
+            >
+              New Trip
+            </Button>
+          </Link>
+
           <div className="hidden items-center gap-2 sm:flex">
-            <Avatar className="size-7">
+            <Avatar className="size-8 border border-outline-variant">
               {user.image ? <AvatarImage src={user.image} alt={user.name ?? ""} /> : null}
-              <AvatarFallback className="text-xs">{initials}</AvatarFallback>
+              <AvatarFallback className="text-xs bg-surface-high text-foreground">
+                {initials}
+              </AvatarFallback>
             </Avatar>
-            <span className="max-w-[120px] truncate text-sm text-muted-foreground">
-              {user.name}
-            </span>
           </div>
 
           <form action={signOutAction}>
-            <Button type="submit" variant="ghost" size="sm" className="gap-1.5">
+            <Button
+              type="submit"
+              variant="ghost"
+              size="sm"
+              className="gap-1.5 text-outline hover:text-foreground"
+            >
               <LogOut className="size-4" />
               <span className="hidden sm:inline">Sign out</span>
             </Button>
