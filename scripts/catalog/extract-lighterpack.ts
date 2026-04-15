@@ -90,7 +90,7 @@ async function main() {
     const XLSX = require("xlsx");
     const wb = XLSX.readFile(XLSX_PATH);
     const ws = wb.Sheets[wb.SheetNames[0]];
-    const rows = XLSX.utils.sheet_to_json<Record<string, any>>(ws, { header: 1 });
+    const rows: any[][] = XLSX.utils.sheet_to_json(ws, { header: 1 });
 
     for (const row of rows) {
       for (const cell of Object.values(row)) {

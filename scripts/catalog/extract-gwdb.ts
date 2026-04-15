@@ -45,7 +45,7 @@ async function main() {
   const XLSX = require("xlsx");
   const wb = XLSX.readFile(XLSX_PATH);
   const ws = wb.Sheets[wb.SheetNames[0]];
-  const rows = XLSX.utils.sheet_to_json<Record<string, any>>(ws);
+  const rows: Record<string, any>[] = XLSX.utils.sheet_to_json(ws);
 
   const items = new Map<string, ExtractedItem>();
   let skipped = 0;
