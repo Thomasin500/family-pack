@@ -116,11 +116,19 @@ export function ClosetPage() {
 
       <Tabs value={tab} onValueChange={setActiveTab}>
         <TabsList>
-          {tabs.map((t) => (
-            <TabsTrigger key={t.id} value={t.id}>
-              {t.label}
-            </TabsTrigger>
-          ))}
+          {tabs.map((t) => {
+            const count =
+              t.ownerType === "shared"
+                ? items.filter((i: any) => i.ownerType === "shared").length
+                : items.filter((i: any) => i.ownerType === "personal" && i.ownerId === t.ownerId)
+                    .length;
+            return (
+              <TabsTrigger key={t.id} value={t.id}>
+                {t.label}
+                {count > 0 && ` (${count})`}
+              </TabsTrigger>
+            );
+          })}
         </TabsList>
 
         {tabs.map((t) => {

@@ -7,8 +7,9 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { signOutAction } from "@/app/app/actions";
 import { cn } from "@/lib/utils";
-import { LogOut, Scale } from "lucide-react";
+import { LogOut, Scale, Sun, Moon } from "lucide-react";
 import { useWeightUnit } from "@/components/providers/weight-unit-provider";
+import { useState } from "react";
 
 interface NavBarProps {
   user: {
@@ -22,12 +23,24 @@ const navLinks = [
   { href: "/app", label: "Dashboard" },
   { href: "/app/closet", label: "Closet" },
   { href: "/app/trips", label: "Trips" },
-  { href: "/app/settings", label: "Settings" },
 ];
 
 export function NavBar({ user }: NavBarProps) {
   const pathname = usePathname();
   const { unit, toggle } = useWeightUnit();
+  const [dark, setDark] = useState(() => {
+    if (typeof document !== "undefined") {
+      return document.documentElement.classList.contains("dark");
+    }
+    return false;
+  });
+
+  function toggleDark() {
+    const next = !dark;
+    setDark(next);
+    document.documentElement.classList.toggle("dark", next);
+    localStorage.setItem("theme", next ? "dark" : "light");
+  }
 
   const initials = user.name
     ? user.name
@@ -50,17 +63,13 @@ export function NavBar({ user }: NavBarProps) {
               height={32}
               className="rounded-lg"
             />
-            <span className="text-lg font-semibold tracking-tight">
-              Family Pack
-            </span>
+            <span className="text-lg font-semibold tracking-tight">Family Pack</span>
           </Link>
 
           <nav className="hidden items-center gap-1 sm:flex">
             {navLinks.map((link) => {
               const isActive =
-                link.href === "/app"
-                  ? pathname === "/app"
-                  : pathname.startsWith(link.href);
+                link.href === "/app" ? pathname === "/app" : pathname.startsWith(link.href);
 
               return (
                 <Link
@@ -92,11 +101,19 @@ export function NavBar({ user }: NavBarProps) {
             {unit === "imperial" ? "oz/lb" : "g/kg"}
           </Button>
 
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={toggleDark}
+            title="Toggle dark mode"
+            className="size-8"
+          >
+            {dark ? <Sun className="size-3.5" /> : <Moon className="size-3.5" />}
+          </Button>
+
           <div className="hidden items-center gap-2 sm:flex">
             <Avatar className="size-7">
-              {user.image ? (
-                <AvatarImage src={user.image} alt={user.name ?? ""} />
-              ) : null}
+              {user.image ? <AvatarImage src={user.image} alt={user.name ?? ""} /> : null}
               <AvatarFallback className="text-xs">{initials}</AvatarFallback>
             </Avatar>
             <span className="max-w-[120px] truncate text-sm text-muted-foreground">
