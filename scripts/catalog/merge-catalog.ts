@@ -56,10 +56,10 @@ function main() {
   if (existsSync(existingSeedPath)) {
     // Parse the hardcoded array from seed-catalog.ts
     const seedContent = readFileSync(existingSeedPath, "utf-8");
-    const matches = seedContent.matchAll(
-      /\{\s*brand:\s*"([^"]+)",\s*model:\s*"([^"]+)",\s*categorySuggestion:\s*"([^"]+)"\s*\}/g
-    );
-    for (const m of matches) {
+    const regex =
+      /\{\s*brand:\s*"([^"]+)",\s*model:\s*"([^"]+)",\s*categorySuggestion:\s*"([^"]+)"\s*\}/g;
+    let m: RegExpExecArray | null;
+    while ((m = regex.exec(seedContent)) !== null) {
       existingSeedItems.push({
         brand: m[1],
         model: m[2],

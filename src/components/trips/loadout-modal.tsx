@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { displayWeight } from "@/lib/weight";
 import { useWeightUnit } from "@/components/providers/weight-unit-provider";
@@ -45,15 +40,13 @@ export function LoadoutModal({ open, onOpenChange, pack }: LoadoutModalProps) {
   }
 
   // Build sorted zone groups
-  const zoneGroups: ZoneGroup[] = PACK_ZONES
-    .map((zone) => {
-      const items = zoneMap.get(zone.id) ?? [];
-      const totalGrams = items.reduce((sum: number, pi: any) => {
-        return sum + (pi.item?.weightGrams ?? 0) * (pi.quantity ?? 1);
-      }, 0);
-      return { zone, items, totalGrams };
-    })
-    .filter((g) => g.items.length > 0);
+  const zoneGroups: ZoneGroup[] = PACK_ZONES.map((zone) => {
+    const items = zoneMap.get(zone.id) ?? [];
+    const totalGrams = items.reduce((sum: number, pi: any) => {
+      return sum + (pi.item?.weightGrams ?? 0) * (pi.quantity ?? 1);
+    }, 0);
+    return { zone, items, totalGrams };
+  }).filter((g) => g.items.length > 0);
 
   // Also check for "separate" zone (pet gear)
   const separateItems = zoneMap.get("separate") ?? [];
@@ -94,7 +87,6 @@ export function LoadoutModal({ open, onOpenChange, pack }: LoadoutModalProps) {
                 id: "separate",
                 label: "Pet Pack (Separate)",
                 description: "Carried by pet",
-                order: 99,
               }}
               items={separateItems}
               totalGrams={separateGrams}
@@ -137,12 +129,8 @@ function ZoneSection({
     >
       <div className="flex items-center justify-between mb-1">
         <div>
-          <span className="text-xs font-semibold uppercase tracking-wider">
-            {zone.label}
-          </span>
-          <span className="ml-2 text-xs text-muted-foreground">
-            {zone.description}
-          </span>
+          <span className="text-xs font-semibold uppercase tracking-wider">{zone.label}</span>
+          <span className="ml-2 text-xs text-muted-foreground">{zone.description}</span>
         </div>
         <span className="text-xs font-mono tabular-nums text-muted-foreground">
           {displayWeight(totalGrams, unit)}
@@ -157,20 +145,13 @@ function ZoneSection({
 
           return (
             <div key={pi.id} className="flex items-center gap-2 py-0.5">
-              <span className="text-sm truncate flex-1 min-w-0">
-                {item.name}
-              </span>
+              <span className="text-sm truncate flex-1 min-w-0">{item.name}</span>
               <div className="flex items-center gap-1 shrink-0">
                 {pi.quantity > 1 && (
-                  <span className="text-xs text-muted-foreground">
-                    x{pi.quantity}
-                  </span>
+                  <span className="text-xs text-muted-foreground">x{pi.quantity}</span>
                 )}
                 {isShared && (
-                  <Badge
-                    variant="outline"
-                    className="px-1 py-0 text-[10px] leading-tight"
-                  >
+                  <Badge variant="outline" className="px-1 py-0 text-[10px] leading-tight">
                     &#9733;
                   </Badge>
                 )}
