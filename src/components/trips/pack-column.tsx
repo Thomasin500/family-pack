@@ -5,12 +5,14 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { displayWeight, bodyWeightPercent } from "@/lib/weight";
+import { getCarryWarning } from "@/lib/carry-warnings";
 import { useWeightUnit } from "@/components/providers/weight-unit-provider";
 import { useUpdatePackItem } from "@/hooks/use-trip-pack-items";
 import { Checkbox } from "@/components/ui/checkbox";
 import { LoadoutModal } from "./loadout-modal";
 import { X, Backpack } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 
 interface PackColumnProps {
   pack: any;
@@ -57,8 +59,7 @@ export function PackColumn({ pack, categories, tripId, checklistMode = false }: 
   for (const pi of packItems) {
     const w = (pi.item?.weightGrams ?? 0) * (pi.quantity ?? 1);
     const isWorn = pi.isWornOverride ?? pi.item?.isWorn ?? false;
-    const isConsumable =
-      pi.isConsumableOverride ?? pi.item?.isConsumable ?? false;
+    const isConsumable = pi.isConsumableOverride ?? pi.item?.isConsumable ?? false;
 
     skinOut += w;
 
@@ -75,8 +76,14 @@ export function PackColumn({ pack, categories, tripId, checklistMode = false }: 
   const [loadoutOpen, setLoadoutOpen] = useState(false);
   const checkedCount = packItems.filter((pi: any) => pi.isChecked).length;
 
-  function handleRemove(packItemId: string) {
-    removeFromPack.mutate({ packId: pack.id, itemId: packItemId });
+  function handleRemove(packItemId: string, itemName: string) {
+    toast(`Remove "${itemName}" from pack?`, {
+      action: {
+        label: "Remove",
+        onClick: () => removeFromPack.mutate({ packId: pack.id, itemId: packItemId }),
+      },
+      cancel: { label: "Cancel", onClick: () => {} },
+    });
   }
 
   function handleToggleChecked(packItemId: string, checked: boolean) {
@@ -95,9 +102,7 @@ export function PackColumn({ pack, categories, tripId, checklistMode = false }: 
         </Avatar>
         <div className="min-w-0">
           <p className="text-sm font-semibold truncate">{user?.name}</p>
-          <p className="text-xs text-muted-foreground capitalize">
-            {user?.role}
-          </p>
+          <p className="text-xs text-muted-foreground capitalize">{user?.role}</p>
         </div>
         <div className="ml-auto flex items-center gap-1.5">
           <Button
@@ -129,9 +134,7 @@ export function PackColumn({ pack, categories, tripId, checklistMode = false }: 
       {/* Items by Category */}
       <div className="flex-1 overflow-y-auto px-2 py-2 space-y-1">
         {packItems.length === 0 && (
-          <p className="text-sm text-muted-foreground text-center py-8">
-            No gear added yet
-          </p>
+          <p className="text-sm text-muted-foreground text-center py-8">No gear added yet</p>
         )}
 
         {sortedCategories.map(({ category, items }) => (
@@ -160,37 +163,33 @@ export function PackColumn({ pack, categories, tripId, checklistMode = false }: 
       <div className="border-t px-4 py-2.5 space-y-1 bg-muted/30">
         <div className="flex justify-between text-xs">
           <span className="text-muted-foreground">Base weight</span>
-          <span className="font-mono tabular-nums">
-            {displayWeight(baseWeight, unit)}
-          </span>
+          <span className="font-mono tabular-nums">{displayWeight(baseWeight, unit)}</span>
         </div>
         <div className="flex justify-between text-xs">
           <span className="text-muted-foreground">Total carried</span>
-          <span className="font-mono tabular-nums">
-            {displayWeight(totalCarried, unit)}
-          </span>
+          <span className="font-mono tabular-nums">{displayWeight(totalCarried, unit)}</span>
         </div>
         <div className="flex justify-between text-xs font-medium">
           <span>Skin-out</span>
-          <span className="font-mono tabular-nums">
-            {displayWeight(skinOut, unit)}
-          </span>
+          <span className="font-mono tabular-nums">{displayWeight(skinOut, unit)}</span>
         </div>
-        {user?.bodyWeightKg && user.bodyWeightKg > 0 && (
-          <div className="flex justify-between text-xs">
-            <span className="text-muted-foreground">% body weight</span>
-            <span className="font-mono tabular-nums">
-              {bodyWeightPercent(totalCarried, user.bodyWeightKg).toFixed(1)}%
-            </span>
-          </div>
-        )}
+        {user?.bodyWeightKg &&
+          user.bodyWeightKg > 0 &&
+          (() => {
+            const percent = bodyWeightPercent(totalCarried, user.bodyWeightKg);
+            const warning = getCarryWarning(percent, user.role ?? "adult");
+            return (
+              <div className="flex justify-between text-xs">
+                <span className="text-muted-foreground">% body weight</span>
+                <span className={`font-mono tabular-nums font-medium ${warning.color}`}>
+                  {percent.toFixed(1)}% · {warning.label}
+                </span>
+              </div>
+            );
+          })()}
       </div>
 
-      <LoadoutModal
-        open={loadoutOpen}
-        onOpenChange={setLoadoutOpen}
-        pack={pack}
-      />
+      <LoadoutModal open={loadoutOpen} onOpenChange={setLoadoutOpen} pack={pack} />
     </div>
   );
 }
@@ -204,7 +203,7 @@ function CategoryGroup({
 }: {
   category: any;
   items: any[];
-  onRemove: (packItemId: string) => void;
+  onRemove: (packItemId: string, itemName: string) => void;
   checklistMode: boolean;
   onToggleChecked: (packItemId: string, checked: boolean) => void;
 }) {
@@ -225,8 +224,7 @@ function CategoryGroup({
           const item = pi.item;
           if (!item) return null;
           const isWorn = pi.isWornOverride ?? item.isWorn ?? false;
-          const isConsumable =
-            pi.isConsumableOverride ?? item.isConsumable ?? false;
+          const isConsumable = pi.isConsumableOverride ?? item.isConsumable ?? false;
           const isShared = item.ownerType === "shared";
           const isBorrowed = pi.isBorrowed ?? false;
           const weight = (item.weightGrams ?? 0) * (pi.quantity ?? 1);
@@ -241,52 +239,38 @@ function CategoryGroup({
               {checklistMode && (
                 <Checkbox
                   checked={pi.isChecked ?? false}
-                  onCheckedChange={(checked) =>
-                    onToggleChecked(pi.id, checked === true)
-                  }
+                  onCheckedChange={(checked) => onToggleChecked(pi.id, checked === true)}
                   className="shrink-0"
                 />
               )}
-              <span className={`text-sm truncate flex-1 min-w-0 ${
-                checklistMode && pi.isChecked ? "line-through" : ""
-              }`}>
+              <span
+                className={`text-sm truncate flex-1 min-w-0 ${
+                  checklistMode && pi.isChecked ? "line-through" : ""
+                }`}
+              >
                 {item.name}
               </span>
               <div className="flex items-center gap-1 shrink-0">
                 {pi.quantity > 1 && (
-                  <span className="text-xs text-muted-foreground">
-                    x{pi.quantity}
-                  </span>
+                  <span className="text-xs text-muted-foreground">x{pi.quantity}</span>
                 )}
                 {isWorn && (
-                  <Badge
-                    variant="outline"
-                    className="px-1 py-0 text-[10px] leading-tight"
-                  >
+                  <Badge variant="outline" className="px-1 py-0 text-[10px] leading-tight">
                     W
                   </Badge>
                 )}
                 {isConsumable && (
-                  <Badge
-                    variant="outline"
-                    className="px-1 py-0 text-[10px] leading-tight"
-                  >
+                  <Badge variant="outline" className="px-1 py-0 text-[10px] leading-tight">
                     C
                   </Badge>
                 )}
                 {isShared && (
-                  <Badge
-                    variant="outline"
-                    className="px-1 py-0 text-[10px] leading-tight"
-                  >
+                  <Badge variant="outline" className="px-1 py-0 text-[10px] leading-tight">
                     &#9733;
                   </Badge>
                 )}
                 {isBorrowed && (
-                  <Badge
-                    variant="outline"
-                    className="px-1 py-0 text-[10px] leading-tight"
-                  >
+                  <Badge variant="outline" className="px-1 py-0 text-[10px] leading-tight">
                     &#8593;
                   </Badge>
                 )}
@@ -297,7 +281,7 @@ function CategoryGroup({
                   variant="ghost"
                   size="icon-xs"
                   className="opacity-0 group-hover:opacity-100 transition-opacity"
-                  onClick={() => onRemove(pi.id)}
+                  onClick={() => onRemove(pi.id, item.name)}
                 >
                   <X className="size-3" />
                 </Button>

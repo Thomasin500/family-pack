@@ -45,14 +45,14 @@ The fundamental data model difference: **we model a couple as two people who sha
 
 Key concepts no competitor handles:
 
-| Concept | What it means |
-|---|---|
-| **Shared gear ownership** | An item can belong to a household, not just one person |
-| **Owner vs carrier** | A kid owns their sleeping bag, but a parent might carry it |
-| **Weight balancing** | See all packs side-by-side and balance shared gear to equalize weight |
-| **Solo vs group mode** | Same closet feeds both solo lists and group trips seamlessly |
-| **Two accounts, one household** | Both partners log in independently but share a gear pool |
-| **Pets as trip members** | Dogs get their own closet, pack column, and carry weight limits based on body weight |
+| Concept                         | What it means                                                                        |
+| ------------------------------- | ------------------------------------------------------------------------------------ |
+| **Shared gear ownership**       | An item can belong to a household, not just one person                               |
+| **Owner vs carrier**            | A kid owns their sleeping bag, but a parent might carry it                           |
+| **Weight balancing**            | See all packs side-by-side and balance shared gear to equalize weight                |
+| **Solo vs group mode**          | Same closet feeds both solo lists and group trips seamlessly                         |
+| **Two accounts, one household** | Both partners log in independently but share a gear pool                             |
+| **Pets as trip members**        | Dogs get their own closet, pack column, and carry weight limits based on body weight |
 
 ---
 
@@ -126,41 +126,41 @@ Built by Andrew Carmichael, a Scottish hiker and software engineer. Featured in 
 
 ### Competitive Comparison Matrix
 
-| Feature | LighterPack | PackWizard | PackStack | Hikt | OutPack | **Ours** |
-|---|---|---|---|---|---|---|
-| Gear closet | No | Yes (bins) | Yes | Yes | Yes | **Yes** |
-| Weight breakdown (base/worn/consumable) | Yes | Yes | Yes | Yes | Yes | **Yes** |
-| Gear database (auto-fill) | No | Yes (pricing) | Yes (catalog) | Yes | Yes (mfr specs) | **Tier 1 (names), Tier 3 (full)** |
-| Multi-pack per trip | No | No | Yes | No | Yes | **Yes** |
-| Group trip (assign gear to people) | No | No | Partial (profiles) | No | **Yes** | **Yes** |
-| Shared gear distribution | No | No | No | No | **Yes** | **Yes** |
-| Trip metadata (dates, terrain, temp) | No | No | Yes | No | Yes | **Tier 1 (basic), Tier 3 (full)** |
-| Food / meal planning | No | No | Calorie calc | No | **Full (library, macros, per-person)** | **Tier 3** |
-| Gear kits | No | No | Yes | No | Yes | **Tier 2** |
-| Checklist mode | No | Yes | No | No | Yes | **Tier 2** |
-| Trip journaling (waypoints, GPX, photos) | No | No | No | No | **Yes** | No |
-| Gear history (times packed) | No | No | No | No | **Yes** | **Tier 3** |
-| Wishlist | No | No | No | No | **Yes** | **Tier 2** |
-| Actual vs planned weight | No | No | No | No | **Yes** | **Tier 3** |
-| Social (follow, activity feed) | No | No | No | No | **Yes** | **Tier 4** |
-| Public gallery / pack browser | No | Yes (tags) | Links only | Basic | Basic | **Tier 4 (+ forking)** |
-| List comparison (side-by-side) | No | No | No | No | No | **Tier 3** |
-| Mobile experience | Poor | Improved | Native iOS | Good | Responsive web | **Responsive + PWA** |
-| Import (LighterPack/CSV) | N/A | Yes | Yes | Yes | Unknown | **Tier 2** |
-| Export (PDF/CSV) | No | PDF | No | No | Unknown | **Tier 2** |
-| Drag and drop | Basic | No | Yes | No | Meal planner | **Yes** |
-| Dark mode | No | No | Yes | Yes | Unknown | **Yes** |
-| Inline editing | Yes | No | No | No | No | **Yes** |
-| Household/shared gear model | No | No | No | No | No | **Yes** |
-| Separate accounts per person | N/A | N/A | No | No (premium collab) | No | **Yes** |
-| Side-by-side pack balancing | No | No | No | No | Percentages | **Yes (drag + delta + auto-suggest)** |
-| Owner vs carrier tracking | No | No | No | No | No | **Yes** |
-| What-if mode | No | No | No | No | No | **Tier 3** |
-| Fork/remix community lists | No | No | No | No | No | **Tier 4** |
-| Solo alternative linking | No | No | No | No | No | **Yes** |
-| Weight heatmap | No | No | No | No | No | **Yes** |
-| Kids/age-aware defaults | No | No | No | No | No | **Yes** |
-| Pet/dog as trip member | No | No | No | No | No | **Yes** |
+| Feature                                  | LighterPack | PackWizard    | PackStack          | Hikt                | OutPack                                | **Ours**                              |
+| ---------------------------------------- | ----------- | ------------- | ------------------ | ------------------- | -------------------------------------- | ------------------------------------- |
+| Gear closet                              | No          | Yes (bins)    | Yes                | Yes                 | Yes                                    | **Yes**                               |
+| Weight breakdown (base/worn/consumable)  | Yes         | Yes           | Yes                | Yes                 | Yes                                    | **Yes**                               |
+| Gear database (auto-fill)                | No          | Yes (pricing) | Yes (catalog)      | Yes                 | Yes (mfr specs)                        | **Tier 1 (names), Tier 3 (full)**     |
+| Multi-pack per trip                      | No          | No            | Yes                | No                  | Yes                                    | **Yes**                               |
+| Group trip (assign gear to people)       | No          | No            | Partial (profiles) | No                  | **Yes**                                | **Yes**                               |
+| Shared gear distribution                 | No          | No            | No                 | No                  | **Yes**                                | **Yes**                               |
+| Trip metadata (dates, terrain, temp)     | No          | No            | Yes                | No                  | Yes                                    | **Tier 1 (basic), Tier 3 (full)**     |
+| Food / meal planning                     | No          | No            | Calorie calc       | No                  | **Full (library, macros, per-person)** | **Tier 3**                            |
+| Gear kits                                | No          | No            | Yes                | No                  | Yes                                    | **Tier 2**                            |
+| Checklist mode                           | No          | Yes           | No                 | No                  | Yes                                    | **Tier 2**                            |
+| Trip journaling (waypoints, GPX, photos) | No          | No            | No                 | No                  | **Yes**                                | No                                    |
+| Gear history (times packed)              | No          | No            | No                 | No                  | **Yes**                                | **Tier 3**                            |
+| Wishlist                                 | No          | No            | No                 | No                  | **Yes**                                | **Tier 2**                            |
+| Actual vs planned weight                 | No          | No            | No                 | No                  | **Yes**                                | **Tier 3**                            |
+| Social (follow, activity feed)           | No          | No            | No                 | No                  | **Yes**                                | **Tier 4**                            |
+| Public gallery / pack browser            | No          | Yes (tags)    | Links only         | Basic               | Basic                                  | **Tier 4 (+ forking)**                |
+| List comparison (side-by-side)           | No          | No            | No                 | No                  | No                                     | **Tier 3**                            |
+| Mobile experience                        | Poor        | Improved      | Native iOS         | Good                | Responsive web                         | **Responsive + PWA**                  |
+| Import (LighterPack/CSV)                 | N/A         | Yes           | Yes                | Yes                 | Unknown                                | **Tier 2**                            |
+| Export (PDF/CSV)                         | No          | PDF           | No                 | No                  | Unknown                                | **Tier 2**                            |
+| Drag and drop                            | Basic       | No            | Yes                | No                  | Meal planner                           | **Yes**                               |
+| Dark mode                                | No          | No            | Yes                | Yes                 | Unknown                                | **Yes**                               |
+| Inline editing                           | Yes         | No            | No                 | No                  | No                                     | **Yes**                               |
+| Household/shared gear model              | No          | No            | No                 | No                  | No                                     | **Yes**                               |
+| Separate accounts per person             | N/A         | N/A           | No                 | No (premium collab) | No                                     | **Yes**                               |
+| Side-by-side pack balancing              | No          | No            | No                 | No                  | Percentages                            | **Yes (drag + delta + auto-suggest)** |
+| Owner vs carrier tracking                | No          | No            | No                 | No                  | No                                     | **Yes**                               |
+| What-if mode                             | No          | No            | No                 | No                  | No                                     | **Tier 3**                            |
+| Fork/remix community lists               | No          | No            | No                 | No                  | No                                     | **Tier 4**                            |
+| Solo alternative linking                 | No          | No            | No                 | No                  | No                                     | **Yes**                               |
+| Weight heatmap                           | No          | No            | No                 | No                  | No                                     | **Yes**                               |
+| Kids/age-aware defaults                  | No          | No            | No                 | No                  | No                                     | **Yes**                               |
+| Pet/dog as trip member                   | No          | No            | No                 | No                  | No                                     | **Yes**                               |
 
 ### Gaps We Own Exclusively
 
@@ -178,15 +178,15 @@ Built by Andrew Carmichael, a Scottish hiker and software engineer. Featured in 
 
 ### What OutPack Does That We Don't (and whether to add it)
 
-| OutPack Feature | Add to Family Pack? | Where | Notes |
-|---|---|---|---|
-| **Food library + meal planner** | Partial | Tier 3 | Our calorie calc is simpler. Full meal planner is a large feature. Consider pantry for consumables |
-| **Trip journaling** (waypoints, GPX, photos, summits) | No | — | Different product focus. We're a gear planning tool, not a trip journal. Users can pair us with AllTrails/Gaia |
-| **Gear history** (times packed) | Yes | Tier 3 | Simple counter. Helps identify core vs rarely-used gear |
-| **Wishlist** | Yes | Tier 2 | Boolean flag on Item or lightweight table. Low effort, nice to have |
-| **Actual vs planned weight** | Yes | Tier 3 | `actual_weight_grams` on TripPack. Post-trip logging |
-| **Social** (follow users, activity feed) | Partial | Tier 4 | Public gallery with forking covers the useful part without building a social network |
-| **Barcode scanner for food** | No | — | Niche feature, unreliable (per OutPack reviews). Not worth the effort |
+| OutPack Feature                                       | Add to Family Pack? | Where  | Notes                                                                                                          |
+| ----------------------------------------------------- | ------------------- | ------ | -------------------------------------------------------------------------------------------------------------- |
+| **Food library + meal planner**                       | Partial             | Tier 3 | Our calorie calc is simpler. Full meal planner is a large feature. Consider pantry for consumables             |
+| **Trip journaling** (waypoints, GPX, photos, summits) | No                  | —      | Different product focus. We're a gear planning tool, not a trip journal. Users can pair us with AllTrails/Gaia |
+| **Gear history** (times packed)                       | Yes                 | Tier 3 | Simple counter. Helps identify core vs rarely-used gear                                                        |
+| **Wishlist**                                          | Yes                 | Tier 2 | Boolean flag on Item or lightweight table. Low effort, nice to have                                            |
+| **Actual vs planned weight**                          | Yes                 | Tier 3 | `actual_weight_grams` on TripPack. Post-trip logging                                                           |
+| **Social** (follow users, activity feed)              | Partial             | Tier 4 | Public gallery with forking covers the useful part without building a social network                           |
+| **Barcode scanner for food**                          | No                  | —      | Niche feature, unreliable (per OutPack reviews). Not worth the effort                                          |
 
 ---
 
@@ -194,54 +194,54 @@ Built by Andrew Carmichael, a Scottish hiker and software engineer. Featured in 
 
 ### Core Principles
 
-| Principle | Implementation |
-|---|---|
-| **Inline editing first** | Click any cell to edit. No modals for name, weight, quantity. Tab between fields, Enter to save |
-| **Quick-add bar** | Persistent input row at bottom of each category. Type + Enter. Never open a form to add an item |
-| **Catalog typeahead** | As you type in the name field, fuzzy-match against catalog. Pick a suggestion or keep typing |
-| **Keyboard-driven** | Tab/arrow keys between fields and rows. `n` for new item, `d` for delete, Enter to confirm |
-| **Auto-save** | No save button anywhere. Every change persists immediately via debounced mutations |
-| **Mobile-first for checklist** | Checklist mode is the #1 mobile use case. Design it phone-first |
-| **Desktop-first for workspace** | The multi-column trip editor is a desktop experience. On mobile, tabs switch between packs |
-| **Color-coded categories** | Left border color bar on item groups. Consistent across closet and trip views |
-| **Weight heatmap** | Tint weight cells green-to-red relative to category. Heaviest items pop visually |
-| **Contextual weight units** | Items < 16oz display in oz. Totals display in lb + oz. Metric users get g/kg. Storage always grams |
-| **Dark mode** | Ship from day one via Tailwind dark mode |
+| Principle                       | Implementation                                                                                     |
+| ------------------------------- | -------------------------------------------------------------------------------------------------- |
+| **Inline editing first**        | Click any cell to edit. No modals for name, weight, quantity. Tab between fields, Enter to save    |
+| **Quick-add bar**               | Persistent input row at bottom of each category. Type + Enter. Never open a form to add an item    |
+| **Catalog typeahead**           | As you type in the name field, fuzzy-match against catalog. Pick a suggestion or keep typing       |
+| **Keyboard-driven**             | Tab/arrow keys between fields and rows. `n` for new item, `d` for delete, Enter to confirm         |
+| **Auto-save**                   | No save button anywhere. Every change persists immediately via debounced mutations                 |
+| **Mobile-first for checklist**  | Checklist mode is the #1 mobile use case. Design it phone-first                                    |
+| **Desktop-first for workspace** | The multi-column trip editor is a desktop experience. On mobile, tabs switch between packs         |
+| **Color-coded categories**      | Left border color bar on item groups. Consistent across closet and trip views                      |
+| **Weight heatmap**              | Tint weight cells green-to-red relative to category. Heaviest items pop visually                   |
+| **Contextual weight units**     | Items < 16oz display in oz. Totals display in lb + oz. Metric users get g/kg. Storage always grams |
+| **Dark mode**                   | Ship from day one via Tailwind dark mode                                                           |
 
 ### What to Keep from Competitors
 
-| Pattern | Source | Verdict |
-|---|---|---|
-| Inline cell editing | LighterPack | **Keep** — core UX advantage |
-| Category color bars | Everyone | **Keep** |
-| Pie chart | Everyone | **Keep as secondary**, add bar chart + budget bar as primary |
-| Drag-and-drop reorder | LighterPack, PackStack | **Keep** |
-| Base/worn/consumable toggle | Everyone | **Keep**, improve icon affordance with clear labels |
-| Shareable read-only view | PackStack | **Keep** — purpose-built display page |
-| Gear catalog search | PackStack, PackWizard | **Keep** for names in Tier 1, full data in Tier 3 |
-| Reusable kits | PackStack | **Keep** for Tier 2 |
+| Pattern                     | Source                 | Verdict                                                      |
+| --------------------------- | ---------------------- | ------------------------------------------------------------ |
+| Inline cell editing         | LighterPack            | **Keep** — core UX advantage                                 |
+| Category color bars         | Everyone               | **Keep**                                                     |
+| Pie chart                   | Everyone               | **Keep as secondary**, add bar chart + budget bar as primary |
+| Drag-and-drop reorder       | LighterPack, PackStack | **Keep**                                                     |
+| Base/worn/consumable toggle | Everyone               | **Keep**, improve icon affordance with clear labels          |
+| Shareable read-only view    | PackStack              | **Keep** — purpose-built display page                        |
+| Gear catalog search         | PackStack, PackWizard  | **Keep** for names in Tier 1, full data in Tier 3            |
+| Reusable kits               | PackStack              | **Keep** for Tier 2                                          |
 
 ### What to Change from Competitors
 
-| Pattern | Source | Change |
-|---|---|---|
-| Gear closet as popup | PackWizard | **Full page** — not a popup or sidebar |
-| Pie chart as primary viz | Everyone | **Bar chart primary** — easier to compare, pie chart as toggle |
-| Modal item editing | PackStack, Hikt | **Inline-first** — modal only for full detail (notes, image, links) |
-| Desktop-only design | LighterPack, PackWizard | **Mobile-first for key views** (closet, checklist) |
-| Fixed unit display | Most apps | **Contextual units** — items in oz, totals in lb+oz, metric toggle |
-| Flat category lists | Everyone | **Sub-categories** — collapsible groups within categories |
+| Pattern                  | Source                  | Change                                                              |
+| ------------------------ | ----------------------- | ------------------------------------------------------------------- |
+| Gear closet as popup     | PackWizard              | **Full page** — not a popup or sidebar                              |
+| Pie chart as primary viz | Everyone                | **Bar chart primary** — easier to compare, pie chart as toggle      |
+| Modal item editing       | PackStack, Hikt         | **Inline-first** — modal only for full detail (notes, image, links) |
+| Desktop-only design      | LighterPack, PackWizard | **Mobile-first for key views** (closet, checklist)                  |
+| Fixed unit display       | Most apps               | **Contextual units** — items in oz, totals in lb+oz, metric toggle  |
+| Flat category lists      | Everyone                | **Sub-categories** — collapsible groups within categories           |
 
 ### What to Add (new patterns)
 
-| Pattern | Notes |
-|---|---|
-| **Weight balance indicator** | Visual bar comparing packs with delta. Green = balanced, red = lopsided |
-| **What-if mode** | Ghost/remove items to see weight impact without committing |
-| **Weight heatmap on rows** | Green-to-red tint on weight cells relative to category |
-| **Quick-add bar** | Persistent input at bottom of each category for rapid entry |
-| **Pack timeline** | Calendar showing shared gear commitments (Tier 3+) |
-| **Carry weight vs base weight** | Two metrics per person — what they own vs what they physically carry |
+| Pattern                         | Notes                                                                   |
+| ------------------------------- | ----------------------------------------------------------------------- |
+| **Weight balance indicator**    | Visual bar comparing packs with delta. Green = balanced, red = lopsided |
+| **What-if mode**                | Ghost/remove items to see weight impact without committing              |
+| **Weight heatmap on rows**      | Green-to-red tint on weight cells relative to category                  |
+| **Quick-add bar**               | Persistent input at bottom of each category for rapid entry             |
+| **Pack timeline**               | Calendar showing shared gear commitments (Tier 3+)                      |
+| **Carry weight vs base weight** | Two metrics per person — what they own vs what they physically carry    |
 
 ### Key Screen Wireframes
 
@@ -318,19 +318,19 @@ Built by Andrew Carmichael, a Scottish hiker and software engineer. Featured in 
 
 #### Visual Indicators
 
-| Icon | Meaning |
-|---|---|
-| `*` (shared) | Shared family/household gear |
+| Icon               | Meaning                                         |
+| ------------------ | ----------------------------------------------- |
+| `*` (shared)       | Shared family/household gear                    |
 | `~` (carrying for) | Carrying someone else's gear (owner != carrier) |
-| No icon | Your own personal gear in your own pack |
+| No icon            | Your own personal gear in your own pack         |
 
 #### Weight Lines Per Person
 
-| Metric | Meaning |
-|---|---|
-| **Base weight** | Gear in pack, excluding consumables and worn items (for gear optimization) |
-| **Total carried** | Base + consumables (what the pack actually weighs on your back) |
-| **Skin out total** | Total carried + worn items (everything on your body leaving the trailhead) |
+| Metric               | Meaning                                                                                                                                 |
+| -------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| **Base weight**      | Gear in pack, excluding consumables and worn items (for gear optimization)                                                              |
+| **Total carried**    | Base + consumables (what the pack actually weighs on your back)                                                                         |
+| **Skin out total**   | Total carried + worn items (everything on your body leaving the trailhead)                                                              |
 | **% of body weight** | Total carried / body weight. Shown for all members with body weight entered. Critical for dogs (10-25% max), kids, and comfort planning |
 
 #### Mobile — Trip Workspace
@@ -665,45 +665,45 @@ Built by Andrew Carmichael, a Scottish hiker and software engineer. Featured in 
 
 ### Feature Count
 
-| Tier | Features | Purpose |
-|---|---|---|
-| Tier 1 — Core | ~48 | Usable couples/family/pet gear app (added pet support, skin out total, % body weight) |
-| Tier 2 — Quality of Life | ~42 | Feels complete and polished (added templates, readiness system, trip-type templates, cut list, not-on-trip view, activity tags, wishlist) |
-| Tier 3 — Differentiators | ~37 | Reasons to switch from competitors (added loadout view, gamification elements, gear history, actual vs planned weight, trip notes) |
-| Tier 4 — Polish | ~13 | Growth and community (trip-type templates moved to Tier 2) |
-| **Total** | **~140** | |
+| Tier                     | Features | Purpose                                                                                                                                   |
+| ------------------------ | -------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| Tier 1 — Core            | ~48      | Usable couples/family/pet gear app (added pet support, skin out total, % body weight)                                                     |
+| Tier 2 — Quality of Life | ~42      | Feels complete and polished (added templates, readiness system, trip-type templates, cut list, not-on-trip view, activity tags, wishlist) |
+| Tier 3 — Differentiators | ~37      | Reasons to switch from competitors (added loadout view, gamification elements, gear history, actual vs planned weight, trip notes)        |
+| Tier 4 — Polish          | ~13      | Growth and community (trip-type templates moved to Tier 2)                                                                                |
+| **Total**                | **~140** |                                                                                                                                           |
 
 ---
 
 ## 5. Tech Stack
 
-| Layer | Choice | Rationale |
-|---|---|---|
-| **Framework** | Next.js 14+ (App Router) | React-based, SSR for public share pages, API routes eliminate separate backend |
-| **Language** | TypeScript | Type safety across frontend and API |
-| **Database** | PostgreSQL on Neon | Free tier, relational data fits perfectly, `pg_trgm` for fuzzy catalog search |
-| **ORM** | Drizzle | Lightweight, great TS inference, SQL-like syntax, better DX than Prisma at this scale |
-| **Auth** | Auth.js (NextAuth v5) | Google OAuth to start, add email/password later |
-| **Styling** | Tailwind CSS + shadcn/ui | Fast iteration, accessible components, dark mode built in |
-| **Drag & Drop** | dnd-kit | Best React DnD library, handles reorder + cross-column drag |
-| **Charts** | Recharts | React-native, simple API, handles bar + pie + progress |
-| **Search** | PostgreSQL `pg_trgm` | Fuzzy typeahead for catalog, no Elasticsearch needed |
-| **Image Storage** | Cloudflare R2 (Tier 4) | For gear photos, when/if added |
-| **Hosting** | Vercel (start) -> Railway or self-host (scale) | Free tier to start, easy migration path |
-| **State** | TanStack Query (React Query) | Server state caching, optimistic updates, refetching. React context for UI state only |
+| Layer             | Choice                                         | Rationale                                                                             |
+| ----------------- | ---------------------------------------------- | ------------------------------------------------------------------------------------- |
+| **Framework**     | Next.js 14+ (App Router)                       | React-based, SSR for public share pages, API routes eliminate separate backend        |
+| **Language**      | TypeScript                                     | Type safety across frontend and API                                                   |
+| **Database**      | PostgreSQL on Neon                             | Free tier, relational data fits perfectly, `pg_trgm` for fuzzy catalog search         |
+| **ORM**           | Drizzle                                        | Lightweight, great TS inference, SQL-like syntax, better DX than Prisma at this scale |
+| **Auth**          | Auth.js (NextAuth v5)                          | Google OAuth to start, add email/password later                                       |
+| **Styling**       | Tailwind CSS + shadcn/ui                       | Fast iteration, accessible components, dark mode built in                             |
+| **Drag & Drop**   | dnd-kit                                        | Best React DnD library, handles reorder + cross-column drag                           |
+| **Charts**        | Recharts                                       | React-native, simple API, handles bar + pie + progress                                |
+| **Search**        | PostgreSQL `pg_trgm`                           | Fuzzy typeahead for catalog, no Elasticsearch needed                                  |
+| **Image Storage** | Cloudflare R2 (Tier 4)                         | For gear photos, when/if added                                                        |
+| **Hosting**       | Vercel (start) -> Railway or self-host (scale) | Free tier to start, easy migration path                                               |
+| **State**         | TanStack Query (React Query)                   | Server state caching, optimistic updates, refetching. React context for UI state only |
 
 ### Key Technical Decisions
 
-| Decision | Choice | Rationale |
-|---|---|---|
-| Weight storage | Integer grams | No floating point errors. 1g precision is more than enough. Display layer handles conversion |
-| Real-time sync | Polling (5s interval) or SWR revalidation | WebSockets overkill for 2-6 users. Polling is simple and sufficient |
-| Drag and drop library | dnd-kit | Handles reorder + cross-container drag. Active maintenance. Better than react-beautiful-dnd (deprecated) |
-| Auto-save strategy | Debounced mutations (300ms) via TanStack Query + optimistic updates | Feels instant. Batches rapid edits. Rolls back on error |
-| Catalog search | Server-side pg_trgm, debounced client requests (200ms) | Fuzzy matching in Postgres is fast for < 10k entries |
-| Image storage | Defer to Tier 4 | Adds complexity. Not needed for MVP. URL field is enough for now |
-| Mobile approach | Responsive web (PWA later in Tier 4) | Native app is months of extra work. Responsive covers 90% of use cases |
-| Primary keys | UUID | Merge-safe if you ever need to combine databases, shard, or sync offline |
+| Decision              | Choice                                                              | Rationale                                                                                                |
+| --------------------- | ------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| Weight storage        | Integer grams                                                       | No floating point errors. 1g precision is more than enough. Display layer handles conversion             |
+| Real-time sync        | Polling (5s interval) or SWR revalidation                           | WebSockets overkill for 2-6 users. Polling is simple and sufficient                                      |
+| Drag and drop library | dnd-kit                                                             | Handles reorder + cross-container drag. Active maintenance. Better than react-beautiful-dnd (deprecated) |
+| Auto-save strategy    | Debounced mutations (300ms) via TanStack Query + optimistic updates | Feels instant. Batches rapid edits. Rolls back on error                                                  |
+| Catalog search        | Server-side pg_trgm, debounced client requests (200ms)              | Fuzzy matching in Postgres is fast for < 10k entries                                                     |
+| Image storage         | Defer to Tier 4                                                     | Adds complexity. Not needed for MVP. URL field is enough for now                                         |
+| Mobile approach       | Responsive web (PWA later in Tier 4)                                | Native app is months of extra work. Responsive covers 90% of use cases                                   |
+| Primary keys          | UUID                                                                | Merge-safe if you ever need to combine databases, shard, or sync offline                                 |
 
 ---
 
@@ -747,18 +747,16 @@ export const households = pgTable("household", {
 export const users = pgTable("user", {
   id: uuid("id").defaultRandom().primaryKey(),
   name: text("name").notNull(),
-  email: text("email"),                              // nullable for pets/young kids
+  email: text("email"), // nullable for pets/young kids
   imageUrl: text("image_url"),
   weightUnitPref: weightUnitEnum("weight_unit_pref").default("imperial"),
-  bodyWeightKg: integer("body_weight_kg"),            // used for % body weight calc
+  bodyWeightKg: integer("body_weight_kg"), // used for % body weight calc
   heightCm: integer("height_cm"),
   birthDate: date("birth_date"),
   sex: sexEnum("sex"),
-  role: roleEnum("role").default("adult"),            // "adult" | "child" | "pet"
-  breed: text("breed"),                               // pet breed/size (for carry guidelines)
-  managedByUserId: uuid("managed_by_user_id").references(
-    (): any => users.id
-  ),                                                  // who manages this pet/child's closet
+  role: roleEnum("role").default("adult"), // "adult" | "child" | "pet"
+  breed: text("breed"), // pet breed/size (for carry guidelines)
+  managedByUserId: uuid("managed_by_user_id").references((): any => users.id), // who manages this pet/child's closet
   householdId: uuid("household_id").references(() => households.id),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
@@ -772,9 +770,7 @@ export const categories = pgTable("category", {
   color: text("color").notNull().default("#6b7280"),
   icon: text("icon"),
   sortOrder: integer("sort_order").notNull().default(0),
-  parentCategoryId: uuid("parent_category_id").references(
-    (): any => categories.id
-  ),
+  parentCategoryId: uuid("parent_category_id").references((): any => categories.id),
   householdId: uuid("household_id")
     .references(() => households.id)
     .notNull(),
@@ -797,9 +793,7 @@ export const items = pgTable("item", {
   tags: text("tags").array(),
   notes: text("notes"),
   imageUrl: text("image_url"),
-  catalogProductId: uuid("catalog_product_id").references(
-    () => catalogProducts.id
-  ),
+  catalogProductId: uuid("catalog_product_id").references(() => catalogProducts.id),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
@@ -873,7 +867,7 @@ export const tripPacks = pgTable("trip_pack", {
     .references(() => users.id)
     .notNull(),
   actualTotalWeightGrams: integer("actual_total_weight_grams"), // post-trip weigh-in
-  tripNotes: text("trip_notes"),                                // "what worked, what didn't"
+  tripNotes: text("trip_notes"), // "what worked, what didn't"
 });
 
 export const tripPackItems = pgTable("trip_pack_item", {
@@ -910,7 +904,9 @@ export const templates = pgTable("template", {
   id: uuid("id").defaultRandom().primaryKey(),
   name: text("name").notNull(),
   description: text("description"),
-  householdId: uuid("household_id").references(() => households.id).notNull(),
+  householdId: uuid("household_id")
+    .references(() => households.id)
+    .notNull(),
   sourceTripId: uuid("source_trip_id").references(() => trips.id),
   isDefault: boolean("is_default").default(false),
   createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -918,8 +914,12 @@ export const templates = pgTable("template", {
 
 export const templateItems = pgTable("template_item", {
   id: uuid("id").defaultRandom().primaryKey(),
-  templateId: uuid("template_id").references(() => templates.id, { onDelete: "cascade" }).notNull(),
-  itemId: uuid("item_id").references(() => items.id).notNull(),
+  templateId: uuid("template_id")
+    .references(() => templates.id, { onDelete: "cascade" })
+    .notNull(),
+  itemId: uuid("item_id")
+    .references(() => items.id)
+    .notNull(),
   assignToRole: text("assign_to_role"),
   quantity: integer("quantity").default(1).notNull(),
   isWornOverride: boolean("is_worn_override"),
@@ -955,6 +955,7 @@ TripPackItem's trip_pack_id determines whose pack it's IN (the carrier)
 ### The Key Design Insights
 
 **Owner vs Carrier:** `TripPackItem` has two user references:
+
 - **`trip_pack_id`** -> `TripPack.user_id` = who is **carrying** the item (carrier)
 - **`owned_by_user_id`** = who **owns** the item (nullable = shared household gear)
 
@@ -1077,14 +1078,21 @@ This single distinction enables the entire parent-carries-kid's-gear workflow.
 
 The catalog auto-populates product **names** (brand + model) only. Users enter their own measured weights. Manufacturer weights are notoriously off by 10-20%, and backpackers weigh their own gear anyway.
 
-### Data Sources
+### Data Sources (Updated April 15, 2026 — pipeline built and run)
 
-| Source | Raw Entries | Format | After Cleanup | Usable Names |
-|---|---|---|---|---|
-| OpenWeightDatabase (GitHub) | ~30-60 | CSV: Brand, Model, Weight (g) | ~30-60 (already clean) | ~30-60 |
-| Featherweight ul_items.txt (GitHub) | ~1,190 | CSV: weight, name (no brand/model split) | ~900 (after dedup) | ~300-500 |
-| Your own gear | ~50-100 | Manual entry | All usable | ~50-100 |
-| **Total seed** | | | | **~400-650** |
+| Source                               | Raw Entries | Format                       | After Cleanup                     | Unique Items |
+| ------------------------------------ | ----------- | ---------------------------- | --------------------------------- | ------------ |
+| Hand-curated seed                    | 98          | TypeScript array             | Pre-split brand/model             | 98           |
+| Crowd-Sourced Gear Weight DB (xlsx)  | 380         | Company, Full name, Category | Pre-split, category mapped        | 343          |
+| LighterPack lists (132 URLs)         | 4,122       | HTML scrape → item names     | Brand extraction via known-brands | 308          |
+| Featherweight ul_items.txt (GitHub)  | 40,529      | CSV: weight, item_name       | Brand extraction + dedup          | 8,602        |
+| **Total (after cross-source dedup)** |             |                              |                                   | **9,065**    |
+
+Cross-source validation: 3 items in all 4 sources, 32 in 3 sources, 209 in 2 sources. 107 outdoor brands with aliases.
+
+Pipeline: `npm run catalog:build:full` (extract all → merge → dedup → QA report). Data stored in `data/catalog/`.
+
+Community growth: items auto-promoted to catalog when packed on trips (brand+model set, stable 7+ days, no dupe). Popularity counter bumps on typeahead selection, improving search ranking.
 
 ### OpenWeightDatabase Format
 
@@ -1152,6 +1160,8 @@ CREATE TABLE catalog_product (
   category_suggestion TEXT,
   search_text TEXT NOT NULL,  -- lowercase(brand + ' ' + model)
   source TEXT DEFAULT 'seed', -- 'seed' | 'community'
+  source_count INTEGER DEFAULT 1, -- how many data sources confirm this item
+  popularity INTEGER DEFAULT 0,   -- incremented on typeahead selection
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
@@ -1176,12 +1186,8 @@ export async function GET(req: NextRequest) {
   const results = await db
     .select()
     .from(catalogProducts)
-    .where(
-      sql`similarity(${catalogProducts.searchText}, ${q.toLowerCase()}) > 0.15`
-    )
-    .orderBy(
-      sql`similarity(${catalogProducts.searchText}, ${q.toLowerCase()}) DESC`
-    )
+    .where(sql`similarity(${catalogProducts.searchText}, ${q.toLowerCase()}) > 0.15`)
+    .orderBy(sql`similarity(${catalogProducts.searchText}, ${q.toLowerCase()}) DESC`)
     .limit(8);
 
   return NextResponse.json(results);
@@ -1216,22 +1222,22 @@ Quick-add bar:
 
 ### Neon Free Tier Limits
 
-| Resource | Limit | Our Usage |
-|---|---|---|
-| Storage | 0.5 GB per project | A few MB of gear data |
-| Compute | 100 CU-hours/month | Near zero (scales to zero when idle) |
-| Projects | Up to 20 | Only need 1 |
-| Point-in-time restore | 6 hours of history | Fine for dev |
+| Resource              | Limit              | Our Usage                            |
+| --------------------- | ------------------ | ------------------------------------ |
+| Storage               | 0.5 GB per project | A few MB of gear data                |
+| Compute               | 100 CU-hours/month | Near zero (scales to zero when idle) |
+| Projects              | Up to 20           | Only need 1                          |
+| Point-in-time restore | 6 hours of history | Fine for dev                         |
 
 ### Vercel Free (Hobby) Tier Limits
 
-| Resource | Limit | Our Usage |
-|---|---|---|
-| Bandwidth | 100 GB/month | < 1 GB |
-| Function invocations | 100,000/month | < 1,000 |
-| Function duration | 10 seconds max | Queries take < 200ms |
-| Build minutes | 6,000/month | ~5 min per deploy |
-| Commercial use | **Prohibited** | Fine for personal tool |
+| Resource             | Limit          | Our Usage              |
+| -------------------- | -------------- | ---------------------- |
+| Bandwidth            | 100 GB/month   | < 1 GB                 |
+| Function invocations | 100,000/month  | < 1,000                |
+| Function duration    | 10 seconds max | Queries take < 200ms   |
+| Build minutes        | 6,000/month    | ~5 min per deploy      |
+| Commercial use       | **Prohibited** | Fine for personal tool |
 
 ### Setup Steps
 
@@ -1368,13 +1374,13 @@ npx vercel --prod
 
 ### Hosting Comparison (for when you outgrow free tier)
 
-| Platform | Cost | Database | Best For |
-|---|---|---|---|
-| **Vercel + Neon** (start here) | $0 free / $25/mo paid | Separate (Neon) | Best DX, fastest to start |
-| **Railway** | $8-15/mo | Built-in Postgres | One platform for everything, no commercial restriction |
-| **Render** | $7-15/mo | Built-in Postgres (90-day free) | Heroku-style simplicity |
-| **Fly.io** | $3-10/mo | Fly Postgres | Global edge, WebSocket support |
-| **Coolify + Hetzner** | $4-6/mo | Self-managed Postgres | Cheapest long-term, most control |
+| Platform                       | Cost                  | Database                        | Best For                                               |
+| ------------------------------ | --------------------- | ------------------------------- | ------------------------------------------------------ |
+| **Vercel + Neon** (start here) | $0 free / $25/mo paid | Separate (Neon)                 | Best DX, fastest to start                              |
+| **Railway**                    | $8-15/mo              | Built-in Postgres               | One platform for everything, no commercial restriction |
+| **Render**                     | $7-15/mo              | Built-in Postgres (90-day free) | Heroku-style simplicity                                |
+| **Fly.io**                     | $3-10/mo              | Fly Postgres                    | Global edge, WebSocket support                         |
+| **Coolify + Hetzner**          | $4-6/mo               | Self-managed Postgres           | Cheapest long-term, most control                       |
 
 ### Migration Path (Vercel+Neon -> Railway)
 
@@ -1417,16 +1423,16 @@ LOCAL (your machine)          STAGING (per PR)              PRODUCTION
 
 ### Environment Comparison
 
-| | Local | Staging (per PR) | Production |
-|---|---|---|---|
-| **App** | `localhost:3000` | `feat-xyz.vercel.app` | `familypack.vercel.app` |
-| **Database** | Docker Postgres | Neon branch (auto-created) | Neon main branch |
-| **DB driver** | `pg` (node-postgres) | `@neondatabase/serverless` | `@neondatabase/serverless` |
-| **Schema changes** | `drizzle-kit push` (direct) | `drizzle-kit migrate` (in build) | `drizzle-kit migrate` (in build) |
-| **Data** | Seed scripts (fake/test) | Copy-on-write from production | Real user data |
-| **Auth** | Google OAuth (localhost callback) | Google OAuth (Vercel preview URL) | Google OAuth (production URL) |
-| **Cost** | $0 (Docker) | $0 (Neon free tier branches) | $0 (Neon free tier) |
-| **Lifecycle** | Always running | Created on push, deleted on merge | Permanent |
+|                    | Local                             | Staging (per PR)                  | Production                       |
+| ------------------ | --------------------------------- | --------------------------------- | -------------------------------- |
+| **App**            | `localhost:3000`                  | `feat-xyz.vercel.app`             | `familypack.vercel.app`          |
+| **Database**       | Docker Postgres                   | Neon branch (auto-created)        | Neon main branch                 |
+| **DB driver**      | `pg` (node-postgres)              | `@neondatabase/serverless`        | `@neondatabase/serverless`       |
+| **Schema changes** | `drizzle-kit push` (direct)       | `drizzle-kit migrate` (in build)  | `drizzle-kit migrate` (in build) |
+| **Data**           | Seed scripts (fake/test)          | Copy-on-write from production     | Real user data                   |
+| **Auth**           | Google OAuth (localhost callback) | Google OAuth (Vercel preview URL) | Google OAuth (production URL)    |
+| **Cost**           | $0 (Docker)                       | $0 (Neon free tier branches)      | $0 (Neon free tier)              |
+| **Lifecycle**      | Always running                    | Created on push, deleted on merge | Permanent                        |
 
 ### Local Development
 
@@ -1533,6 +1539,7 @@ Every pull request gets its own Vercel preview deployment AND its own Neon datab
 4. Enable "Automatically delete obsolete Neon branches"
 
 The integration auto-injects `DATABASE_URL` per environment:
+
 - Production deploys -> Neon `main` branch
 - Preview deploys -> auto-created `preview/*` branch
 - Local dev -> you set it in `.env.local`
@@ -1550,21 +1557,21 @@ git push origin main (or merge a PR)
 
 ### Schema Migration Strategy
 
-| Environment | Tool | When |
-|---|---|---|
-| **Local** | `drizzle-kit push` | Fast iteration, no migration files. Diffs schema and applies directly |
+| Environment              | Tool                                           | When                                                                   |
+| ------------------------ | ---------------------------------------------- | ---------------------------------------------------------------------- |
+| **Local**                | `drizzle-kit push`                             | Fast iteration, no migration files. Diffs schema and applies directly  |
 | **Staging + Production** | `drizzle-kit generate` + `drizzle-kit migrate` | Versioned migration files committed with PRs. Runs during Vercel build |
 
 Migration safety for production:
 
-| Change | Safe? | Notes |
-|---|---|---|
-| Add a new table | Yes | Nothing depends on it yet |
-| Add a nullable column | Yes | Existing rows get NULL |
-| Add a column with a default | Yes | Existing rows get the default |
-| Add a NOT NULL column without default | **No** | Fails if table has rows |
-| Rename a column | **Risky** | Old code breaks during deploy window |
-| Drop a column | **Risky** | Old code breaks during deploy window |
+| Change                                | Safe?     | Notes                                |
+| ------------------------------------- | --------- | ------------------------------------ |
+| Add a new table                       | Yes       | Nothing depends on it yet            |
+| Add a nullable column                 | Yes       | Existing rows get NULL               |
+| Add a column with a default           | Yes       | Existing rows get the default        |
+| Add a NOT NULL column without default | **No**    | Fails if table has rows              |
+| Rename a column                       | **Risky** | Old code breaks during deploy window |
+| Drop a column                         | **Risky** | Old code breaks during deploy window |
 
 ### Google OAuth Across Environments
 
@@ -1592,10 +1599,38 @@ const users = [
 ];
 
 const items = [
-  { name: "Tent", brand: "Nemo", model: "Dagger 2p", weightGrams: 1679, category: "Big Four", ownerType: "shared" },
-  { name: "Backpack", brand: "ULA", model: "Ultra Catalyst", weightGrams: 1196, category: "Big Four", ownerType: "personal" },
-  { name: "Sleeping Bag", brand: "Kelty", model: "Cosmic Ultra 800", weightGrams: 1232, category: "Big Four", ownerType: "personal" },
-  { name: "Pack", brand: "Ruffwear", model: "Palisades with harness", weightGrams: 740, category: "Birch's Stuff", ownerType: "personal" },
+  {
+    name: "Tent",
+    brand: "Nemo",
+    model: "Dagger 2p",
+    weightGrams: 1679,
+    category: "Big Four",
+    ownerType: "shared",
+  },
+  {
+    name: "Backpack",
+    brand: "ULA",
+    model: "Ultra Catalyst",
+    weightGrams: 1196,
+    category: "Big Four",
+    ownerType: "personal",
+  },
+  {
+    name: "Sleeping Bag",
+    brand: "Kelty",
+    model: "Cosmic Ultra 800",
+    weightGrams: 1232,
+    category: "Big Four",
+    ownerType: "personal",
+  },
+  {
+    name: "Pack",
+    brand: "Ruffwear",
+    model: "Palisades with harness",
+    weightGrams: 740,
+    category: "Birch's Stuff",
+    ownerType: "personal",
+  },
   // ... rest of spreadsheet items
 ];
 ```
@@ -1654,46 +1689,46 @@ Feature Development:
 
 ### Cost by Scale
 
-| Users | Cost | Stack | Effort |
-|---|---|---|---|
-| 2 (you + partner) | $0/mo | Vercel Free + Neon Free | Zero ops |
-| 10-100 | $0/mo | Same | Zero ops |
-| 100-1,000 | $25-40/mo | Vercel Pro + Neon Launch | Add billing |
-| 1,000-10,000 | $70-300/mo | Vercel Pro + Neon Scale (or migrate) | Consider alternatives |
-| 10,000+ | $200-1000+/mo | Likely self-hosted or Railway | Real ops decisions |
+| Users             | Cost          | Stack                                | Effort                |
+| ----------------- | ------------- | ------------------------------------ | --------------------- |
+| 2 (you + partner) | $0/mo         | Vercel Free + Neon Free              | Zero ops              |
+| 10-100            | $0/mo         | Same                                 | Zero ops              |
+| 100-1,000         | $25-40/mo     | Vercel Pro + Neon Launch             | Add billing           |
+| 1,000-10,000      | $70-300/mo    | Vercel Pro + Neon Scale (or migrate) | Consider alternatives |
+| 10,000+           | $200-1000+/mo | Likely self-hosted or Railway        | Real ops decisions    |
 
 ### Known Scaling Concerns
 
-| Concern | When | Solution |
-|---|---|---|
-| Neon cold start (500ms-1s) | First request after idle | Set suspend timeout to 5 min. Add loading skeleton |
-| Vercel 10-sec function limit (Hobby) | Large CSV imports | Break into chunks, or upgrade to Pro (300 sec limit) |
-| Vercel commercial use restriction | Any monetization | Upgrade to Pro ($20/mo) |
-| Vercel billing surprises | Viral traffic spike | Set spending alerts. Use Cloudflare CDN in front |
-| Database connections | High concurrency | Not an issue with neon-http (stateless). If TCP, use PgBouncer |
-| Catalog search performance | 50k+ entries | pg_trgm stays fast. Add tsvector full-text search if needed |
-| Bundle size | Feature growth | Code-split. Dynamic imports for charts and DnD |
+| Concern                              | When                     | Solution                                                       |
+| ------------------------------------ | ------------------------ | -------------------------------------------------------------- |
+| Neon cold start (500ms-1s)           | First request after idle | Set suspend timeout to 5 min. Add loading skeleton             |
+| Vercel 10-sec function limit (Hobby) | Large CSV imports        | Break into chunks, or upgrade to Pro (300 sec limit)           |
+| Vercel commercial use restriction    | Any monetization         | Upgrade to Pro ($20/mo)                                        |
+| Vercel billing surprises             | Viral traffic spike      | Set spending alerts. Use Cloudflare CDN in front               |
+| Database connections                 | High concurrency         | Not an issue with neon-http (stateless). If TCP, use PgBouncer |
+| Catalog search performance           | 50k+ entries             | pg_trgm stays fast. Add tsvector full-text search if needed    |
+| Bundle size                          | Feature growth           | Code-split. Dynamic imports for charts and DnD                 |
 
 ### Not Real Risks (at this scale)
 
-| "Risk" | Why it's not a problem |
-|---|---|
-| "Postgres can't handle the load" | Postgres handles millions of rows trivially. Our data is tiny |
-| "Serverless won't scale" | It auto-scales. That's the point |
-| "We need microservices" | One database and one app. Microservices solve problems we'll never have |
-| "We need Kubernetes" | No |
+| "Risk"                           | Why it's not a problem                                                  |
+| -------------------------------- | ----------------------------------------------------------------------- |
+| "Postgres can't handle the load" | Postgres handles millions of rows trivially. Our data is tiny           |
+| "Serverless won't scale"         | It auto-scales. That's the point                                        |
+| "We need microservices"          | One database and one app. Microservices solve problems we'll never have |
+| "We need Kubernetes"             | No                                                                      |
 
 ### Future-Proofing Decisions Already Made
 
-| Decision | Why it's future-proof |
-|---|---|
-| Postgres | Industry standard. Every provider supports it. Migrate anywhere |
-| Drizzle ORM with explicit schema | Schema in code. Switch providers by changing connection file |
-| Next.js App Router | Deploy to Vercel, Netlify, Railway, Docker, bare Node |
-| Neon HTTP driver | Only Vercel-specific piece. One file change to swap for `pg` pool |
-| Integer grams for weight | No floating point errors at any scale |
-| UUID primary keys | Merge-safe, shard-safe, offline-sync-safe |
-| Closet items separate from trip pack items | Can add features without touching core schema |
+| Decision                                   | Why it's future-proof                                             |
+| ------------------------------------------ | ----------------------------------------------------------------- |
+| Postgres                                   | Industry standard. Every provider supports it. Migrate anywhere   |
+| Drizzle ORM with explicit schema           | Schema in code. Switch providers by changing connection file      |
+| Next.js App Router                         | Deploy to Vercel, Netlify, Railway, Docker, bare Node             |
+| Neon HTTP driver                           | Only Vercel-specific piece. One file change to swap for `pg` pool |
+| Integer grams for weight                   | No floating point errors at any scale                             |
+| UUID primary keys                          | Merge-safe, shard-safe, offline-sync-safe                         |
+| Closet items separate from trip pack items | Can add features without touching core schema                     |
 
 ---
 
@@ -1850,13 +1885,13 @@ Visual pack x-ray + person silhouette + group view. The RPG character sheet.
 
 ### Pack Class Labels
 
-| Base Weight | Class | 
-|---|---|
-| Under 10 lb | Ultralight |
-| 10-15 lb | Lightweight |
-| 15-20 lb | Light |
-| 20-30 lb | Traditional |
-| Over 30 lb | Heavy |
+| Base Weight | Class       |
+| ----------- | ----------- |
+| Under 10 lb | Ultralight  |
+| 10-15 lb    | Lightweight |
+| 15-20 lb    | Light       |
+| 20-30 lb    | Traditional |
+| Over 30 lb  | Heavy       |
 
 Dog carry % labels: Trail Runner (<10%), Trail Partner (10-15%), Pack Dog (15-20%), Overloaded (>20%)
 
@@ -1866,13 +1901,13 @@ Fuzzy matching on item names, brands, and categories — no manual tagging requi
 
 ### Gear Veterancy
 
-| Trips | Label |
-|---|---|
-| 0 | New |
-| 1-2 | Breaking In |
-| 3-5 | Trusted |
-| 6-10 | Veteran |
-| 10+ | Legendary |
+| Trips | Label       |
+| ----- | ----------- |
+| 0     | New         |
+| 1-2   | Breaking In |
+| 3-5   | Trusted     |
+| 6-10  | Veteran     |
+| 10+   | Legendary   |
 
 ### Trip Templates
 
@@ -1892,6 +1927,7 @@ Save any trip as a template. Create new trips from templates with all gear pre-p
 ## Appendix: Sources & References
 
 ### Competitor Websites
+
 - [Hikt](https://hikt.app/) — Smart Backpacking Gear Manager (best overall polish)
 - [OutPack](https://outpack.app/) — Most feature-rich for trip lifecycle (group trips, food planner, journaling)
 - [OutPack About](https://outpack.app/about) — Built by Andrew Carmichael
@@ -1903,11 +1939,13 @@ Save any trip as a template. Create new trips from templates with all gear pre-p
 - [LighterPack](https://lighterpack.com/) — The legacy standard, best inline editing UX
 
 ### Data Sources for Catalog Seeding
+
 - [OpenWeightDatabase (GitHub)](https://github.com/OpenWeightDatabase/OpenWeightDatabase) — Open source outdoor gear weights
 - [Featherweight ul_items.txt (GitHub)](https://github.com/MooseV2/featherweight/blob/master/docs/assets/ul_items.txt) — ~1,190 ultralight gear entries
 - [PackStack (GitHub)](https://github.com/Packstack-Tech/packstack) — Open source, reference for architecture
 
 ### Technical Documentation
+
 - [Neon Docs](https://neon.com/docs/) — Serverless Postgres
 - [Drizzle ORM Docs](https://orm.drizzle.team/) — TypeScript ORM
 - [Drizzle + Neon Setup](https://orm.drizzle.team/docs/get-started/neon-new)
@@ -1917,6 +1955,7 @@ Save any trip as a template. Create new trips from templates with all gear pre-p
 - [Recharts](https://recharts.org/) — React charts
 
 ### Hosting & Infrastructure
+
 - [Vercel](https://vercel.com/) — Hosting
 - [Neon Pricing](https://neon.com/pricing)
 - [Railway](https://railway.app/) — Alternative hosting

@@ -61,3 +61,16 @@ export function useDeleteTrip() {
     },
   });
 }
+
+export function useDuplicateTrip() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) =>
+      fetchApi<any>(`/api/trips/${id}/duplicate`, {
+        method: "POST",
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["trips"] });
+    },
+  });
+}

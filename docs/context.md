@@ -2,7 +2,7 @@
 
 > Use this document to brief a new Claude session on the full context of the Family Pack project. Paste this at the start of a conversation to pick up where we left off.
 
-**Last updated:** April 14, 2026
+**Last updated:** April 15, 2026
 
 ---
 
@@ -34,6 +34,7 @@ No existing app models a household. They all assume a single user or a single ac
 ### Full Spec Document
 
 The complete product specification is at:
+
 ```
 docs/spec.md
 ```
@@ -48,41 +49,41 @@ These were discussed and agreed upon. Do not revisit unless the user asks.
 
 ### Scope Simplifications
 
-| Decision | Rationale |
-|---|---|
-| **One active trip at a time** | No need for gear scheduling, conflict detection, or calendar views. The family only does one trip at a time. Dramatically simplifies the data model |
-| **No gear checkout/availability tracking** | Shared gear is always available. No need to track which trip has the bear canister |
-| **Catalog stores names only (no weights)** | Manufacturer weights are unreliable. Backpackers weigh their own gear. Catalog just auto-fills brand + model to save typing. Users enter their own measured weights |
-| **No trip journaling** | OutPack does trip journaling (waypoints, GPX, photos). We're a gear planning tool, not a trip journal. Users can pair us with AllTrails/Gaia for that |
-| **No barcode scanner** | Niche feature, unreliable per reviews. Not worth the effort |
-| **Project name: Family Pack** | Repo: `family-pack`, Vercel: `familypack.vercel.app` |
-| **Next.js 16 uses proxy.ts instead of middleware.ts** | Breaking change from 15 |
-| **Drizzle config loads .env.local conditionally** | `existsSync` check for Vercel compatibility |
-| **db/index.ts loads .env.local fallback** | For seed scripts running outside Next.js |
-| **Build script does NOT run migrations** | Schema pushed manually to Neon, migrations added later |
-| **ESLint: no-explicit-any downgraded to warning** | MVP uses `any` in hooks, will type properly later |
+| Decision                                              | Rationale                                                                                                                                                           |
+| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **One active trip at a time**                         | No need for gear scheduling, conflict detection, or calendar views. The family only does one trip at a time. Dramatically simplifies the data model                 |
+| **No gear checkout/availability tracking**            | Shared gear is always available. No need to track which trip has the bear canister                                                                                  |
+| **Catalog stores names only (no weights)**            | Manufacturer weights are unreliable. Backpackers weigh their own gear. Catalog just auto-fills brand + model to save typing. Users enter their own measured weights |
+| **No trip journaling**                                | OutPack does trip journaling (waypoints, GPX, photos). We're a gear planning tool, not a trip journal. Users can pair us with AllTrails/Gaia for that               |
+| **No barcode scanner**                                | Niche feature, unreliable per reviews. Not worth the effort                                                                                                         |
+| **Project name: Family Pack**                         | Repo: `family-pack`, Vercel: `familypack.vercel.app`                                                                                                                |
+| **Next.js 16 uses proxy.ts instead of middleware.ts** | Breaking change from 15                                                                                                                                             |
+| **Drizzle config loads .env.local conditionally**     | `existsSync` check for Vercel compatibility                                                                                                                         |
+| **db/index.ts loads .env.local fallback**             | For seed scripts running outside Next.js                                                                                                                            |
+| **Build script does NOT run migrations**              | Schema pushed manually to Neon, migrations added later                                                                                                              |
+| **ESLint: no-explicit-any downgraded to warning**     | MVP uses `any` in hooks, will type properly later                                                                                                                   |
 
 ### Architecture Decisions
 
-| Decision | Choice | Rationale |
-|---|---|---|
-| Framework | Next.js 14+ (App Router) | User knows React. SSR for share pages. API routes eliminate separate backend |
-| Database | PostgreSQL on Neon | Free tier, relational data fits, `pg_trgm` for fuzzy catalog search |
-| ORM | Drizzle | Lighter than Prisma, great TS inference, SQL-like |
-| Auth | Auth.js (NextAuth v5) | Google OAuth to start |
-| Styling | Tailwind + shadcn/ui | Fast iteration, dark mode built in |
-| Drag & Drop | dnd-kit | Best React DnD, handles cross-column drag |
-| Charts | Recharts | React-native, simple API |
-| Hosting | Vercel (free) + Neon (free) to start | $0/mo. Migrate to Railway if needed later |
-| Local dev DB | Docker Postgres (port 5432) | Fast, offline, free. Don't hit Neon during dev |
-| DB driver | Dual: `pg` locally, `@neondatabase/serverless` in prod | One `db/index.ts` switches based on `NODE_ENV` |
-| Staging | Vercel preview deploys + Neon branch per PR | Auto-created, copy-on-write from prod, auto-deleted on merge |
-| Schema dev | `drizzle-kit push` locally, `drizzle-kit migrate` in CI | Push for fast iteration, migrations for versioned prod changes |
-| Weight storage | Integer grams | No floating point errors. Display layer handles oz/lb/kg conversion |
-| Real-time sync | Polling (5s) or SWR revalidation | WebSockets overkill for 2-6 household members |
-| Auto-save | Debounced mutations (300ms) + optimistic updates | No save button anywhere |
-| Primary keys | UUID | Merge-safe, shard-safe, offline-sync-safe |
-| State management | TanStack Query for server state, React context for UI | No Redux |
+| Decision         | Choice                                                  | Rationale                                                                    |
+| ---------------- | ------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| Framework        | Next.js 14+ (App Router)                                | User knows React. SSR for share pages. API routes eliminate separate backend |
+| Database         | PostgreSQL on Neon                                      | Free tier, relational data fits, `pg_trgm` for fuzzy catalog search          |
+| ORM              | Drizzle                                                 | Lighter than Prisma, great TS inference, SQL-like                            |
+| Auth             | Auth.js (NextAuth v5)                                   | Google OAuth to start                                                        |
+| Styling          | Tailwind + shadcn/ui                                    | Fast iteration, dark mode built in                                           |
+| Drag & Drop      | dnd-kit                                                 | Best React DnD, handles cross-column drag                                    |
+| Charts           | Recharts                                                | React-native, simple API                                                     |
+| Hosting          | Vercel (free) + Neon (free) to start                    | $0/mo. Migrate to Railway if needed later                                    |
+| Local dev DB     | Docker Postgres (port 5432)                             | Fast, offline, free. Don't hit Neon during dev                               |
+| DB driver        | Dual: `pg` locally, `@neondatabase/serverless` in prod  | One `db/index.ts` switches based on `NODE_ENV`                               |
+| Staging          | Vercel preview deploys + Neon branch per PR             | Auto-created, copy-on-write from prod, auto-deleted on merge                 |
+| Schema dev       | `drizzle-kit push` locally, `drizzle-kit migrate` in CI | Push for fast iteration, migrations for versioned prod changes               |
+| Weight storage   | Integer grams                                           | No floating point errors. Display layer handles oz/lb/kg conversion          |
+| Real-time sync   | Polling (5s) or SWR revalidation                        | WebSockets overkill for 2-6 household members                                |
+| Auto-save        | Debounced mutations (300ms) + optimistic updates        | No save button anywhere                                                      |
+| Primary keys     | UUID                                                    | Merge-safe, shard-safe, offline-sync-safe                                    |
+| State management | TanStack Query for server state, React context for UI   | No Redux                                                                     |
 
 ### Data Model Key Insights
 
@@ -175,6 +176,7 @@ Tools       | Headlamp     | Blue Petzl Tikkina                          | Carri
 ```
 
 Summary stats from spreadsheet:
+
 - Base Weight: 426.47 oz / 26.65 lb (14.41% body weight)
 - Total Carried: 562.66 oz / 35.17 lb (19.01% body weight)
 - Skin Out Total: 588.41 oz / 36.78 lb (19.88% body weight)
@@ -184,29 +186,29 @@ Summary stats from spreadsheet:
 
 ## Feature Tiers (summary — full list in spec doc)
 
-| Tier | Count | Key Features |
-|---|---|---|
-| **Tier 1 — Core MVP** | ~48 | **BUILT.** Auth, household, gear closet, trip workspace, weight display, pet support, dark mode |
-| **Tier 2 — Quality of Life** | ~42 | Sharing, checklist, mobile, kits, wishlist, cut list, activity tags, **trip templates, readiness system** |
-| **Tier 3 — Differentiators** | ~37 | What-if, comparison, calorie calc, gear intelligence, gear history, **loadout view, gamification elements** |
-| **Tier 4 — Community & Polish** | ~13 | Public gallery, offline PWA, analytics over time |
+| Tier                            | Count | Key Features                                                                                                |
+| ------------------------------- | ----- | ----------------------------------------------------------------------------------------------------------- |
+| **Tier 1 — Core MVP**           | ~48   | **BUILT.** Auth, household, gear closet, trip workspace, weight display, pet support, dark mode             |
+| **Tier 2 — Quality of Life**    | ~42   | Sharing, checklist, mobile, kits, wishlist, cut list, activity tags, **trip templates, readiness system**   |
+| **Tier 3 — Differentiators**    | ~37   | What-if, comparison, calorie calc, gear intelligence, gear history, **loadout view, gamification elements** |
+| **Tier 4 — Community & Polish** | ~13   | Public gallery, offline PWA, analytics over time                                                            |
 
 ---
 
 ## Implementation Phases
 
-| Phase | Status | What |
-|---|---|---|
-| **1: Foundation** | DONE | Next.js scaffold, Drizzle schema, Docker Postgres, Neon production, Vercel deploy, Google OAuth, CI pipeline |
-| **2: Gear Closet** | DONE | Closet page with tabs, item table with inline editing, add item dialog with catalog typeahead, weight summary |
-| **3: Trip Workspace** | DONE | Trip list, new trip dialog, trip workspace with pack columns, shared gear pool, add-to-pack, weight summaries |
-| **4: Core Completion** | DONE | Unit toggle (imperial/metric), checklist mode, gear history + veterancy labels, loadout view skeleton, Vitest test suite |
-| **5: Trip Experience** | Next | Drag-and-drop (dnd-kit), cut list + wishlist, what-if mode, templates, trip duplication |
-| **6: Intelligence & Gamification** | Planned | Activity tags, pack class labels, smart trip tags, readiness system, weight trends, party view |
-| **7: Polish & Completeness** | Planned | Mobile, closet search, weight display gaps, editing power, sharing pages, age-aware defaults |
-| **8: Import/Export & Kits** | Planned | LighterPack import, CSV/PDF export, reusable kits |
-| **9: Advanced Loadout & Analytics** | Planned | SVG pack overlay, person silhouette, dog variant, group view, comparison view |
-| **10: Community & Scale** | Planned | Public gallery, offline PWA, trip planning (calorie calc), gear intelligence |
+| Phase                               | Status  | What                                                                                                                     |
+| ----------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------ |
+| **1: Foundation**                   | DONE    | Next.js scaffold, Drizzle schema, Docker Postgres, Neon production, Vercel deploy, Google OAuth, CI pipeline             |
+| **2: Gear Closet**                  | DONE    | Closet page with tabs, item table with inline editing, add item dialog with catalog typeahead, weight summary            |
+| **3: Trip Workspace**               | DONE    | Trip list, new trip dialog, trip workspace with pack columns, shared gear pool, add-to-pack, weight summaries            |
+| **4: Core Completion**              | DONE    | Unit toggle (imperial/metric), checklist mode, gear history + veterancy labels, loadout view skeleton, Vitest test suite |
+| **5: Trip Experience**              | Next    | Drag-and-drop (dnd-kit), cut list + wishlist, what-if mode, templates, trip duplication                                  |
+| **6: Intelligence & Gamification**  | Planned | Activity tags, pack class labels, smart trip tags, readiness system, weight trends, party view                           |
+| **7: Polish & Completeness**        | Planned | Mobile, closet search, weight display gaps, editing power, sharing pages, age-aware defaults                             |
+| **8: Import/Export & Kits**         | Planned | LighterPack import, CSV/PDF export, reusable kits                                                                        |
+| **9: Advanced Loadout & Analytics** | Planned | SVG pack overlay, person silhouette, dog variant, group view, comparison view                                            |
+| **10: Community & Scale**           | Planned | Public gallery, offline PWA, trip planning (calorie calc), gear intelligence                                             |
 
 Full roadmap with all features: `docs/roadmap.md`
 
@@ -218,16 +220,17 @@ Full roadmap with all features: `docs/roadmap.md`
 
 All environments are confirmed working.
 
-| | Local | Staging (per PR) | Production |
-|---|---|---|---|
-| **App** | `localhost:3000` | `feat-xyz.vercel.app` | `familypack.vercel.app` |
-| **Database** | Docker Postgres | Neon branch (auto-created) | Neon main branch |
-| **DB driver** | `pg` (node-postgres) | `@neondatabase/serverless` | `@neondatabase/serverless` |
-| **Schema** | `drizzle-kit push` | `drizzle-kit migrate` (in build) | `drizzle-kit migrate` (in build) |
-| **Data** | Seed scripts | Copy-on-write from prod | Real data |
-| **Cost** | $0 | $0 | $0 |
+|               | Local                | Staging (per PR)                 | Production                       |
+| ------------- | -------------------- | -------------------------------- | -------------------------------- |
+| **App**       | `localhost:3000`     | `feat-xyz.vercel.app`            | `familypack.vercel.app`          |
+| **Database**  | Docker Postgres      | Neon branch (auto-created)       | Neon main branch                 |
+| **DB driver** | `pg` (node-postgres) | `@neondatabase/serverless`       | `@neondatabase/serverless`       |
+| **Schema**    | `drizzle-kit push`   | `drizzle-kit migrate` (in build) | `drizzle-kit migrate` (in build) |
+| **Data**      | Seed scripts         | Copy-on-write from prod          | Real data                        |
+| **Cost**      | $0                   | $0                               | $0                               |
 
 Key files:
+
 - `docker-compose.yml` — local Postgres container
 - `src/db/index.ts` — dual driver (switches on `NODE_ENV`) with `.env.local` fallback for seed scripts
 - `.env.local` — local connection string (never committed)
@@ -246,6 +249,7 @@ Key files:
 ## Current Build Status
 
 ### Built and Deployed (Phases 1-3)
+
 - Full database schema (14 tables) pushed to local Docker + Neon production
 - Google OAuth authentication (login, session, user creation)
 - Household create + join + member management (including pets)
@@ -258,17 +262,26 @@ Key files:
 - CI pipeline (typecheck + lint)
 - Production deploy on Vercel + Neon with preview branch support
 
-### Built in Phase 4 (April 14, 2026 — not yet committed)
+### Built in Phase 4 (April 14-15, 2026 — not yet pushed to prod)
+
 - **Unit preference toggle** — imperial/metric switch in nav bar, persisted to DB, flows through all weight displays via `WeightUnitProvider` context. Inline editing respects unit (oz vs g). API: `GET/PATCH /api/user/preferences`
 - **Checklist mode** — Toggle on trip workspace header. Checkboxes per item, progress bar per pack ("5/22 packed"), strikethrough + dimming on checked items. Schema: `isChecked` boolean on `trip_pack_items`
-- **Gear history & veterancy** — Trip count per item via join query (`GET /api/items/history`). Veterancy labels in closet: Breaking In / Trusted / Veteran / Legendary (color-coded, with trip count tooltip). Utility: `src/lib/gear-veterancy.ts`
-- **Loadout view skeleton** — CSS grid pack-zone modal per person. Zones: Brain, Main Top/Mid/Bottom, Side Pockets, External, Worn. Category-to-zone mapping in `src/lib/pack-zones.ts`. Triggered via backpack icon on pack column header
-- **Vitest test suite** — 38 tests across 3 files: weight conversions, veterancy levels, zone mapping. `npm run test` + `npm run test:watch`
+- **Gear history & veterancy** — Trip count per item via join query (`GET /api/items/history`). Veterancy labels in closet: Breaking In / Trusted / Veteran / Legendary (color-coded, with trip count tooltip)
+- **Loadout view skeleton** — CSS grid pack-zone modal per person. Zones: Brain, Main Top/Mid/Bottom, Side Pockets, External, Worn. Category-to-zone mapping
+- **Carry weight warnings** — Color-coded body weight % (green/yellow/orange/red) with separate pet thresholds
+- **Body weight input for humans** — Inline editable on dashboard, respects imperial/metric
+- **Closet search** — Search bar filtering by name, brand, model, category
+- **Trip duplication** — Deep copy (members, packs, pack items) via copy button on trip cards. API: `POST /api/trips/[id]/duplicate`
+- **Catalog pipeline** — 9,065 products from 4 sources (hand-curated + Gear Weight DB + LighterPack lists + Featherweight). Known-brands list (107 brands with aliases). Merge + dedup pipeline with QA report. Community promotion logic (auto-adds stable items when packed on trips). Popularity counter on typeahead selection
+- **Test suite** — 65 Vitest tests across 7 files (81% coverage on src/lib/)
+- **Web app extras** — Metadata + OG tags, 404 page, error boundary, loading skeletons, toast notifications with delete confirmations, Vercel Analytics, robots.txt
+- **DX** — Prettier, Husky pre-commit hooks, lint-staged, Dependabot, seed scripts, format scripts, dynamic imports for modals, thorough README
 
-### Designed / On Fast Follow List
+### On Fast Follow List (Phase 5+)
+
+- Drag-and-drop between pack columns (dnd-kit)
 - Cut list + wishlist (trip-level + closet-level)
 - What-if mode (extends cut list — ghost items, swap simulation)
-- Drag-and-drop between pack columns (dnd-kit)
 - Trip templates + default loadouts (new schema needed)
 - Readiness system (Ten Essentials fuzzy matching, hybrid approach, warnings on by default)
 - Gamification Phase A (pack class labels, dog class labels, smart auto-derived trip tags)
@@ -276,30 +289,16 @@ Key files:
 - Activity tags (tag picker UI, closet filter, trip activity selection — schema column exists)
 - Reusable kits (schema exists, needs API + UI)
 - CSV/PDF export, LighterPack import
-- What-if mode (client-side staging, swap simulation)
-
-### Not Yet Planned (remaining spec)
-- Mobile responsiveness polish
-- Closet search & filter
-- Weight display enhancements (heatmap, bar charts, budget bars, balance indicator)
-- Sharing (public read-only pages)
-- Editing power (keyboard nav, bulk actions, undo)
-- Solo trip mode
-- Age-aware defaults
-- Advanced loadout (SVG overlay, person silhouette, dog variant, group view)
-- Comparison view, trip planning (calorie calc), gear intelligence
-- Community features, offline PWA
 
 ### Known Issues / Tech Debt
+
 - ~43 `any` types across 9 component files (ESLint set to warn)
-- Root layout metadata still says "Create Next App" — needs title/description update
-- No favicon, web app manifest, OG meta tags
-- No error.tsx, loading.tsx, or not-found.tsx pages
-- CI pipeline skips tests and build step (only runs typecheck + lint)
 - API PATCH routes spread raw body without Zod schema validation
 - No drag-and-drop between packs yet (items added via dialog)
+- No custom favicon (still default Next.js icon) or web app manifest
 - Catalog search requires pg_trgm extension enabled on Neon (may need manual setup)
-- Schema change (`isChecked` on trip_pack_items) needs `drizzle-kit push` locally before checklist works
+- Schema changes (`isChecked`, `sourceCount`, `popularity`) need `drizzle-kit push` locally and Neon migration for prod
+- Catalog needs to be seeded on production (`npm run seed:catalog:merged`)
 
 ---
 
@@ -315,29 +314,33 @@ Key files:
 
 ## Key Files
 
-| Path | Purpose |
-|---|---|
-| `docs/spec.md` | Full product specification (~1,800 lines) |
-| `docs/context.md` | This file — session context for new Claude conversations |
-| `docs/roadmap.md` | Condensed feature roadmap with 10 phases, all spec features mapped |
-| `src/db/schema.ts` | Full Drizzle schema (14 tables, all enums, relations, type exports) |
-| `src/db/index.ts` | Dual driver connection (pg local, Neon prod) with .env.local fallback |
-| `src/lib/auth.ts` | Auth.js config (Google OAuth + Drizzle adapter) |
-| `src/lib/api-helpers.ts` | getAuthenticatedUser(), handleApiError(), ApiError class |
-| `src/lib/weight.ts` | Weight conversion utilities (gramsToOz, displayWeight, bodyWeightPercent) |
-| `src/lib/gear-veterancy.ts` | Veterancy level calculation + color mapping |
-| `src/lib/pack-zones.ts` | Pack zone definitions + category-to-zone mapping for loadout view |
-| `src/lib/constants.ts` | Default categories, carry limit constants |
-| `src/lib/fetch.ts` | Shared fetchApi helper for hooks |
-| `src/app/api/` | 16 API route files (household, categories, items, items/history, trips, pack items, catalog search, user/preferences) |
-| `src/hooks/` | 9 TanStack Query hook files (household, categories, items, item-history, trips, pack items, catalog search, user-preferences) |
-| `src/components/providers/` | QueryProvider, WeightUnitProvider (React context for imperial/metric) |
-| `src/components/app/` | Nav bar (with unit toggle), dashboard, household setup |
-| `src/components/closet/` | Closet page, item table (with veterancy labels), add item dialog, catalog typeahead, weight summary |
-| `src/components/trips/` | Trips page, new trip dialog, trip workspace (with checklist toggle), pack column (with checklist + loadout button), shared gear pool, add to pack dialog, loadout modal |
-| `src/lib/__tests__/` | 3 Vitest test files (weight, gear-veterancy, pack-zones) — 38 tests |
-| `scripts/seed-catalog.ts` | Seeds 98 catalog products |
-| `scripts/seed-dev-data.ts` | Seeds dev household, users, items, categories, trip |
-| `docker-compose.yml` | Local Postgres for development |
-| `vitest.config.ts` | Vitest test configuration with @ alias |
-| `.github/workflows/ci.yml` | CI pipeline (typecheck + lint) |
+| Path                           | Purpose                                                                                                                                                                           |
+| ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `docs/spec.md`                 | Full product specification (~1,800 lines)                                                                                                                                         |
+| `docs/context.md`              | This file — session context for new Claude conversations                                                                                                                          |
+| `docs/roadmap.md`              | Condensed feature roadmap with 10 phases, all spec features mapped                                                                                                                |
+| `src/db/schema.ts`             | Full Drizzle schema (14 tables, all enums, relations, type exports)                                                                                                               |
+| `src/db/index.ts`              | Dual driver connection (pg local, Neon prod) with .env.local fallback                                                                                                             |
+| `src/lib/auth.ts`              | Auth.js config (Google OAuth + Drizzle adapter)                                                                                                                                   |
+| `src/lib/api-helpers.ts`       | getAuthenticatedUser(), handleApiError(), ApiError class                                                                                                                          |
+| `src/lib/weight.ts`            | Weight conversion utilities (gramsToOz, displayWeight, bodyWeightPercent)                                                                                                         |
+| `src/lib/gear-veterancy.ts`    | Veterancy level calculation + color mapping                                                                                                                                       |
+| `src/lib/pack-zones.ts`        | Pack zone definitions + category-to-zone mapping for loadout view                                                                                                                 |
+| `src/lib/constants.ts`         | Default categories, carry limit constants                                                                                                                                         |
+| `src/lib/fetch.ts`             | Shared fetchApi helper for hooks                                                                                                                                                  |
+| `src/app/api/`                 | 16 API route files (household, categories, items, items/history, trips, pack items, catalog search, user/preferences)                                                             |
+| `src/hooks/`                   | 9 TanStack Query hook files (household, categories, items, item-history, trips, pack items, catalog search, user-preferences)                                                     |
+| `src/components/providers/`    | QueryProvider, WeightUnitProvider (React context for imperial/metric)                                                                                                             |
+| `src/components/app/`          | Nav bar (with unit toggle), dashboard (with body weight input), household setup                                                                                                   |
+| `src/components/closet/`       | Closet page (with search), item table (with veterancy labels), add item dialog, catalog typeahead (with popularity tracking), weight summary                                      |
+| `src/components/trips/`        | Trips page (with duplicate), trip workspace (with checklist toggle), pack column (with checklist + loadout + carry warnings), shared gear pool, add to pack dialog, loadout modal |
+| `src/lib/carry-warnings.ts`    | Body weight % warning thresholds (human vs pet)                                                                                                                                   |
+| `src/lib/catalog-promotion.ts` | Community catalog growth — auto-promotes stable items when packed                                                                                                                 |
+| `src/lib/__tests__/`           | 7 Vitest test files — 65 tests (weight, veterancy, zones, carry-warnings, fetch, api-helpers, utils)                                                                              |
+| `data/catalog/`                | Catalog pipeline: known-brands.json, source extracts, merged-catalog.json (9,065 items), merge-report.txt                                                                         |
+| `scripts/catalog/`             | Catalog extraction + merge pipeline (extract-gwdb, extract-lighterpack, extract-featherweight, merge-catalog, brand-matcher)                                                      |
+| `scripts/seed-catalog.ts`      | Seeds 98 catalog products                                                                                                                                                         |
+| `scripts/seed-dev-data.ts`     | Seeds dev household, users, items, categories, trip                                                                                                                               |
+| `docker-compose.yml`           | Local Postgres for development                                                                                                                                                    |
+| `vitest.config.ts`             | Vitest test configuration with @ alias                                                                                                                                            |
+| `.github/workflows/ci.yml`     | CI pipeline (typecheck + lint)                                                                                                                                                    |

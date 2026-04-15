@@ -2,17 +2,29 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useTrips } from "@/hooks/use-trips";
+import { useTrips, useDuplicateTrip } from "@/hooks/use-trips";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { NewTripDialog } from "./new-trip-dialog";
-import { MapPin, Calendar, Users, Plus } from "lucide-react";
+import { MapPin, Calendar, Users, Plus, Copy } from "lucide-react";
+import { toast } from "sonner";
 
 export function TripsPage() {
   const { data: trips, isLoading } = useTrips();
+  const duplicateTrip = useDuplicateTrip();
   const [dialogOpen, setDialogOpen] = useState(false);
   const router = useRouter();
+
+  function handleDuplicate(e: React.MouseEvent, tripId: string) {
+    e.stopPropagation();
+    duplicateTrip.mutate(tripId, {
+      onSuccess: (data: any) => {
+        toast.success("Trip duplicated");
+        router.push(`/app/trips/${data.id}`);
+      },
+    });
+  }
 
   if (isLoading) {
     return (
@@ -22,10 +34,7 @@ export function TripsPage() {
         </div>
         <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
           {[1, 2, 3].map((i) => (
-            <div
-              key={i}
-              className="h-36 rounded-xl border bg-muted/40 animate-pulse"
-            />
+            <div key={i} className="h-36 rounded-xl border bg-muted/40 animate-pulse" />
           ))}
         </div>
       </div>
@@ -49,9 +58,7 @@ export function TripsPage() {
               <MapPin className="size-8 text-muted-foreground" />
             </div>
             <p className="text-lg font-medium mb-1">No trips yet.</p>
-            <p className="text-muted-foreground text-sm mb-4">
-              Plan your first adventure!
-            </p>
+            <p className="text-muted-foreground text-sm mb-4">Plan your first adventure!</p>
             <Button onClick={() => setDialogOpen(true)}>
               <Plus className="size-4" data-icon="inline-start" />
               New Trip
@@ -93,12 +100,23 @@ export function TripsPage() {
                     </span>
                   </div>
                 )}
-                <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                  <Users className="size-3.5" />
-                  <span>
-                    {trip.members?.length ?? 0}{" "}
-                    {(trip.members?.length ?? 0) === 1 ? "member" : "members"}
-                  </span>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                    <Users className="size-3.5" />
+                    <span>
+                      {trip.members?.length ?? 0}{" "}
+                      {(trip.members?.length ?? 0) === 1 ? "member" : "members"}
+                    </span>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="icon-xs"
+                    onClick={(e) => handleDuplicate(e, trip.id)}
+                    disabled={duplicateTrip.isPending}
+                    title="Duplicate trip"
+                  >
+                    <Copy className="size-3.5" />
+                  </Button>
                 </div>
               </CardContent>
             </Card>

@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
+import { Toaster } from "sonner";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -22,8 +23,7 @@ export const metadata: Metadata = {
     "Backpacking gear management for couples, families, and pets. Track weights, plan trips, and balance packs across your whole household.",
   openGraph: {
     title: "Family Pack",
-    description:
-      "Backpacking gear management for couples, families, and pets.",
+    description: "Backpacking gear management for couples, families, and pets.",
     siteName: "Family Pack",
     type: "website",
   },
@@ -42,12 +42,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
         {children}
+        <Toaster richColors position="bottom-right" />
         <Analytics />
       </body>
     </html>

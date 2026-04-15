@@ -3,6 +3,7 @@ import { db } from "@/db";
 import { tripPacks, tripPackItems, trips } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
 import { getAuthenticatedUser, handleApiError, ApiError } from "@/lib/api-helpers";
+import { maybePromoteToCatalog } from "@/lib/catalog-promotion";
 
 export async function POST(
   req: NextRequest,
@@ -40,6 +41,9 @@ export async function POST(
         isConsumableOverride: isConsumableOverride ?? null,
       })
       .returning();
+
+    // Fire-and-forget: check if this item should be promoted to the catalog
+    maybePromoteToCatalog(itemId).catch(() => {});
 
     return NextResponse.json(packItem, { status: 201 });
   } catch (error) {

@@ -16,21 +16,14 @@ interface CatalogTypeaheadProps {
   onSelect: (suggestion: CatalogSuggestion) => void;
 }
 
-export function CatalogTypeahead({
-  value,
-  onChange,
-  onSelect,
-}: CatalogTypeaheadProps) {
+export function CatalogTypeahead({ value, onChange, onSelect }: CatalogTypeaheadProps) {
   const [open, setOpen] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const { data: results } = useCatalogSearch(value);
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
-      if (
-        wrapperRef.current &&
-        !wrapperRef.current.contains(e.target as Node)
-      ) {
+      if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
         setOpen(false);
       }
     }
@@ -68,12 +61,18 @@ export function CatalogTypeahead({
                 });
                 onChange(item.brand ? `${item.brand} ${item.model}` : item.model);
                 setOpen(false);
+                // Fire-and-forget: bump popularity
+                if (item.id) {
+                  fetch("/api/catalog/select", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ id: item.id }),
+                  }).catch(() => {});
+                }
               }}
             >
               <span className="font-medium">{item.brand}</span>
-              {item.brand && item.model && (
-                <span className="text-muted-foreground"> &mdash; </span>
-              )}
+              {item.brand && item.model && <span className="text-muted-foreground"> &mdash; </span>}
               <span>{item.model}</span>
             </li>
           ))}

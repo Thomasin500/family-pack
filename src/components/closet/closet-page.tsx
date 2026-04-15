@@ -8,8 +8,14 @@ import { useItems } from "@/hooks/use-items";
 import { useCategories } from "@/hooks/use-categories";
 import { ItemTable } from "@/components/closet/item-table";
 import { WeightSummary } from "@/components/closet/weight-summary";
-import { AddItemDialog } from "@/components/closet/add-item-dialog";
-import { Plus } from "lucide-react";
+import dynamic from "next/dynamic";
+import { Input } from "@/components/ui/input";
+import { Plus, Search } from "lucide-react";
+
+const AddItemDialog = dynamic(
+  () => import("@/components/closet/add-item-dialog").then((m) => m.AddItemDialog),
+  { ssr: false }
+);
 
 export function ClosetPage() {
   const { data: householdData, isLoading: householdLoading } = useHousehold();
@@ -18,6 +24,7 @@ export function ClosetPage() {
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<string>("");
+  const [searchQuery, setSearchQuery] = useState("");
 
   const members = householdData?.members ?? [];
   const items = allItems ?? [];
@@ -97,6 +104,16 @@ export function ClosetPage() {
         )}
       </div>
 
+      <div className="relative mb-4">
+        <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+        <Input
+          placeholder="Search gear..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="pl-9"
+        />
+      </div>
+
       <Tabs value={tab} onValueChange={setActiveTab}>
         <TabsList>
           {tabs.map((t) => (
@@ -107,22 +124,26 @@ export function ClosetPage() {
         </TabsList>
 
         {tabs.map((t) => {
-          const tabItems =
+          const ownerItems =
             t.ownerType === "shared"
               ? items.filter((i: any) => i.ownerType === "shared")
-              : items.filter(
-                  (i: any) =>
-                    i.ownerType === "personal" && i.ownerId === t.ownerId
+              : items.filter((i: any) => i.ownerType === "personal" && i.ownerId === t.ownerId);
+          const tabItems = searchQuery.trim()
+            ? ownerItems.filter((i: any) => {
+                const q = searchQuery.toLowerCase();
+                return (
+                  i.name?.toLowerCase().includes(q) ||
+                  i.brand?.toLowerCase().includes(q) ||
+                  i.model?.toLowerCase().includes(q) ||
+                  i.category?.name?.toLowerCase().includes(q)
                 );
+              })
+            : ownerItems;
           return (
             <TabsContent key={t.id} value={t.id}>
               <div className="mt-4 space-y-4">
                 <WeightSummary items={tabItems} />
-                <ItemTable
-                  items={tabItems}
-                  categories={cats}
-                  readOnly={t.readOnly}
-                />
+                <ItemTable items={tabItems} categories={cats} readOnly={t.readOnly} />
               </div>
             </TabsContent>
           );
@@ -133,9 +154,7 @@ export function ClosetPage() {
         open={dialogOpen}
         onOpenChange={setDialogOpen}
         categories={cats}
-        defaultOwnerType={
-          activeTabDef?.ownerType === "shared" ? "shared" : "personal"
-        }
+        defaultOwnerType={activeTabDef?.ownerType === "shared" ? "shared" : "personal"}
         defaultOwnerId={currentUser?.id ?? ""}
       />
     </div>

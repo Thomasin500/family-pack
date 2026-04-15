@@ -7,6 +7,21 @@ interface UserPreferences {
   weightUnitPref: "imperial" | "metric";
 }
 
+export function useUpdateProfile() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: { bodyWeightKg?: number; heightCm?: number; name?: string }) =>
+      fetchApi("/api/user/profile", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["household"] });
+    },
+  });
+}
+
 export function useUserPreferences() {
   return useQuery({
     queryKey: ["user-preferences"],

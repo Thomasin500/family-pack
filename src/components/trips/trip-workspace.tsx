@@ -4,7 +4,11 @@ import { useTrip } from "@/hooks/use-trips";
 import { useCategories } from "@/hooks/use-categories";
 import { useItems } from "@/hooks/use-items";
 import { PackColumn } from "./pack-column";
-import { SharedGearPool } from "./shared-gear-pool";
+import dynamic from "next/dynamic";
+
+const SharedGearPool = dynamic(() => import("./shared-gear-pool").then((m) => m.SharedGearPool), {
+  ssr: false,
+});
 import { Badge } from "@/components/ui/badge";
 import { displayWeight } from "@/lib/weight";
 import { useWeightUnit } from "@/components/providers/weight-unit-provider";
@@ -30,10 +34,7 @@ export function TripWorkspace({ tripId }: TripWorkspaceProps) {
         <div className="h-8 w-48 rounded bg-muted animate-pulse mb-4" />
         <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
           {[1, 2].map((i) => (
-            <div
-              key={i}
-              className="h-64 rounded-xl border bg-muted/40 animate-pulse"
-            />
+            <div key={i} className="h-64 rounded-xl border bg-muted/40 animate-pulse" />
           ))}
         </div>
       </div>
@@ -63,8 +64,7 @@ export function TripWorkspace({ tripId }: TripWorkspaceProps) {
 
   // Shared household items not yet assigned to any pack
   const sharedItems = (allItems ?? []).filter(
-    (item: any) =>
-      item.ownerType === "shared" && !itemIdsInPacks.has(item.id)
+    (item: any) => item.ownerType === "shared" && !itemIdsInPacks.has(item.id)
   );
 
   // Calculate per-pack weight totals for the summary bar
@@ -132,9 +132,7 @@ export function TripWorkspace({ tripId }: TripWorkspaceProps) {
                 {trip.endDate && ` - ${formatDate(trip.endDate)}`}
               </span>
             )}
-            {trip.terrain && (
-              <span className="capitalize">{trip.terrain}</span>
-            )}
+            {trip.terrain && <span className="capitalize">{trip.terrain}</span>}
           </div>
         </div>
       </div>
@@ -155,11 +153,7 @@ export function TripWorkspace({ tripId }: TripWorkspaceProps) {
 
         {/* Shared Gear Pool */}
         <div className="mt-6">
-          <SharedGearPool
-            items={sharedItems}
-            packs={packs}
-            tripId={tripId}
-          />
+          <SharedGearPool items={sharedItems} packs={packs} tripId={tripId} />
         </div>
       </div>
 
@@ -171,10 +165,7 @@ export function TripWorkspace({ tripId }: TripWorkspaceProps) {
               Total Weight
             </span>
             {packWeights.map((pw) => (
-              <div
-                key={pw.userId}
-                className="flex items-center gap-2 shrink-0"
-              >
+              <div key={pw.userId} className="flex items-center gap-2 shrink-0">
                 <span className="text-sm font-medium">{pw.userName}</span>
                 <span className="text-sm font-mono tabular-nums text-muted-foreground">
                   {displayWeight(pw.totalGrams, unit)}

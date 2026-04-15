@@ -1,0 +1,2039 @@
+[
+  {
+    "brand": "32 Degrees",
+    "model": "Packable Down Jacket",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "32 Degrees",
+    "model": "Packable Down Vest",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "3F UL Gear",
+    "model": "3F UL Gear Tudor 38L",
+    "categorySuggestion": "Big Four",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "3F UL Gear",
+    "model": "LanShan 2",
+    "categorySuggestion": "Shelter",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "3F UL Gear",
+    "model": "Poncho Tarp",
+    "categorySuggestion": "Shelter",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Aegismax",
+    "model": "Quilt",
+    "categorySuggestion": "Sleep",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Aegismax",
+    "model": "Ultralight 95% Goose Down Mummy",
+    "categorySuggestion": "Sleep",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Aerobie",
+    "model": "Aeropress Coffee Maker",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Altra",
+    "model": "Trail Gaiters",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Amazon Essentials",
+    "model": "Amazon Essentials Full-Zip Polar Fleece",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Anker",
+    "model": "Astro E1 5200mAh",
+    "categorySuggestion": "Electronics",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Anker",
+    "model": "PowerCore Fusion",
+    "categorySuggestion": "Electronics",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Anker",
+    "model": "PowerCore+ Mini 3350mAh",
+    "categorySuggestion": "Electronics",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Appalachian Ultralight",
+    "model": "Balloon",
+    "categorySuggestion": "Big Four",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "BearVault",
+    "model": "BV450",
+    "categorySuggestion": "Tools & Utility",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Bic",
+    "model": "Bic Lighter",
+    "categorySuggestion": "Tools & Utility",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Bic",
+    "model": "Mini-Bic lighter",
+    "categorySuggestion": "Tools & Utility",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "BIC",
+    "model": "BIC mini",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Big Agnes",
+    "model": "Copper Spur 2",
+    "categorySuggestion": "Shelter",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Big Agnes",
+    "model": "Copper Spur 2 - Fast Fly Configuration",
+    "categorySuggestion": "Shelter",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Big Agnes",
+    "model": "Onyx UL",
+    "categorySuggestion": "Shelter",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Big Agnes",
+    "model": "Q-Core Insulated",
+    "categorySuggestion": "Sleep",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Big Agnes",
+    "model": "Q-Core SLX",
+    "categorySuggestion": "Sleep",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Black Diamond",
+    "model": "Black Diamond Ion",
+    "categorySuggestion": "Tools & Utility",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Black Diamond",
+    "model": "Black Diamond StormLine Stretch Rain Shield",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Black Diamond",
+    "model": "Carbon Ultra Distance Z-Poles",
+    "categorySuggestion": "Tools & Utility",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Black Diamond",
+    "model": "Spot",
+    "categorySuggestion": "Tools & Utility",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Black Rock Gear",
+    "model": "Original BlackRock Hat",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Body Wrappers",
+    "model": "nylon dancer pants",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Body Wrappers",
+    "model": "Ripstop Pant",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Borah Gear",
+    "model": "5.5'X9' Tarp",
+    "categorySuggestion": "Shelter",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Borah Gear",
+    "model": "Cuben Bivy",
+    "categorySuggestion": "Shelter",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Borah Gear",
+    "model": "Down Jacket",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Borah Gear",
+    "model": "Down Vest",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Borah Gear",
+    "model": "eVent Rain Mitts",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Borah Gear",
+    "model": "Side zip bivy",
+    "categorySuggestion": "Shelter",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Borah Gear",
+    "model": "Solo Tarp",
+    "categorySuggestion": "Shelter",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "BRS",
+    "model": "BRS-3000T",
+    "categorySuggestion": "Kitchen & Food",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Buff",
+    "model": "Merino Wool Buff",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Built On Athletics",
+    "model": "1\" inseam running shorts",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Bushcraft Essentials",
+    "model": "Bushbox Ultralight Outdoor Pocket Stove",
+    "categorySuggestion": "Kitchen & Food",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Camelbak",
+    "model": "Fourteener",
+    "categorySuggestion": "Big Four",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Camp Source",
+    "model": "odor barrier bag",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Cascade Mountain Tech",
+    "model": "Cascade Mountain Tech Carbon Fiber Quick Lock Cork Grip",
+    "categorySuggestion": "Tools & Utility",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Coca-Cola",
+    "model": "PET Coke bottle",
+    "categorySuggestion": "Water",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Cocoon",
+    "model": "Cocoon Hyperlight Air-Core Pillow",
+    "categorySuggestion": "Sleep",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Cocoon",
+    "model": "Deluxe air pillow",
+    "categorySuggestion": "Sleep",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Columbia",
+    "model": "Columbia Silver Ridge Long Sleeve Shirt",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Columbia",
+    "model": "OutDry Extreme Mesh Hooded Shell",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Cotopaxi",
+    "model": "Teca Half-Zip Vest",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Cumulus",
+    "model": "Climalite Pullover",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Dakine",
+    "model": "Campus 33L",
+    "categorySuggestion": "Big Four",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Darn Tough",
+    "model": "1/4 height, Cushion Hiker",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Darn Tough",
+    "model": "Hiker 1/4 Cushion",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Darn Tough",
+    "model": "Hiker 1/4 Sock Cushion",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Darn Tough",
+    "model": "Hiker 1/4 Ultralight",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Darn Tough",
+    "model": "Hiker Micro Crew Light Cushion",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Deuter",
+    "model": "Aircontact Core 65+10",
+    "categorySuggestion": "Big Four",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Dutchware Gear",
+    "model": "Kevlar Tree Huggers",
+    "categorySuggestion": "Tools & Utility",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Dutchware Gear",
+    "model": "Titanium Nail Stake",
+    "categorySuggestion": "Tools & Utility",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Eddie Bauer",
+    "model": "MicroTherm 2.0 Down Hooded Jacket",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Enlightened Equipment",
+    "model": "10* Enigma",
+    "categorySuggestion": "Sleep",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Enlightened Equipment",
+    "model": "20* Revelation",
+    "categorySuggestion": "Sleep",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Enlightened Equipment",
+    "model": "20° Revelation",
+    "categorySuggestion": "Sleep",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Enlightened Equipment",
+    "model": "Conundrum 20°",
+    "categorySuggestion": "Sleep",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Enlightened Equipment",
+    "model": "Enigma 20*",
+    "categorySuggestion": "Sleep",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Enlightened Equipment",
+    "model": "Enigma 50F Quilt",
+    "categorySuggestion": "Sleep",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Enlightened Equipment",
+    "model": "Enigma APEX 30F",
+    "categorySuggestion": "Sleep",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Enlightened Equipment",
+    "model": "Enigma APEX 50",
+    "categorySuggestion": "Sleep",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Enlightened Equipment",
+    "model": "Enlightened Equipment Enigma 20",
+    "categorySuggestion": "Sleep",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Enlightened Equipment",
+    "model": "Enlightened Equipment Revolt 20",
+    "categorySuggestion": "Sleep",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Enlightened Equipment",
+    "model": "Recon Bivy",
+    "categorySuggestion": "Shelter",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Enlightened Equipment",
+    "model": "Revelation 10",
+    "categorySuggestion": "Sleep",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Enlightened Equipment",
+    "model": "Revelation 20",
+    "categorySuggestion": "Sleep",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Enlightened Equipment",
+    "model": "Revelation 20 degree",
+    "categorySuggestion": "Sleep",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Enlightened Equipment",
+    "model": "Revelation 30",
+    "categorySuggestion": "Sleep",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Enlightened Equipment",
+    "model": "Revelation 40° 850",
+    "categorySuggestion": "Sleep",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Enlightened Equipment",
+    "model": "Revelation 850 DT 20°F",
+    "categorySuggestion": "Sleep",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Enlightened Equipment",
+    "model": "Revelation APEX 30",
+    "categorySuggestion": "Sleep",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Enlightened Equipment",
+    "model": "Revelation APEX 50F",
+    "categorySuggestion": "Sleep",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Eno",
+    "model": "Sub7 Hammock",
+    "categorySuggestion": "Shelter",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Esbit",
+    "model": "Solid Fuel Cube",
+    "categorySuggestion": "Kitchen & Food",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Esbit",
+    "model": "Titanium Tri-wing",
+    "categorySuggestion": "Kitchen & Food",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Etowah Outfitters",
+    "model": "6x8.5 DCF Tarp",
+    "categorySuggestion": "Shelter",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Evernew",
+    "model": "Ti (Solo) Cup 400FD",
+    "categorySuggestion": "Kitchen & Food",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Evernew",
+    "model": "Water Carrier",
+    "categorySuggestion": "Water",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "ExOfficio",
+    "model": "Give-N-Go Bikini",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "ExOfficio",
+    "model": "Give-n-go Boxer Briefs",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Exped",
+    "model": "AirMat HL M",
+    "categorySuggestion": "Sleep",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Exped",
+    "model": "Exped Schnozzel Pumpbag UL M",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Exped",
+    "model": "SynMat HL MW",
+    "categorySuggestion": "Sleep",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Exped",
+    "model": "SynMat HL Winter MW",
+    "categorySuggestion": "Sleep",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Exped",
+    "model": "Synmat Hyperlite",
+    "categorySuggestion": "Sleep",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Exped",
+    "model": "UL Pillow",
+    "categorySuggestion": "Sleep",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Fenix",
+    "model": "E05",
+    "categorySuggestion": "Tools & Utility",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Fire Maple",
+    "model": "FMS-117T",
+    "categorySuggestion": "Kitchen & Food",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Fizan",
+    "model": "Compact 3 Trekking Poles",
+    "categorySuggestion": "Tools & Utility",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Frogg Toggs",
+    "model": "Emergency Jacket",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Frogg Toggs",
+    "model": "Frogg Toggs Ultra-Lite2 Jacket",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Frogg Toggs",
+    "model": "UltraLite2 Jacket",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Frogg Toggs",
+    "model": "UltraLite2 Pants",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Frogg Toggs",
+    "model": "Women's Ultralite 2 Jacket",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Garcia",
+    "model": "Bear Cache",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Gold Toe",
+    "model": "Gold Toe Metropolitan Dress Sock",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "GoLite",
+    "model": "Jam 50",
+    "categorySuggestion": "Big Four",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Gossamer Gear",
+    "model": "Gorilla",
+    "categorySuggestion": "Big Four",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Gossamer Gear",
+    "model": "Kumo",
+    "categorySuggestion": "Big Four",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Gossamer Gear",
+    "model": "Mariposa 2016",
+    "categorySuggestion": "Big Four",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Gossamer Gear",
+    "model": "Nighlight",
+    "categorySuggestion": "Sleep",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Gossamer Gear",
+    "model": "Seconds Thinlight Foam Pad - 1/8\"",
+    "categorySuggestion": "Sleep",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Gossamer Gear",
+    "model": "Thinlight 1/8\"",
+    "categorySuggestion": "Sleep",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Gossamer Gear",
+    "model": "Thinlight foam pad",
+    "categorySuggestion": "Sleep",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Gossamer Gear",
+    "model": "THINLIGHT FOAM PAD - 1/8\"",
+    "categorySuggestion": "Sleep",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Gossamer Gear",
+    "model": "Thinlite",
+    "categorySuggestion": "Sleep",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Gregory",
+    "model": "Miwok 24",
+    "categorySuggestion": "Big Four",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "GSI",
+    "model": "Soloist Pot",
+    "categorySuggestion": "Tools & Utility",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Hammock Gear",
+    "model": "Burrow 20°",
+    "categorySuggestion": "Sleep",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Hammock Gear",
+    "model": "Burrow Econ 20",
+    "categorySuggestion": "Sleep",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Hammock Gear",
+    "model": "Phoenix Econ 20",
+    "categorySuggestion": "Sleep",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "handi-foil",
+    "model": "Heavy Duty Mini Loaf Pan",
+    "categorySuggestion": "Kitchen & Food",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Hartford Gear Co.",
+    "model": "Stake Bag",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Hefty",
+    "model": "Trash Compactor bag 18 gallon",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Hilleberg",
+    "model": "Akto",
+    "categorySuggestion": "Shelter",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Hummingbird Hammocks",
+    "model": "Single+",
+    "categorySuggestion": "Shelter",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Hummingbird Hammocks",
+    "model": "Warbler Bugnet",
+    "categorySuggestion": "Shelter",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "HydraPak",
+    "model": "HydraPak Seeker 2L",
+    "categorySuggestion": "Water",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Hyperlight Mountain Gear",
+    "model": "Echo II Tarp - only",
+    "categorySuggestion": "Shelter",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Hyperlite Mountain Gear",
+    "model": "Side Entry Pod",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Hyperlite Mountain Gear",
+    "model": "Stuff Sack Pillow",
+    "categorySuggestion": "Sleep",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Hyperlite Mountain Gear",
+    "model": "The Shell",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Hyperlite Mountain Gear",
+    "model": "UltaMid 2",
+    "categorySuggestion": "Shelter",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Hyperlite Mountain Gear",
+    "model": "UltaMid 2 Half Insert",
+    "categorySuggestion": "Shelter",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Icebreaker",
+    "model": "Chase Beanie",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Icebreaker",
+    "model": "Pocket Hat",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "IMUSA",
+    "model": "Aluminum mug",
+    "categorySuggestion": "Kitchen & Food",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Katabatic Gear",
+    "model": "Flex 30 Quilt",
+    "categorySuggestion": "Sleep",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Katabatic Gear",
+    "model": "Helios 55",
+    "categorySuggestion": "Big Four",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Katabatic Gear",
+    "model": "Palisade",
+    "categorySuggestion": "Sleep",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Katadyn",
+    "model": "BeFree Water Filter",
+    "categorySuggestion": "Water",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Katadyn",
+    "model": "Katadyn BeFree",
+    "categorySuggestion": "Water",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Kelty",
+    "model": "Kelty Redwing 50",
+    "categorySuggestion": "Big Four",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Komperdell",
+    "model": "Komperdell Carbon C3 Power Lock",
+    "categorySuggestion": "Tools & Utility",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "KS Ultralight Gear",
+    "model": "KS 3",
+    "categorySuggestion": "Big Four",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "KS Ultralight Gear",
+    "model": "Tao Pack",
+    "categorySuggestion": "Big Four",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Kungix (Amazon)",
+    "model": "Aluminum Y stake",
+    "categorySuggestion": "Tools & Utility",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Leki",
+    "model": "Leki Makalu Lite COR-TEC AS",
+    "categorySuggestion": "Tools & Utility",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Lightload Towels",
+    "model": "Extra Strength Light Load Towel",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Lightloads",
+    "model": "pack towel",
+    "categorySuggestion": "Big Four",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "LiteOutdoors",
+    "model": "LiteOutdoors Silnylon Tarp",
+    "categorySuggestion": "Shelter",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Litesmith",
+    "model": "Meye Ti™ Titanium Stakes",
+    "categorySuggestion": "Tools & Utility",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Locus Gear",
+    "model": "CP3 Poles",
+    "categorySuggestion": "Tools & Utility",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "LRI",
+    "model": "Photon Freedom Microlight",
+    "categorySuggestion": "Tools & Utility",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Luke's Ultralight",
+    "model": "Argon Wind Pants",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Marmot",
+    "model": "Helium 15",
+    "categorySuggestion": "Sleep",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Marmot",
+    "model": "Hydrogen 30",
+    "categorySuggestion": "Sleep",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Marmot",
+    "model": "Ion 20",
+    "categorySuggestion": "Sleep",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Marmot",
+    "model": "Phase 20 - Women's",
+    "categorySuggestion": "Sleep",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Marmot",
+    "model": "Precip",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Marmot",
+    "model": "Precip Jacket",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Marmot",
+    "model": "Thermo 1/4 zip",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Marmot",
+    "model": "Xenon Women's",
+    "categorySuggestion": "Sleep",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "McDonald's",
+    "model": "McFlurry spoon",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "MEC",
+    "model": "Vectair Insulated UL",
+    "categorySuggestion": "Sleep",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Melanzana",
+    "model": "Micro Grid Crew",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Melanzana",
+    "model": "Micro Grid Hoodie",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Melanzana",
+    "model": "Micro Grid Hoodie V2",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Melanzana",
+    "model": "Micro Grid Toque",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Melanzana",
+    "model": "Micro Grid Zip Top",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Mizuno",
+    "model": "Wave Universe 5",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "MLD",
+    "model": "Burn",
+    "categorySuggestion": "Big Four",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "MLD",
+    "model": "Cuben Packing Cube",
+    "categorySuggestion": "Big Four",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "MLD",
+    "model": "Prophet",
+    "categorySuggestion": "Big Four",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "MLD",
+    "model": "Shoulder Strap Bottle Pocket",
+    "categorySuggestion": "Water",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "MLD",
+    "model": "Superlight Bivy",
+    "categorySuggestion": "Shelter",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Montbell",
+    "model": "Chameece",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Montbell",
+    "model": "Dynamo Wind Pants",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Montbell",
+    "model": "MW Merino 1/4 Zip Top",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Montbell",
+    "model": "MW Merino Tights",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Montbell",
+    "model": "Stretch Wind Park",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Montbell",
+    "model": "Superior Down Parka",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Montbell",
+    "model": "Thermawrap UL",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Montbell",
+    "model": "Torrent Flier Jacket Women's",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Montbell",
+    "model": "U. L. Comfort System Pillow",
+    "categorySuggestion": "Sleep",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Montbell",
+    "model": "Ultralight Umbrella",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Mountain Equipment",
+    "model": "Rockall Crew",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Mountain Hardware",
+    "model": "Microchill Lite Hoodie",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Mountain Hardware",
+    "model": "Monkey Man Grid II Fleece",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Mountain Hardware",
+    "model": "Phantom Spark",
+    "categorySuggestion": "Sleep",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Mountain Hardwear",
+    "model": "Ghost Lite Jacket",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Mountain Hardwear",
+    "model": "Ghost Whisperer Hooded Down Jacket",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "MSR",
+    "model": "Blizzard Sand / Snow Stake",
+    "categorySuggestion": "Tools & Utility",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "MSR",
+    "model": "MicroRocket",
+    "categorySuggestion": "Kitchen & Food",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "MSR",
+    "model": "MSR 40z fuel Cannister",
+    "categorySuggestion": "Kitchen & Food",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "My Trail",
+    "model": "Poncho Tarp",
+    "categorySuggestion": "Shelter",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "MYOG",
+    "model": "Flat Tarp 7x10",
+    "categorySuggestion": "Shelter",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "na",
+    "model": "book of matches",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Naturehike",
+    "model": "Folding Camping Mat",
+    "categorySuggestion": "Sleep",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Naturehike",
+    "model": "Naturehike Ultralight Portable USB Charge LED Headlamp",
+    "categorySuggestion": "Tools & Utility",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Nemo",
+    "model": "Flyer Self-Inflating Sleeping Pad",
+    "categorySuggestion": "Sleep",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Nemo",
+    "model": "Hornet 2p Elite",
+    "categorySuggestion": "Shelter",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Nemo",
+    "model": "Tensor Insulated",
+    "categorySuggestion": "Sleep",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Nemo",
+    "model": "Tensor Insulated 20S Mummy",
+    "categorySuggestion": "Sleep",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Nemo",
+    "model": "Tensor uninsulated sleeping pad",
+    "categorySuggestion": "Sleep",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Nike",
+    "model": "Pro Dri-FIT Cotton Cushion, 1/4 height",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Nitecore",
+    "model": "NU25 UL",
+    "categorySuggestion": "Tools & Utility",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Nitecore",
+    "model": "Thumb",
+    "categorySuggestion": "Tools & Utility",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "North Face",
+    "model": "E-Tip gloves",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "North Face",
+    "model": "Men's TKA 100 Glacier 1/4 zip",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "North X North",
+    "model": "Merino Wool Hooded Neck Gaiter",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Nunatak",
+    "model": "JMT Jacket",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "O2 Rainwear",
+    "model": "Original Hooded Jacket",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Oakley",
+    "model": "Oakley Radar Sunglasses",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Opinel",
+    "model": "No. 7 Stainless Steel",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Optimus",
+    "model": "Neoprene Freezer Bag Coozie",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Ospray",
+    "model": "Exos 48",
+    "categorySuggestion": "Big Four",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Osprey",
+    "model": "Exos 48",
+    "categorySuggestion": "Big Four",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Osprey",
+    "model": "Exos 58",
+    "categorySuggestion": "Big Four",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Osprey",
+    "model": "Talon 44",
+    "categorySuggestion": "Big Four",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Osprey",
+    "model": "Tempest 40L",
+    "categorySuggestion": "Big Four",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Outdoor Research",
+    "model": "Men's Helium II Jacket",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Outdoor Research",
+    "model": "Transcendent Hoodie",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Pa'lante",
+    "model": "Simple Pack",
+    "categorySuggestion": "Big Four",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "PackTowl",
+    "model": "UltraLite",
+    "categorySuggestion": "Big Four",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Paria Outdoor Products",
+    "model": "Sanctuary Sil Tarp",
+    "categorySuggestion": "Shelter",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Patagonia",
+    "model": "Capilene 2 Lightweight Leggings",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Patagonia",
+    "model": "Capilene 2 Lightweight Longsleeve Crew",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Patagonia",
+    "model": "Capilene 2 Lightweight T-Shirt",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Patagonia",
+    "model": "Capilene 4 Thermal Weight 1/2 zip Longsleeve",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Patagonia",
+    "model": "Capilene 4 Thermal Weight Leggings",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Patagonia",
+    "model": "Down Sweater",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Patagonia",
+    "model": "Houdini",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Patagonia",
+    "model": "Houdini Pants",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Patagonia",
+    "model": "Houdini w/ hood",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Patagonia",
+    "model": "Houdini Wind Jacket",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Patagonia",
+    "model": "Lightweight Leggings",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Patagonia",
+    "model": "Men's Tropic Comfort Hoody II",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Patagonia",
+    "model": "Micro D Pullover",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Patagonia",
+    "model": "Nine Trails Shorts",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Patagonia",
+    "model": "Patagonia Men's Capilene Thermal Weight Bottoms",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Patagonia",
+    "model": "R1 1/2 zip pullover",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Patagonia",
+    "model": "R1 Hoody",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Patagonia",
+    "model": "Thermal Weight Crewneck",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Petzl",
+    "model": "e+lite",
+    "categorySuggestion": "Tools & Utility",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "QiWiz",
+    "model": "Big Dig",
+    "categorySuggestion": "Tools & Utility",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Rab",
+    "model": "Pulse SS Tee",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "RAVPower",
+    "model": "Luster Mini 3350",
+    "categorySuggestion": "Electronics",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Ray-way",
+    "model": "Tarp Kit 2P",
+    "categorySuggestion": "Shelter",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "REI",
+    "model": "Flash",
+    "categorySuggestion": "Sleep",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "REI",
+    "model": "Flash 45",
+    "categorySuggestion": "Big Four",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "REI",
+    "model": "Flash 65L",
+    "categorySuggestion": "Big Four",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "REI",
+    "model": "Multi Lite Towel",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "REI",
+    "model": "Power Wool Beanie",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "REI",
+    "model": "Power Wool Gloves",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "REI",
+    "model": "REI Co-op Coolmax Ultralight Quarter Socks",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "REI",
+    "model": "REI Co-op Down Jacket",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "REI",
+    "model": "REI Flash 45L Backpack",
+    "categorySuggestion": "Big Four",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Robens",
+    "model": "Vapour",
+    "categorySuggestion": "Sleep",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Ruta Locura",
+    "model": "710 Carbon Fiber Tent Pole",
+    "categorySuggestion": "Tools & Utility",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Ruta Locura",
+    "model": "Titanium Instep Crampons",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Sawyer",
+    "model": "mini",
+    "categorySuggestion": "Water",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Sawyer",
+    "model": "Squeeze",
+    "categorySuggestion": "Water",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Sea to Summit",
+    "model": "Nano Mosquito Pyramid Insect Shield Net Shelter",
+    "categorySuggestion": "Shelter",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Sea to Summit",
+    "model": "Ultra-Sil Nano Dry Sack",
+    "categorySuggestion": "Tools & Utility",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Sea to Summit",
+    "model": "Ultra-Sil Nano Tarp Poncho",
+    "categorySuggestion": "Shelter",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Sea to Summit",
+    "model": "Ultralight Pad",
+    "categorySuggestion": "Sleep",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Seek Outside",
+    "model": "Divide",
+    "categorySuggestion": "Big Four",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Seek Outside",
+    "model": "Hipbelt Pocket",
+    "categorySuggestion": "Big Four",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Showa",
+    "model": "Temres 282",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Showa",
+    "model": "Temres 282 Blue",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Silva",
+    "model": "Forecaster compass",
+    "categorySuggestion": "Tools & Utility",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Six Moon Designs",
+    "model": "Deschutes",
+    "categorySuggestion": "Shelter",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Six Moon Designs",
+    "model": "Lunar Solo",
+    "categorySuggestion": "Shelter",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Six Moond Designs",
+    "model": "Deschutes Tarp",
+    "categorySuggestion": "Shelter",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Snow Peak",
+    "model": "Gigapower Stove",
+    "categorySuggestion": "Kitchen & Food",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Snow Peak",
+    "model": "Litemax Stove",
+    "categorySuggestion": "Kitchen & Food",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Snow Peak",
+    "model": "Trek 700 Titanium Mug",
+    "categorySuggestion": "Kitchen & Food",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Snow Peak",
+    "model": "Trek 700ml Titanium Pot",
+    "categorySuggestion": "Tools & Utility",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Soto",
+    "model": "Amicus",
+    "categorySuggestion": "Kitchen & Food",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Soto",
+    "model": "Soto Amicus",
+    "categorySuggestion": "Kitchen & Food",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Superior Wilderness Designs",
+    "model": "Superior 35 UL",
+    "categorySuggestion": "Big Four",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Suunto",
+    "model": "Clipper compass",
+    "categorySuggestion": "Tools & Utility",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Tarptent",
+    "model": "Notch",
+    "categorySuggestion": "Shelter",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Tarptent",
+    "model": "Rainshadow 2",
+    "categorySuggestion": "Shelter",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Tarptent",
+    "model": "Saddle 2",
+    "categorySuggestion": "Shelter",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "The Tent Lab",
+    "model": "Deuce of Spades",
+    "categorySuggestion": "Tools & Utility",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "The Tent Lab",
+    "model": "Deuce of Spades Trowel",
+    "categorySuggestion": "Tools & Utility",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Them-A-Rest",
+    "model": "Z-Lite Sol",
+    "categorySuggestion": "Sleep",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Therm-a-Rest",
+    "model": "Down Pillow",
+    "categorySuggestion": "Sleep",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Therm-a-Rest",
+    "model": "NeoAir X-Lite",
+    "categorySuggestion": "Sleep",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Therm-a-Rest",
+    "model": "NeoAir Xlite",
+    "categorySuggestion": "Sleep",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Therm-a-Rest",
+    "model": "Neoair Xlite Regular",
+    "categorySuggestion": "Sleep",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Therm-a-Rest",
+    "model": "NeoAir XTherm",
+    "categorySuggestion": "Sleep",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Therm-a-Rest",
+    "model": "SOLite",
+    "categorySuggestion": "Sleep",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Therm-a-Rest",
+    "model": "Thermarest X-lite",
+    "categorySuggestion": "Sleep",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Therm-a-Rest",
+    "model": "XLite",
+    "categorySuggestion": "Sleep",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Therm-a-Rest",
+    "model": "Xlite Women's",
+    "categorySuggestion": "Sleep",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Therm-a-Rest",
+    "model": "XTherm Max",
+    "categorySuggestion": "Sleep",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Therm-a-Rest",
+    "model": "Z Lite SOL",
+    "categorySuggestion": "Sleep",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Therm-a-Rest",
+    "model": "Z-Seat",
+    "categorySuggestion": "Tools & Utility",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Thrunite",
+    "model": "Ti3",
+    "categorySuggestion": "Tools & Utility",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Titanium Goat",
+    "model": "Kestrel Bivy",
+    "categorySuggestion": "Shelter",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Toaks",
+    "model": "Titanium long handle spoon",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Toaks",
+    "model": "Toaks 550ml LIGHT",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Toaks",
+    "model": "Toaks 550ml pot",
+    "categorySuggestion": "Kitchen & Food",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Toaks",
+    "model": "Toaks Titanium Backpacking Wood Burning Stove",
+    "categorySuggestion": "Kitchen & Food",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Toaks",
+    "model": "Tri-wing",
+    "categorySuggestion": "Kitchen & Food",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "UGQ",
+    "model": "Bandit 20",
+    "categorySuggestion": "Sleep",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "UGQ",
+    "model": "Bivy Solo Tarp",
+    "categorySuggestion": "Shelter",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Ultimate Direction",
+    "model": "Fastpack 30",
+    "categorySuggestion": "Big Four",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Under Armor",
+    "model": "Threadborne t-shirt",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Under Armour",
+    "model": "Original 6\" Boxerbriefs",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Under Armour",
+    "model": "UA Launch 7\" stretch woven shorts",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Uniqlo",
+    "model": "Ultralight Down Hoody",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Uniqloe",
+    "model": "Uniqlo Airism Mesh V-neck T-Shirt Short Sleeve",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Ursack",
+    "model": "All White",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Ursack",
+    "model": "Ursack S29.3 Allwhite",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Vargo",
+    "model": "Titanium TI-Lite 750 Mug",
+    "categorySuggestion": "Kitchen & Food",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Victorinox",
+    "model": "Classic SD Pocket Knife",
+    "categorySuggestion": "Tools & Utility",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Victorinox",
+    "model": "Victorinox Swiss Army Classic SD Pocket Knife",
+    "categorySuggestion": "Tools & Utility",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Vivo Barefoot",
+    "model": "Ultra Pure v1",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Vivo Barefoot",
+    "model": "Ultra Pure v2",
+    "categorySuggestion": "Clothing",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Warbonnet",
+    "model": "Warbonnet Edge",
+    "categorySuggestion": "Shelter",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Western Mountaineering",
+    "model": "Alpinlite",
+    "categorySuggestion": "Sleep",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Yama Mountain Gear",
+    "model": "2P Cirriform DW",
+    "categorySuggestion": "Shelter",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Yama Mountain Gear",
+    "model": "5'/7'x9' tapered tarp",
+    "categorySuggestion": "Shelter",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Yama Mountain Gear",
+    "model": "7'/5' X 9' TAPERED TARP - .8 OZ CUBEN FIBER",
+    "categorySuggestion": "Shelter",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Yama Mountain Gear",
+    "model": "9'/7' X 9' Tapered Tarp - .5 oz Cuben Fiber",
+    "categorySuggestion": "Shelter",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Yama Mountain Gear",
+    "model": "Bug Shelter 2P - SilPoly",
+    "categorySuggestion": "Shelter",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Yama Mountain Gear",
+    "model": "Cirriform 1 SW Cuben Fiber",
+    "categorySuggestion": "Shelter",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Yama Mountain Gear",
+    "model": "Tapered SilPoly Tarp",
+    "categorySuggestion": "Shelter",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Zebralight",
+    "model": "H52w",
+    "categorySuggestion": "Tools & Utility",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Zelph's Stoveworks",
+    "model": "Fancee Feast Stove",
+    "categorySuggestion": "Kitchen & Food",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "Ziploc",
+    "model": "Ziploc Twish-N-Loc",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "ZPacks",
+    "model": "6 inch Sonic Stakes",
+    "categorySuggestion": "Tools & Utility",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "ZPacks",
+    "model": "Arc Blast",
+    "categorySuggestion": "Big Four",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "ZPacks",
+    "model": "Carbon Fiber Tent Poles",
+    "categorySuggestion": "Tools & Utility",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "ZPacks",
+    "model": "Duplex",
+    "categorySuggestion": "Shelter",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "ZPacks",
+    "model": "Hexamid Solo Plus Tent",
+    "categorySuggestion": "Shelter",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "ZPacks",
+    "model": "Hexamid Solo Tarp",
+    "categorySuggestion": "Shelter",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "ZPacks",
+    "model": "Solplex",
+    "categorySuggestion": "Shelter",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "ZPacks",
+    "model": "Straight Carbon Fiber Tent Pole",
+    "categorySuggestion": "Shelter",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "ZPacks",
+    "model": "Titanium Short Handle Spoon",
+    "categorySuggestion": "Big Four",
+    "sources": ["gear-weight-db"]
+  },
+  {
+    "brand": "ZPacks",
+    "model": "Zero",
+    "categorySuggestion": "Big Four",
+    "sources": ["gear-weight-db"]
+  }
+]

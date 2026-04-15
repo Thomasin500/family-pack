@@ -18,16 +18,8 @@ export const weightUnitEnum = pgEnum("weight_unit", ["imperial", "metric"]);
 export const ownerTypeEnum = pgEnum("owner_type", ["personal", "shared"]);
 export const roleEnum = pgEnum("role", ["adult", "child", "pet"]);
 export const sexEnum = pgEnum("sex", ["male", "female", "other"]);
-export const seasonEnum = pgEnum("season", [
-  "spring",
-  "summer",
-  "fall",
-  "winter",
-]);
-export const catalogSourceEnum = pgEnum("catalog_source", [
-  "seed",
-  "community",
-]);
+export const seasonEnum = pgEnum("season", ["spring", "summer", "fall", "winter"]);
+export const catalogSourceEnum = pgEnum("catalog_source", ["seed", "community"]);
 
 // ── Household ──
 
@@ -95,9 +87,7 @@ export const accounts = pgTable(
     id_token: text("id_token"),
     session_state: text("session_state"),
   },
-  (account) => [
-    primaryKey({ columns: [account.provider, account.providerAccountId] }),
-  ]
+  (account) => [primaryKey({ columns: [account.provider, account.providerAccountId] })]
 );
 
 export const sessions = pgTable("session", {
@@ -161,9 +151,7 @@ export const items = pgTable("item", {
   tags: text("tags").array(),
   notes: text("notes"),
   imageUrl: text("image_url"),
-  catalogProductId: uuid("catalog_product_id").references(
-    () => catalogProducts.id
-  ),
+  catalogProductId: uuid("catalog_product_id").references(() => catalogProducts.id),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
@@ -331,6 +319,8 @@ export const catalogProducts = pgTable("catalog_product", {
   categorySuggestion: text("category_suggestion"),
   searchText: text("search_text").notNull(),
   source: catalogSourceEnum("source").default("seed"),
+  sourceCount: integer("source_count").default(1),
+  popularity: integer("popularity").default(0),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 

@@ -1,0 +1,93 @@
+=== Catalog Merge Report ===
+Generated: 2026-04-15T06:24:09.519Z
+
+Source counts:
+  Gear Weight DB:   343 items
+  LighterPack:      308 items
+  Featherweight:    8602 items
+
+  Hand-curated seed: 98 items
+
+Merge results:
+  Total unique items: 9065
+  Cross-source duplicates resolved: 282
+  Suspicious entries skipped: 4
+
+Source count distribution:
+  4 sources: 3 items
+  3 sources: 32 items
+  2 sources: 209 items
+  1 sources: 8821 items
+
+Category distribution:
+  (uncategorized): 4035
+  Clothing: 1082
+  Kitchen & Food: 840
+  Sleep: 732
+  Big Four: 669
+  Shelter: 604
+  Tools & Utility: 543
+  Water: 420
+  Electronics: 121
+  Pet Gear: 19
+
+Top 20 brands:
+  Sea to Summit: 470
+  REI: 463
+  MSR: 429
+  ZPacks: 411
+  Patagonia: 394
+  Therm-a-Rest: 294
+  Osprey: 277
+  Black Diamond: 273
+  Toaks: 218
+  Anker: 199
+  Enlightened Equipment: 198
+  Sawyer: 191
+  Marmot: 190
+  Outdoor Research: 190
+  Big Agnes: 187
+  Smartwool: 157
+  Nemo: 154
+  Icebreaker: 154
+  Gossamer Gear: 148
+  Columbia: 141
+
+High confidence items (3+ sources): 35
+  Sawyer Mini [hand-curated, gear-weight-db, lighterpack, featherweight]
+  Sawyer Squeeze [hand-curated, gear-weight-db, lighterpack, featherweight]
+  Zpacks Duplex [hand-curated, gear-weight-db, lighterpack, featherweight]
+  Black Diamond Spot [gear-weight-db, lighterpack, featherweight]
+  Enlightened Equipment Enigma 20 [hand-curated, lighterpack, featherweight]
+  Enlightened Equipment Revelation 20 [hand-curated, gear-weight-db, featherweight]
+  Enlightened Equipment Revelation 30 [gear-weight-db, lighterpack, featherweight]
+  Exped UL Pillow [gear-weight-db, lighterpack, featherweight]
+  Gossamer Gear Kumo [gear-weight-db, lighterpack, featherweight]
+  Gossamer Gear Thinlite [gear-weight-db, lighterpack, featherweight]
+  Jetboil Flash [hand-curated, lighterpack, featherweight]
+  Katabatic Gear Palisade [gear-weight-db, lighterpack, featherweight]
+  Marmot Precip [gear-weight-db, lighterpack, featherweight]
+  MLD Burn [gear-weight-db, lighterpack, featherweight]
+  Nemo Hornet 2P [hand-curated, lighterpack, featherweight]
+  Nitecore Thumb [gear-weight-db, lighterpack, featherweight]
+  Osprey Exos 58 [gear-weight-db, lighterpack, featherweight]
+  Patagonia Houdini [gear-weight-db, lighterpack, featherweight]
+  Petzl Bindi [hand-curated, lighterpack, featherweight]
+  Sawyer Micro Squeeze [hand-curated, lighterpack, featherweight]
+  Six Moon Designs Lunar Solo [gear-weight-db, lighterpack, featherweight]
+  Soto Amicus [gear-weight-db, lighterpack, featherweight]
+  Tarptent Notch [gear-weight-db, lighterpack, featherweight]
+  Therm-a-Rest NeoAir X-Lite [gear-weight-db, lighterpack, featherweight]
+  Therm-a-Rest NeoAir Xlite [gear-weight-db, lighterpack, featherweight]
+  Therm-a-Rest NeoAir XTherm [hand-curated, gear-weight-db, featherweight]
+  Therm-a-Rest XLite [gear-weight-db, lighterpack, featherweight]
+  Therm-a-Rest Z Lite Sol [hand-curated, gear-weight-db, featherweight]
+  Therm-a-Rest Z-Seat [gear-weight-db, lighterpack, featherweight]
+  UGQ Bandit 20 [gear-weight-db, lighterpack, featherweight]
+  ... and 5 more
+
+Suspicious entries (skipped):
+  Short numeric: "Hammock Gear 20" (featherweight)
+  Short numeric: "Marmot 40" (featherweight)
+  Short numeric: "Nitecore 20" (featherweight)
+  Short numeric: "ZPacks 35" (featherweight)

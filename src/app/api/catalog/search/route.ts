@@ -18,7 +18,9 @@ export async function GET(req: NextRequest) {
       .select()
       .from(catalogProducts)
       .where(sql`similarity(${catalogProducts.searchText}, ${query}) > 0.15`)
-      .orderBy(sql`similarity(${catalogProducts.searchText}, ${query}) DESC`)
+      .orderBy(
+        sql`similarity(${catalogProducts.searchText}, ${query}) + (coalesce(${catalogProducts.popularity}, 0) * 0.01) DESC`
+      )
       .limit(8);
 
     return NextResponse.json(results);

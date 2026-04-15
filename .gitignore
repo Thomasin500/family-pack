@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# catalog cache (raw fetched data, not committed)
+data/catalog/cache/*
+!data/catalog/cache/.gitkeep

@@ -1,0 +1,1673 @@
+[
+  {
+    "brand": "3F UL Gear",
+    "model": "Rain Skirt",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Altra",
+    "model": "Gaiters",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Altra",
+    "model": "Lone Peak",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Altra",
+    "model": "Lone Peak 3.0 size 9.5",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Altra",
+    "model": "Lone Peak 3.5",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Altra",
+    "model": "Lone Peak 4.0",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Altra",
+    "model": "Lone Peak 6",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Altra",
+    "model": "Lone Peaks",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Altra",
+    "model": "Superior",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Altra",
+    "model": "superior 1",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Altra",
+    "model": "Timps",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Altra",
+    "model": "Trail Runners",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Altra",
+    "model": "Trail Shorts",
+    "categorySuggestion": "Clothing",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Anker",
+    "model": "10000",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Anker",
+    "model": "10k",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Anker",
+    "model": "10k Ma/H",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Anker",
+    "model": "13K mAh",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Anker",
+    "model": "20100",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Anker",
+    "model": "Astro E1 6700",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Anker",
+    "model": "Battery, Charging Cord, iPhone wall charger",
+    "categorySuggestion": "Tools & Utility",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Anker",
+    "model": "Block and Cables",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Anker",
+    "model": "charging block",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Anker",
+    "model": "nano powerport",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Anker",
+    "model": "Powercore 10000",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Anker",
+    "model": "PowerCore Fusion",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Anker",
+    "model": "USB C Wallcharger",
+    "categorySuggestion": "Electronics",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Arc'teryx",
+    "model": "Squamish Hoody",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Big Agnes",
+    "model": "AXL Mummy",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Black Diamond",
+    "model": "Carbon FLZ",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Black Diamond",
+    "model": "Cosmo 225",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Black Diamond",
+    "model": "Cosmo Headlamp",
+    "categorySuggestion": "Tools & Utility",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Black Diamond",
+    "model": "FL Trekking poles",
+    "categorySuggestion": "Tools & Utility",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Black Diamond",
+    "model": "Fleece Gloves",
+    "categorySuggestion": "Clothing",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Black Diamond",
+    "model": "headlamp",
+    "categorySuggestion": "Tools & Utility",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Black Diamond",
+    "model": "Headlamp w/3AAAs",
+    "categorySuggestion": "Tools & Utility",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Black Diamond",
+    "model": "Ion",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Black Diamond",
+    "model": "Spot",
+    "categorySuggestion": "Kitchen & Food",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Black Diamond",
+    "model": "Storm",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Black Diamond",
+    "model": "Trekking Poles",
+    "categorySuggestion": "Tools & Utility",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Black Diamond",
+    "model": "Z-Pole Carbon 110cm",
+    "categorySuggestion": "Tools & Utility",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "BRS",
+    "model": "3000 Ti Stove",
+    "categorySuggestion": "Kitchen & Food",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "BRS",
+    "model": "Burner",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "BRS",
+    "model": "Stove",
+    "categorySuggestion": "Kitchen & Food",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Buff",
+    "model": "or Fleece Tube",
+    "categorySuggestion": "Clothing",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Buff",
+    "model": "PCT",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Columbia",
+    "model": "Featherli",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Columbia",
+    "model": "Featherlight LS Shirt",
+    "categorySuggestion": "Clothing",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Columbia",
+    "model": "Featherlight Shirt",
+    "categorySuggestion": "Clothing",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Columbia",
+    "model": "Klamath Range 1/2 zip",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Columbia",
+    "model": "Silver Ridge",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Columbia",
+    "model": "Silver Ridge LS Shirt",
+    "categorySuggestion": "Clothing",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Columbia",
+    "model": "Silver Ridge Shirt",
+    "categorySuggestion": "Clothing",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Columbia",
+    "model": "Silver Ridge*",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Columbia",
+    "model": "Titanium Omni-dri Long sleeve",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Cumulus",
+    "model": "Inverse",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Cumulus",
+    "model": "Quilt 350",
+    "categorySuggestion": "Sleep",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Darn Tough",
+    "model": "1/4",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Darn Tough",
+    "model": "1/4 Socks",
+    "categorySuggestion": "Clothing",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Darn Tough",
+    "model": "Crew",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Darn Tough",
+    "model": "endurance socks",
+    "categorySuggestion": "Clothing",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Darn Tough",
+    "model": "Light Hiker Micro Crew",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Darn Tough",
+    "model": "Light hiking socks",
+    "categorySuggestion": "Clothing",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Darn Tough",
+    "model": "merino socks",
+    "categorySuggestion": "Clothing",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Darn Tough",
+    "model": "Micro Crew",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Darn Tough",
+    "model": "Socks",
+    "categorySuggestion": "Clothing",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Darn Tough",
+    "model": "T4037",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Decathlon",
+    "model": "forclaz merino thsirt",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Durston Gear",
+    "model": "Kakwa 40",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Dutchware Gear",
+    "model": "1.0 Hexon 11'",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Enlightened Equipment",
+    "model": "Conundrum",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Enlightened Equipment",
+    "model": "Enigma",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Enlightened Equipment",
+    "model": "Enigma 10",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Enlightened Equipment",
+    "model": "Enigma 20",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Enlightened Equipment",
+    "model": "Enigma Quilt",
+    "categorySuggestion": "Sleep",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Enlightened Equipment",
+    "model": "Insulated Jacket",
+    "categorySuggestion": "Clothing",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Enlightened Equipment",
+    "model": "Revelation 30",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Enlightened Equipment",
+    "model": "Revelation 30F Quilt",
+    "categorySuggestion": "Sleep",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Enlightened Equipment",
+    "model": "Revlation 50",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Evernew",
+    "model": ".9L pot",
+    "categorySuggestion": "Kitchen & Food",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Evernew",
+    "model": "1.5 L",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Evernew",
+    "model": "2L Bag",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Evernew",
+    "model": "2l bladder",
+    "categorySuggestion": "Water",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Evernew",
+    "model": "2L Soft Water Bottle",
+    "categorySuggestion": "Water",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Evernew",
+    "model": "400ml pot",
+    "categorySuggestion": "Kitchen & Food",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Evernew",
+    "model": "Titanium Cookware",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Exped",
+    "model": "Air Pillow",
+    "categorySuggestion": "Sleep",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Exped",
+    "model": "Pillow",
+    "categorySuggestion": "Sleep",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Exped",
+    "model": "Schnozzel Pumpbag UL M",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Exped",
+    "model": "UL pillow",
+    "categorySuggestion": "Sleep",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Feathered Friends",
+    "model": "20 Degree Quilt",
+    "categorySuggestion": "Sleep",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Fire Maple",
+    "model": "Stove",
+    "categorySuggestion": "Kitchen & Food",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Fire Maple",
+    "model": "Stove FMS-116T",
+    "categorySuggestion": "Kitchen & Food",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Frogg Toggs",
+    "model": "Rain Pants",
+    "categorySuggestion": "Kitchen & Food",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Frogg Toggs",
+    "model": "UL2",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Garmin",
+    "model": "fenix",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Garmin",
+    "model": "Fenix 6 Sapphire",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Garmin",
+    "model": "Fenix 6X",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Garmin",
+    "model": "Fenix 7 Pro Saphire Edition",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Garmin",
+    "model": "InReach Mini",
+    "categorySuggestion": "Electronics",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Garmin",
+    "model": "Inreach Mini 2",
+    "categorySuggestion": "Electronics",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Garmin",
+    "model": "InReach Mini2",
+    "categorySuggestion": "Electronics",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Garmin",
+    "model": "Instinct 2X Solar Watch",
+    "categorySuggestion": "Electronics",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Garmin",
+    "model": "Watch Cradle Charger",
+    "categorySuggestion": "Electronics",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Gossamer Gear",
+    "model": "1/8\" Closed Cell Foam Pad",
+    "categorySuggestion": "Sleep",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Gossamer Gear",
+    "model": "Ditty Bag",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Gossamer Gear",
+    "model": "Hipster",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Gossamer Gear",
+    "model": "Kumo",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Gossamer Gear",
+    "model": "little towel",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Gossamer Gear",
+    "model": "Mirage",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Gossamer Gear",
+    "model": "Murmur",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Gossamer Gear",
+    "model": "Pot Pocket",
+    "categorySuggestion": "Kitchen & Food",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Gossamer Gear",
+    "model": "Thinlight 1/8\" Pad",
+    "categorySuggestion": "Sleep",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Gossamer Gear",
+    "model": "thinlight 1/8\" pad cut torso",
+    "categorySuggestion": "Sleep",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Gossamer Gear",
+    "model": "Thinlite",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Hyperlite Mountain Gear",
+    "model": "Pod",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Icebreaker",
+    "model": "GT180 Chase Crewe Long Sleeve",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Icebreaker",
+    "model": "Merino",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Icebreaker",
+    "model": "socks",
+    "categorySuggestion": "Clothing",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Icebreaker",
+    "model": "t-shirt",
+    "categorySuggestion": "Clothing",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Inov-8",
+    "model": "Roclite280",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Jetboil",
+    "model": "Flash",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Katabatic Gear",
+    "model": "Alsek",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Katabatic Gear",
+    "model": "Gear",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Katabatic Gear",
+    "model": "Knik 40L",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Katabatic Gear",
+    "model": "Palisade",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Katadyn",
+    "model": "BeFree w/ 1.0L bottle",
+    "categorySuggestion": "Water",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Kelty",
+    "model": "Stakes",
+    "categorySuggestion": "Tools & Utility",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Klymit",
+    "model": "X ultralight pillow",
+    "categorySuggestion": "Sleep",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "La Sportiva",
+    "model": "Wildcats",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Marmot",
+    "model": "Bantamweight",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Marmot",
+    "model": "Essence Rainpants",
+    "categorySuggestion": "Kitchen & Food",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Marmot",
+    "model": "Juniper Springs Shorts",
+    "categorySuggestion": "Clothing",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Marmot",
+    "model": "Precip",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Marmot",
+    "model": "Quasar no Hoody",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Marmot",
+    "model": "Strato Pillow",
+    "categorySuggestion": "Sleep",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Marmot",
+    "model": "Summit Beanie",
+    "categorySuggestion": "Clothing",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Marmot",
+    "model": "Supermica Jacket",
+    "categorySuggestion": "Clothing",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Marmot",
+    "model": "Thermo 1/2 Zip",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Marmot",
+    "model": "Xenon Women's bag",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Merrell",
+    "model": "Moab Ventilators",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "MLD",
+    "model": "Bug Bivy 2",
+    "categorySuggestion": "Shelter",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "MLD",
+    "model": "Burn",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "MLD",
+    "model": "DCF Poncho Tarp + stuff sack",
+    "categorySuggestion": "Shelter",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "MLD",
+    "model": "DCF zip pouch",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "MLD",
+    "model": "Grace Duo",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "MLD",
+    "model": "grace solo .74",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "MLD",
+    "model": "Solomid XL",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Montbell",
+    "model": "A dynamo Windpants",
+    "categorySuggestion": "Kitchen & Food",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Montbell",
+    "model": "DRESS",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Montbell",
+    "model": "Ex Light",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Montbell",
+    "model": "UL umbrella",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Montbell",
+    "model": "Versalite",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Montbell",
+    "model": "Versalite Rain Pants",
+    "categorySuggestion": "Kitchen & Food",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "MSR",
+    "model": "Ground Hog Stakes",
+    "categorySuggestion": "Tools & Utility",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "MSR",
+    "model": "Groundhog peg",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "MSR",
+    "model": "Groundhog Stake",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "MSR",
+    "model": "Pocket Rocket 2",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "MSR",
+    "model": "Spoon",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "MSR",
+    "model": "Superfly",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Nemo",
+    "model": "Fillo Elite",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Nemo",
+    "model": "Hornet 2P",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Nemo",
+    "model": "Tensor",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Nemo",
+    "model": "Zor Short",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Nitecore",
+    "model": "NB10000",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Nitecore",
+    "model": "NB10000 Gen 3",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Nitecore",
+    "model": "NU21 Headlamp",
+    "categorySuggestion": "Tools & Utility",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Nitecore",
+    "model": "NU25",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Nitecore",
+    "model": "NU25 + grosgrain strap",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Nitecore",
+    "model": "NU25 headlamp",
+    "categorySuggestion": "Tools & Utility",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Nitecore",
+    "model": "NU25 UL",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Nitecore",
+    "model": "NU27",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Nitecore",
+    "model": "thumb",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Nitecore",
+    "model": "TINI",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "North Face",
+    "model": "Hyperair Shell",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "North Face",
+    "model": "Thermoball",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Osprey",
+    "model": "Exos 58",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Osprey",
+    "model": "Kestrel 48L",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Outdoor Research",
+    "model": "Fleece Gloves",
+    "categorySuggestion": "Clothing",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Outdoor Research",
+    "model": "Helium II",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Outdoor Research",
+    "model": "Sparkplug",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Outdoor Research",
+    "model": "Sun Hoodie",
+    "categorySuggestion": "Clothing",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Outdoor Research",
+    "model": "Viser",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Pa'lante",
+    "model": "Joey",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Pa'lante",
+    "model": "V2 Laminate",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Patagonia",
+    "model": "Airshed Pro Pullover",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Patagonia",
+    "model": "baggies",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Patagonia",
+    "model": "Beanie",
+    "categorySuggestion": "Clothing",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Patagonia",
+    "model": "Cap 4 Bottom",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Patagonia",
+    "model": "CapAir Hoodie",
+    "categorySuggestion": "Clothing",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Patagonia",
+    "model": "Capilene Lower",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Patagonia",
+    "model": "Hat*",
+    "categorySuggestion": "Clothing",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Patagonia",
+    "model": "Houdini",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Patagonia",
+    "model": "ls t-shirt",
+    "categorySuggestion": "Clothing",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Patagonia",
+    "model": "Micro Puff",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Patagonia",
+    "model": "Midlayer",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Patagonia",
+    "model": "Nanopuff",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Patagonia",
+    "model": "Strider",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Patagonia",
+    "model": "Synthetic hiking Shirt",
+    "categorySuggestion": "Clothing",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Patagonia",
+    "model": "Terrebone Joggers",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Patagonia",
+    "model": "thermal wt tights",
+    "categorySuggestion": "Clothing",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Petzl",
+    "model": "Bindi",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Petzl",
+    "model": "E-Lite Headlamp",
+    "categorySuggestion": "Tools & Utility",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Petzl",
+    "model": "Elite headlamp",
+    "categorySuggestion": "Tools & Utility",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Platypus",
+    "model": "1L",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Platypus",
+    "model": "1L squeeze bottle",
+    "categorySuggestion": "Water",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Platypus",
+    "model": "2L",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "prana",
+    "model": "fenton boardshorts",
+    "categorySuggestion": "Clothing",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Rab",
+    "model": "forge",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Rab",
+    "model": "Silk Liner",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "REI",
+    "model": "Rain Mitts",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Salomon",
+    "model": "Agile Warm Gloves",
+    "categorySuggestion": "Clothing",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Salomon",
+    "model": "Bonatti WP Mittens",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Salomon",
+    "model": "Momentum Tights",
+    "categorySuggestion": "Clothing",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Sawyer",
+    "model": "coupling",
+    "categorySuggestion": "Water",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Sawyer",
+    "model": "micro",
+    "categorySuggestion": "Water",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Sawyer",
+    "model": "Micro Squeeze",
+    "categorySuggestion": "Water",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Sawyer",
+    "model": "Mini",
+    "categorySuggestion": "Water",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Sawyer",
+    "model": "Mini Water Filter",
+    "categorySuggestion": "Water",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Sawyer",
+    "model": "Squeeze",
+    "categorySuggestion": "Water",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Sawyer",
+    "model": "Squeeze Filter",
+    "categorySuggestion": "Water",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Sawyer",
+    "model": "water filter 1 liter pouch",
+    "categorySuggestion": "Water",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Sawyer",
+    "model": "water filter cleaner",
+    "categorySuggestion": "Water",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Sea to Summit",
+    "model": "13L dry bag",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Sea to Summit",
+    "model": "9L UltraSil",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Sea to Summit",
+    "model": "Aeros Pillow",
+    "categorySuggestion": "Sleep",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Sea to Summit",
+    "model": "Aeros Pillow UL",
+    "categorySuggestion": "Sleep",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Sea to Summit",
+    "model": "Aeros Pillow Ultra Light",
+    "categorySuggestion": "Sleep",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Sea to Summit",
+    "model": "Airlite Towel",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Sea to Summit",
+    "model": "Alpha Light Spork",
+    "categorySuggestion": "Kitchen & Food",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Sea to Summit",
+    "model": "Bugnet",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Sea to Summit",
+    "model": "Fleece Liner",
+    "categorySuggestion": "Clothing",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Sea to Summit",
+    "model": "long handle spork",
+    "categorySuggestion": "Kitchen & Food",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Sea to Summit",
+    "model": "Nano Headnet",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Sea to Summit",
+    "model": "Pillow",
+    "categorySuggestion": "Sleep",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Sea to Summit",
+    "model": "Poncho Tarp",
+    "categorySuggestion": "Shelter",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Sea to Summit",
+    "model": "Soap Leaves",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Sea to Summit",
+    "model": "spoon",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Sea to Summit",
+    "model": "Spork",
+    "categorySuggestion": "Kitchen & Food",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Sea to Summit",
+    "model": "Ti-Spoon",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Sea to Summit",
+    "model": "Ultra-Sil Nano 20L",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Sea to Summit",
+    "model": "X-Mug",
+    "categorySuggestion": "Kitchen & Food",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Sierra Designs",
+    "model": "Flashlight 2FL and Stakes",
+    "categorySuggestion": "Tools & Utility",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Sierra Designs",
+    "model": "Uberlight",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Six Moon Designs",
+    "model": "Lunar Solo",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Smartwool",
+    "model": "Midweight",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Snow Peak",
+    "model": "Titanium Trek 700 Mug",
+    "categorySuggestion": "Kitchen & Food",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Soto",
+    "model": "Amicus",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Stanley",
+    "model": "2L Pot",
+    "categorySuggestion": "Kitchen & Food",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Stuff Sack",
+    "model": "for Clothing",
+    "categorySuggestion": "Tools & Utility",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Suunto",
+    "model": "Clipper",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Suunto",
+    "model": "Ranger SL",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Tarptent",
+    "model": "Notch",
+    "categorySuggestion": "Shelter",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Tarptent",
+    "model": "Sumo 1p",
+    "categorySuggestion": "Shelter",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Therm-a-Rest",
+    "model": "Neoair Uberlight",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Therm-a-Rest",
+    "model": "Neoair X-Lite",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Therm-a-Rest",
+    "model": "Neoair xLite",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Therm-a-Rest",
+    "model": "Neoair Xlite Small",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Therm-a-Rest",
+    "model": "Pad Repair Kit",
+    "categorySuggestion": "Sleep",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Therm-a-Rest",
+    "model": "Prolite",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Therm-a-Rest",
+    "model": "Sit pad",
+    "categorySuggestion": "Sleep",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Therm-a-Rest",
+    "model": "Xlite",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Therm-a-Rest",
+    "model": "Xlite NXT Reg",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Therm-a-Rest",
+    "model": "XLite NXT Regular",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Therm-a-Rest",
+    "model": "Z-Lite",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Therm-a-Rest",
+    "model": "Z-Seat",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Therm-a-Rest",
+    "model": "ZLite Sol",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Toaks",
+    "model": "550L",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Toaks",
+    "model": "600ml",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Toaks",
+    "model": "700ml+Tinfoil screen+sack",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Toaks",
+    "model": "750 mL Pot",
+    "categorySuggestion": "Kitchen & Food",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Toaks",
+    "model": "Light Titanium 700ml Pot",
+    "categorySuggestion": "Kitchen & Food",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Toaks",
+    "model": "Long Handle Spoon",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Toaks",
+    "model": "long polished spoon",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Toaks",
+    "model": "Titaium 750ML pot",
+    "categorySuggestion": "Kitchen & Food",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Toaks",
+    "model": "Titanium Spoon",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Trail Designs",
+    "model": "Esbit Kit",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "UGQ",
+    "model": "Bandit",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "UGQ",
+    "model": "Bandit 20",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "ULA",
+    "model": "CDT",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "ULA",
+    "model": "Circuit",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "ULA",
+    "model": "Ohm 2.0",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Ursack",
+    "model": "and Opsack",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Ursack",
+    "model": "regular all white",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Ursack",
+    "model": "s29",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Ursack",
+    "model": "S29.3 ALLWHITE",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Vargo",
+    "model": "base layer",
+    "categorySuggestion": "Clothing",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "Vargo",
+    "model": "trowel",
+    "categorySuggestion": "Tools & Utility",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "ZPacks",
+    "model": "10F bag",
+    "categorySuggestion": "Big Four",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "ZPacks",
+    "model": "20 Classic",
+    "categorySuggestion": "Big Four",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "ZPacks",
+    "model": "20 degree",
+    "categorySuggestion": "Big Four",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "ZPacks",
+    "model": "20 Degree Bag",
+    "categorySuggestion": "Big Four",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "ZPacks",
+    "model": "40 bag",
+    "categorySuggestion": "Big Four",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "ZPacks",
+    "model": "Altaplex Tent",
+    "categorySuggestion": "Shelter",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "ZPacks",
+    "model": "Carbon Fiber stakes",
+    "categorySuggestion": "Big Four",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "ZPacks",
+    "model": "DCF bag",
+    "categorySuggestion": "Big Four",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "ZPacks",
+    "model": "Duplex",
+    "categorySuggestion": "Big Four",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "ZPacks",
+    "model": "Hexamid Solo",
+    "categorySuggestion": "Big Four",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "ZPacks",
+    "model": "hexamid with doors",
+    "categorySuggestion": "Big Four",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "ZPacks",
+    "model": "Medium Dry Bag",
+    "categorySuggestion": "Big Four",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "ZPacks",
+    "model": "Medium Plus Dry Bag",
+    "categorySuggestion": "Big Four",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "ZPacks",
+    "model": "Pack Cover",
+    "categorySuggestion": "Big Four",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "ZPacks",
+    "model": "Plexamid",
+    "categorySuggestion": "Big Four",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "ZPacks",
+    "model": "Possum Wool Gloves",
+    "categorySuggestion": "Big Four",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "ZPacks",
+    "model": "Stake Bag",
+    "categorySuggestion": "Big Four",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "ZPacks",
+    "model": "stuff sack",
+    "categorySuggestion": "Big Four",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "ZPacks",
+    "model": "Triplex",
+    "categorySuggestion": "Big Four",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "ZPacks",
+    "model": "Vertice Rain Mitts",
+    "categorySuggestion": "Big Four",
+    "sources": ["lighterpack"]
+  },
+  {
+    "brand": "ZPacks",
+    "model": "Wallet",
+    "categorySuggestion": "Big Four",
+    "sources": ["lighterpack"]
+  }
+]
