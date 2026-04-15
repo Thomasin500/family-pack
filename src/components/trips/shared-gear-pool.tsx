@@ -61,8 +61,8 @@ export function SharedGearPool({ items, packs, tripId }: SharedGearPoolProps) {
 
       {items.length === 0 ? (
         <p className="text-sm text-muted-foreground text-center py-4">
-          No unassigned shared gear. Add items from the closet or all shared
-          items have been assigned.
+          No unassigned shared gear. Add items from the closet or all shared items have been
+          assigned.
         </p>
       ) : (
         <div className="space-y-1.5">
@@ -72,6 +72,7 @@ export function SharedGearPool({ items, packs, tripId }: SharedGearPoolProps) {
               item={item}
               packs={packs}
               onAssign={handleAssign}
+              unit={unit}
             />
           ))}
         </div>
@@ -96,10 +97,12 @@ function SharedItemRow({
   item,
   packs,
   onAssign,
+  unit,
 }: {
   item: any;
   packs: any[];
   onAssign: (itemId: string, packId: string) => void;
+  unit: "imperial" | "metric";
 }) {
   const [selectedPackId, setSelectedPackId] = useState("");
 
@@ -118,11 +121,7 @@ function SharedItemRow({
         <span className="text-xs font-mono tabular-nums text-muted-foreground shrink-0">
           {displayWeight(item.weightGrams ?? 0, unit)}
         </span>
-        <Button
-          variant="outline"
-          size="xs"
-          onClick={() => onAssign(item.id, packs[0].id)}
-        >
+        <Button variant="outline" size="xs" onClick={() => onAssign(item.id, packs[0].id)}>
           Add
         </Button>
       </div>
@@ -148,12 +147,7 @@ function SharedItemRow({
             ))}
           </SelectContent>
         </Select>
-        <Button
-          variant="outline"
-          size="xs"
-          onClick={handleAssignClick}
-          disabled={!selectedPackId}
-        >
+        <Button variant="outline" size="xs" onClick={handleAssignClick} disabled={!selectedPackId}>
           Add
         </Button>
       </div>
