@@ -304,6 +304,7 @@ export const tripPackItems = pgTable("trip_pack_item", {
   isWornOverride: boolean("is_worn_override"),
   isConsumableOverride: boolean("is_consumable_override"),
   isBorrowed: boolean("is_borrowed").default(false),
+  isChecked: boolean("is_checked").default(false),
 });
 
 export const tripPackItemsRelations = relations(tripPackItems, ({ one }) => ({

@@ -5,6 +5,7 @@ import { useItems } from "@/hooks/use-items";
 import { useCategories } from "@/hooks/use-categories";
 import { useTrip } from "@/hooks/use-trips";
 import { useAddToPack } from "@/hooks/use-trip-pack-items";
+import { useWeightUnit } from "@/components/providers/weight-unit-provider";
 import {
   Dialog,
   DialogContent,
@@ -46,6 +47,7 @@ export function AddToPackDialog({
   const { data: categories } = useCategories();
   const { data: trip } = useTrip(tripId);
   const addToPack = useAddToPack(tripId);
+  const { unit } = useWeightUnit();
 
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
@@ -197,7 +199,7 @@ export function AddToPackDialog({
                     )}
                   </span>
                   <span className="text-xs font-mono tabular-nums text-muted-foreground shrink-0">
-                    {displayWeight(item.weightGrams ?? 0, "imperial")}
+                    {displayWeight(item.weightGrams ?? 0, unit)}
                   </span>
                 </button>
               ))}

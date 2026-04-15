@@ -2,7 +2,7 @@
 
 > Use this document to brief a new Claude session on the full context of the Family Pack project. Paste this at the start of a conversation to pick up where we left off.
 
-**Last updated:** April 13, 2026
+**Last updated:** April 14, 2026
 
 ---
 
@@ -200,9 +200,15 @@ Summary stats from spreadsheet:
 | **1: Foundation** | DONE | Next.js scaffold, Drizzle schema, Docker Postgres, Neon production, Vercel deploy, Google OAuth, CI pipeline |
 | **2: Gear Closet** | DONE | Closet page with tabs, item table with inline editing, add item dialog with catalog typeahead, weight summary |
 | **3: Trip Workspace** | DONE | Trip list, new trip dialog, trip workspace with pack columns, shared gear pool, add-to-pack, weight summaries |
-| **4: Polish** | Next | Mobile responsiveness, sharing pages, dark mode polish, trip duplication |
-| **5: Tier 2** | Planned | Templates, readiness system, checklist, kits, export/import |
-| **6: Gamification** | Planned | Loadout view, pack classes, gear veterancy, weight trends, challenges |
+| **4: Core Completion** | DONE | Unit toggle (imperial/metric), checklist mode, gear history + veterancy labels, loadout view skeleton, Vitest test suite |
+| **5: Trip Experience** | Next | Drag-and-drop (dnd-kit), cut list + wishlist, what-if mode, templates, trip duplication |
+| **6: Intelligence & Gamification** | Planned | Activity tags, pack class labels, smart trip tags, readiness system, weight trends, party view |
+| **7: Polish & Completeness** | Planned | Mobile, closet search, weight display gaps, editing power, sharing pages, age-aware defaults |
+| **8: Import/Export & Kits** | Planned | LighterPack import, CSV/PDF export, reusable kits |
+| **9: Advanced Loadout & Analytics** | Planned | SVG pack overlay, person silhouette, dog variant, group view, comparison view |
+| **10: Community & Scale** | Planned | Public gallery, offline PWA, trip planning (calorie calc), gear intelligence |
+
+Full roadmap with all features: `docs/roadmap.md`
 
 ---
 
@@ -239,10 +245,11 @@ Key files:
 
 ## Current Build Status
 
-### Built and Deployed
+### Built and Deployed (Phases 1-3)
 - Full database schema (14 tables) pushed to local Docker + Neon production
 - Google OAuth authentication (login, session, user creation)
 - Household create + join + member management (including pets)
+- Invite code display + copy on dashboard
 - Gear closet with tabs (Mine/Partner/Shared), inline editing, catalog typeahead
 - Trip list with new trip creation (who's going + metadata)
 - Trip workspace with pack columns, shared gear pool, weight summaries
@@ -251,24 +258,48 @@ Key files:
 - CI pipeline (typecheck + lint)
 - Production deploy on Vercel + Neon with preview branch support
 
-### Designed but Not Yet Built
-- Trip templates and default loadouts
-- Trip readiness system (essentials checker, progress bar, contextual tips)
-- Loadout view (pack x-ray, person silhouette, group modal)
-- Gamification (pack classes, gear veterancy, weight trends, challenges)
-- Mobile responsiveness polish
-- Sharing (public read-only pages)
-- Checklist mode
-- Reusable kits
+### Built in Phase 4 (April 14, 2026 — not yet committed)
+- **Unit preference toggle** — imperial/metric switch in nav bar, persisted to DB, flows through all weight displays via `WeightUnitProvider` context. Inline editing respects unit (oz vs g). API: `GET/PATCH /api/user/preferences`
+- **Checklist mode** — Toggle on trip workspace header. Checkboxes per item, progress bar per pack ("5/22 packed"), strikethrough + dimming on checked items. Schema: `isChecked` boolean on `trip_pack_items`
+- **Gear history & veterancy** — Trip count per item via join query (`GET /api/items/history`). Veterancy labels in closet: Breaking In / Trusted / Veteran / Legendary (color-coded, with trip count tooltip). Utility: `src/lib/gear-veterancy.ts`
+- **Loadout view skeleton** — CSS grid pack-zone modal per person. Zones: Brain, Main Top/Mid/Bottom, Side Pockets, External, Worn. Category-to-zone mapping in `src/lib/pack-zones.ts`. Triggered via backpack icon on pack column header
+- **Vitest test suite** — 38 tests across 3 files: weight conversions, veterancy levels, zone mapping. `npm run test` + `npm run test:watch`
+
+### Designed / On Fast Follow List
+- Cut list + wishlist (trip-level + closet-level)
+- What-if mode (extends cut list — ghost items, swap simulation)
+- Drag-and-drop between pack columns (dnd-kit)
+- Trip templates + default loadouts (new schema needed)
+- Readiness system (Ten Essentials fuzzy matching, hybrid approach, warnings on by default)
+- Gamification Phase A (pack class labels, dog class labels, smart auto-derived trip tags)
+- Gamification Phase B (weight trend charts by season, party composition modal, carrier history)
+- Activity tags (tag picker UI, closet filter, trip activity selection — schema column exists)
+- Reusable kits (schema exists, needs API + UI)
 - CSV/PDF export, LighterPack import
-- What-if mode, trip comparison
+- What-if mode (client-side staging, swap simulation)
+
+### Not Yet Planned (remaining spec)
+- Mobile responsiveness polish
+- Closet search & filter
+- Weight display enhancements (heatmap, bar charts, budget bars, balance indicator)
+- Sharing (public read-only pages)
+- Editing power (keyboard nav, bulk actions, undo)
+- Solo trip mode
+- Age-aware defaults
+- Advanced loadout (SVG overlay, person silhouette, dog variant, group view)
+- Comparison view, trip planning (calorie calc), gear intelligence
 - Community features, offline PWA
 
 ### Known Issues / Tech Debt
-- Many `any` types in hooks and components (downgraded to warnings)
-- No drag-and-drop between packs yet (items added via dialog, not dragged)
-- No unit preference toggle (hardcoded to imperial)
+- ~43 `any` types across 9 component files (ESLint set to warn)
+- Root layout metadata still says "Create Next App" — needs title/description update
+- No favicon, web app manifest, OG meta tags
+- No error.tsx, loading.tsx, or not-found.tsx pages
+- CI pipeline skips tests and build step (only runs typecheck + lint)
+- API PATCH routes spread raw body without Zod schema validation
+- No drag-and-drop between packs yet (items added via dialog)
 - Catalog search requires pg_trgm extension enabled on Neon (may need manual setup)
+- Schema change (`isChecked` on trip_pack_items) needs `drizzle-kit push` locally before checklist works
 
 ---
 
@@ -288,19 +319,25 @@ Key files:
 |---|---|
 | `docs/spec.md` | Full product specification (~1,800 lines) |
 | `docs/context.md` | This file — session context for new Claude conversations |
+| `docs/roadmap.md` | Condensed feature roadmap with 10 phases, all spec features mapped |
 | `src/db/schema.ts` | Full Drizzle schema (14 tables, all enums, relations, type exports) |
 | `src/db/index.ts` | Dual driver connection (pg local, Neon prod) with .env.local fallback |
 | `src/lib/auth.ts` | Auth.js config (Google OAuth + Drizzle adapter) |
 | `src/lib/api-helpers.ts` | getAuthenticatedUser(), handleApiError(), ApiError class |
-| `src/lib/weight.ts` | Weight conversion utilities |
+| `src/lib/weight.ts` | Weight conversion utilities (gramsToOz, displayWeight, bodyWeightPercent) |
+| `src/lib/gear-veterancy.ts` | Veterancy level calculation + color mapping |
+| `src/lib/pack-zones.ts` | Pack zone definitions + category-to-zone mapping for loadout view |
 | `src/lib/constants.ts` | Default categories, carry limit constants |
 | `src/lib/fetch.ts` | Shared fetchApi helper for hooks |
-| `src/app/api/` | 13 API route files (household, categories, items, trips, pack items, catalog search) |
-| `src/hooks/` | 7 TanStack Query hook files (household, categories, items, trips, pack items, catalog search) |
-| `src/components/app/` | Nav bar, dashboard, household setup |
-| `src/components/closet/` | Closet page, item table, add item dialog, catalog typeahead, weight summary |
-| `src/components/trips/` | Trips page, new trip dialog, trip workspace, pack column, shared gear pool, add to pack dialog |
+| `src/app/api/` | 16 API route files (household, categories, items, items/history, trips, pack items, catalog search, user/preferences) |
+| `src/hooks/` | 9 TanStack Query hook files (household, categories, items, item-history, trips, pack items, catalog search, user-preferences) |
+| `src/components/providers/` | QueryProvider, WeightUnitProvider (React context for imperial/metric) |
+| `src/components/app/` | Nav bar (with unit toggle), dashboard, household setup |
+| `src/components/closet/` | Closet page, item table (with veterancy labels), add item dialog, catalog typeahead, weight summary |
+| `src/components/trips/` | Trips page, new trip dialog, trip workspace (with checklist toggle), pack column (with checklist + loadout button), shared gear pool, add to pack dialog, loadout modal |
+| `src/lib/__tests__/` | 3 Vitest test files (weight, gear-veterancy, pack-zones) — 38 tests |
 | `scripts/seed-catalog.ts` | Seeds 98 catalog products |
 | `scripts/seed-dev-data.ts` | Seeds dev household, users, items, categories, trip |
 | `docker-compose.yml` | Local Postgres for development |
+| `vitest.config.ts` | Vitest test configuration with @ alias |
 | `.github/workflows/ci.yml` | CI pipeline (typecheck + lint) |

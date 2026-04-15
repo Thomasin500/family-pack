@@ -7,7 +7,8 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { signOutAction } from "@/app/app/actions";
 import { cn } from "@/lib/utils";
-import { LogOut } from "lucide-react";
+import { LogOut, Scale } from "lucide-react";
+import { useWeightUnit } from "@/components/providers/weight-unit-provider";
 
 interface NavBarProps {
   user: {
@@ -26,6 +27,7 @@ const navLinks = [
 
 export function NavBar({ user }: NavBarProps) {
   const pathname = usePathname();
+  const { unit, toggle } = useWeightUnit();
 
   const initials = user.name
     ? user.name
@@ -79,6 +81,17 @@ export function NavBar({ user }: NavBarProps) {
         </div>
 
         <div className="flex items-center gap-3">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={toggle}
+            className="gap-1.5 font-mono text-xs tabular-nums"
+            title="Toggle weight units"
+          >
+            <Scale className="size-3.5" />
+            {unit === "imperial" ? "oz/lb" : "g/kg"}
+          </Button>
+
           <div className="hidden items-center gap-2 sm:flex">
             <Avatar className="size-7">
               {user.image ? (

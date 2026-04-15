@@ -1,6 +1,7 @@
 "use client";
 
 import { displayWeight } from "@/lib/weight";
+import { useWeightUnit } from "@/components/providers/weight-unit-provider";
 
 interface Item {
   id: string;
@@ -14,6 +15,7 @@ interface WeightSummaryProps {
 }
 
 export function WeightSummary({ items }: WeightSummaryProps) {
+  const { unit } = useWeightUnit();
   const baseWeight = items
     .filter((i) => !i.isWorn && !i.isConsumable)
     .reduce((sum, i) => sum + (i.weightGrams ?? 0), 0);
@@ -31,7 +33,7 @@ export function WeightSummary({ items }: WeightSummaryProps) {
         <span className="inline-block size-2.5 rounded-full bg-foreground/70" />
         <span className="text-muted-foreground">Base</span>
         <span className="font-medium">
-          {displayWeight(baseWeight, "imperial")}
+          {displayWeight(baseWeight, unit)}
         </span>
       </div>
 
@@ -41,7 +43,7 @@ export function WeightSummary({ items }: WeightSummaryProps) {
         <span className="inline-block size-2.5 rounded-full bg-blue-500" />
         <span className="text-muted-foreground">Worn</span>
         <span className="font-medium text-blue-600 dark:text-blue-400">
-          {displayWeight(wornWeight, "imperial")}
+          {displayWeight(wornWeight, unit)}
         </span>
       </div>
 
@@ -51,7 +53,7 @@ export function WeightSummary({ items }: WeightSummaryProps) {
         <span className="inline-block size-2.5 rounded-full bg-amber-500" />
         <span className="text-muted-foreground">Consumable</span>
         <span className="font-medium text-amber-600 dark:text-amber-400">
-          {displayWeight(consumableWeight, "imperial")}
+          {displayWeight(consumableWeight, unit)}
         </span>
       </div>
 
@@ -60,7 +62,7 @@ export function WeightSummary({ items }: WeightSummaryProps) {
       <div className="flex items-center gap-2">
         <span className="text-muted-foreground">Total</span>
         <span className="font-semibold">
-          {displayWeight(totalWeight, "imperial")}
+          {displayWeight(totalWeight, unit)}
         </span>
       </div>
     </div>

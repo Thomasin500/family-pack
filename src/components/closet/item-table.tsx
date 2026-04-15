@@ -13,10 +13,12 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { displayWeight } from "@/lib/weight";
+import { displayWeight, gramsToOz, ozToGrams } from "@/lib/weight";
 import { useUpdateItem, useDeleteItem } from "@/hooks/use-items";
+import { useItemHistory } from "@/hooks/use-item-history";
+import { getVeterancyLevel, getVeterancyColor } from "@/lib/gear-veterancy";
+import { useWeightUnit } from "@/components/providers/weight-unit-provider";
 import { Pencil, Trash2 } from "lucide-react";
-import { gramsToOz, ozToGrams } from "@/lib/weight";
 
 interface Item {
   id: string;
@@ -115,9 +117,11 @@ function InlineEditName({
 
 function InlineEditWeight({
   item,
+  unit,
   onSave,
 }: {
   item: Item;
+  unit: "imperial" | "metric";
   onSave: (grams: number) => void;
 }) {
   const [editing, setEditing] = useState(false);
@@ -132,7 +136,11 @@ function InlineEditWeight({
   }, [editing]);
 
   function startEditing() {
-    setEditValue(gramsToOz(item.weightGrams).toFixed(1));
+    if (unit === "metric") {
+      setEditValue(item.weightGrams.toString());
+    } else {
+      setEditValue(gramsToOz(item.weightGrams).toFixed(1));
+    }
     setEditing(true);
   }
 
@@ -140,12 +148,12 @@ function InlineEditWeight({
     setEditing(false);
     const parsed = parseFloat(editValue);
     if (!isNaN(parsed) && parsed >= 0) {
-      const newGrams = ozToGrams(parsed);
+      const newGrams = unit === "metric" ? Math.round(parsed) : ozToGrams(parsed);
       if (newGrams !== item.weightGrams) {
         onSave(newGrams);
       }
     }
-  }, [editValue, item.weightGrams, onSave]);
+  }, [editValue, item.weightGrams, onSave, unit]);
 
   if (!editing) {
     return (
@@ -154,7 +162,7 @@ function InlineEditWeight({
         className="tabular-nums hover:underline decoration-dashed underline-offset-4 cursor-text"
         onClick={startEditing}
       >
-        {displayWeight(item.weightGrams, "imperial")}
+        {displayWeight(item.weightGrams, unit)}
       </button>
     );
   }
@@ -165,7 +173,7 @@ function InlineEditWeight({
         ref={inputRef}
         className="h-7 w-16 text-sm tabular-nums"
         type="number"
-        step="0.1"
+        step={unit === "metric" ? "1" : "0.1"}
         min="0"
         value={editValue}
         onChange={(e) => setEditValue(e.target.value)}
@@ -175,7 +183,9 @@ function InlineEditWeight({
           if (e.key === "Escape") setEditing(false);
         }}
       />
-      <span className="text-xs text-muted-foreground">oz</span>
+      <span className="text-xs text-muted-foreground">
+        {unit === "metric" ? "g" : "oz"}
+      </span>
     </div>
   );
 }
@@ -183,6 +193,8 @@ function InlineEditWeight({
 export function ItemTable({ items, categories, readOnly = false }: ItemTableProps) {
   const updateItem = useUpdateItem();
   const deleteItem = useDeleteItem();
+  const { unit } = useWeightUnit();
+  const { data: itemHistory } = useItemHistory();
 
   if (items.length === 0) {
     return (
@@ -248,6 +260,8 @@ export function ItemTable({ items, categories, readOnly = false }: ItemTableProp
               items={catItems}
               subtotal={subtotal}
               readOnly={readOnly}
+              unit={unit}
+              itemHistory={itemHistory}
               onUpdateName={(id, name) =>
                 updateItem.mutate({ id, name })
               }
@@ -263,7 +277,7 @@ export function ItemTable({ items, categories, readOnly = false }: ItemTableProp
         <TableRow>
           <TableCell className="font-semibold">Total</TableCell>
           <TableCell className="font-semibold tabular-nums">
-            {displayWeight(grandTotal, "imperial")}
+            {displayWeight(grandTotal, unit)}
           </TableCell>
           <TableCell />
           {!readOnly && <TableCell />}
@@ -278,6 +292,8 @@ function CategoryGroup({
   items,
   subtotal,
   readOnly,
+  unit,
+  itemHistory,
   onUpdateName,
   onUpdateWeight,
   onDelete,
@@ -286,6 +302,8 @@ function CategoryGroup({
   items: Item[];
   subtotal: number;
   readOnly: boolean;
+  unit: "imperial" | "metric";
+  itemHistory?: Record<string, number>;
   onUpdateName: (id: string, name: string) => void;
   onUpdateWeight: (id: string, weightGrams: number) => void;
   onDelete: (id: string) => void;
@@ -308,7 +326,7 @@ function CategoryGroup({
               {category.name}
             </span>
             <span className="ml-auto text-xs tabular-nums text-muted-foreground">
-              {displayWeight(subtotal, "imperial")}
+              {displayWeight(subtotal, unit)}
             </span>
           </div>
         </TableCell>
@@ -342,28 +360,44 @@ function CategoryGroup({
             <TableCell>
               {readOnly ? (
                 <span className="tabular-nums">
-                  {displayWeight(item.weightGrams, "imperial")}
+                  {displayWeight(item.weightGrams, unit)}
                 </span>
               ) : (
                 <InlineEditWeight
                   item={item}
+                  unit={unit}
                   onSave={(grams) => onUpdateWeight(item.id, grams)}
                 />
               )}
             </TableCell>
             <TableCell>
-              <Badge
-                variant={type.variant}
-                className={
-                  type.short === "W"
-                    ? "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 border-transparent"
-                    : type.short === "C"
-                      ? "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300 border-transparent"
-                      : ""
-                }
-              >
-                {type.short}
-              </Badge>
+              <div className="flex items-center gap-1.5">
+                <Badge
+                  variant={type.variant}
+                  className={
+                    type.short === "W"
+                      ? "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 border-transparent"
+                      : type.short === "C"
+                        ? "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300 border-transparent"
+                        : ""
+                  }
+                >
+                  {type.short}
+                </Badge>
+                {itemHistory && (() => {
+                  const tripCount = itemHistory[item.id] ?? 0;
+                  const level = getVeterancyLevel(tripCount);
+                  if (level === "New") return null;
+                  return (
+                    <span
+                      className={`text-[10px] font-medium ${getVeterancyColor(level)}`}
+                      title={`${tripCount} trip${tripCount !== 1 ? "s" : ""}`}
+                    >
+                      {level}
+                    </span>
+                  );
+                })()}
+              </div>
             </TableCell>
             {!readOnly && (
               <TableCell className="text-right">

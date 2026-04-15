@@ -5,16 +5,24 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { displayWeight, bodyWeightPercent } from "@/lib/weight";
-import { X } from "lucide-react";
+import { useWeightUnit } from "@/components/providers/weight-unit-provider";
+import { useUpdatePackItem } from "@/hooks/use-trip-pack-items";
+import { Checkbox } from "@/components/ui/checkbox";
+import { LoadoutModal } from "./loadout-modal";
+import { X, Backpack } from "lucide-react";
+import { useState } from "react";
 
 interface PackColumnProps {
   pack: any;
   categories: any[];
   tripId: string;
+  checklistMode?: boolean;
 }
 
-export function PackColumn({ pack, categories, tripId }: PackColumnProps) {
+export function PackColumn({ pack, categories, tripId, checklistMode = false }: PackColumnProps) {
   const removeFromPack = useRemoveFromPack(tripId);
+  const updatePackItem = useUpdatePackItem(tripId);
+  const { unit } = useWeightUnit();
   const user = pack.user;
   const packItems: any[] = pack.packItems ?? [];
 
@@ -64,8 +72,15 @@ export function PackColumn({ pack, categories, tripId }: PackColumnProps) {
     }
   }
 
+  const [loadoutOpen, setLoadoutOpen] = useState(false);
+  const checkedCount = packItems.filter((pi: any) => pi.isChecked).length;
+
   function handleRemove(packItemId: string) {
     removeFromPack.mutate({ packId: pack.id, itemId: packItemId });
+  }
+
+  function handleToggleChecked(packItemId: string, checked: boolean) {
+    updatePackItem.mutate({ packId: pack.id, itemId: packItemId, isChecked: checked });
   }
 
   return (
@@ -84,12 +99,32 @@ export function PackColumn({ pack, categories, tripId }: PackColumnProps) {
             {user?.role}
           </p>
         </div>
-        <div className="ml-auto text-right">
+        <div className="ml-auto flex items-center gap-1.5">
+          <Button
+            variant="ghost"
+            size="icon-xs"
+            onClick={() => setLoadoutOpen(true)}
+            title="View loadout"
+          >
+            <Backpack className="size-3.5" />
+          </Button>
           <p className="text-xs text-muted-foreground">
-            {packItems.length} {packItems.length === 1 ? "item" : "items"}
+            {checklistMode
+              ? `${checkedCount}/${packItems.length} packed`
+              : `${packItems.length} ${packItems.length === 1 ? "item" : "items"}`}
           </p>
         </div>
       </div>
+      {checklistMode && packItems.length > 0 && (
+        <div className="px-4 pb-2">
+          <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
+            <div
+              className="h-full rounded-full bg-green-500 transition-all duration-300"
+              style={{ width: `${(checkedCount / packItems.length) * 100}%` }}
+            />
+          </div>
+        </div>
+      )}
 
       {/* Items by Category */}
       <div className="flex-1 overflow-y-auto px-2 py-2 space-y-1">
@@ -105,6 +140,8 @@ export function PackColumn({ pack, categories, tripId }: PackColumnProps) {
             category={category}
             items={items}
             onRemove={handleRemove}
+            checklistMode={checklistMode}
+            onToggleChecked={handleToggleChecked}
           />
         ))}
 
@@ -113,6 +150,8 @@ export function PackColumn({ pack, categories, tripId }: PackColumnProps) {
             category={{ name: "Uncategorized", color: "#9ca3af" }}
             items={uncategorized}
             onRemove={handleRemove}
+            checklistMode={checklistMode}
+            onToggleChecked={handleToggleChecked}
           />
         )}
       </div>
@@ -122,19 +161,19 @@ export function PackColumn({ pack, categories, tripId }: PackColumnProps) {
         <div className="flex justify-between text-xs">
           <span className="text-muted-foreground">Base weight</span>
           <span className="font-mono tabular-nums">
-            {displayWeight(baseWeight, "imperial")}
+            {displayWeight(baseWeight, unit)}
           </span>
         </div>
         <div className="flex justify-between text-xs">
           <span className="text-muted-foreground">Total carried</span>
           <span className="font-mono tabular-nums">
-            {displayWeight(totalCarried, "imperial")}
+            {displayWeight(totalCarried, unit)}
           </span>
         </div>
         <div className="flex justify-between text-xs font-medium">
           <span>Skin-out</span>
           <span className="font-mono tabular-nums">
-            {displayWeight(skinOut, "imperial")}
+            {displayWeight(skinOut, unit)}
           </span>
         </div>
         {user?.bodyWeightKg && user.bodyWeightKg > 0 && (
@@ -146,6 +185,12 @@ export function PackColumn({ pack, categories, tripId }: PackColumnProps) {
           </div>
         )}
       </div>
+
+      <LoadoutModal
+        open={loadoutOpen}
+        onOpenChange={setLoadoutOpen}
+        pack={pack}
+      />
     </div>
   );
 }
@@ -154,10 +199,14 @@ function CategoryGroup({
   category,
   items,
   onRemove,
+  checklistMode,
+  onToggleChecked,
 }: {
   category: any;
   items: any[];
   onRemove: (packItemId: string) => void;
+  checklistMode: boolean;
+  onToggleChecked: (packItemId: string, checked: boolean) => void;
 }) {
   return (
     <div
@@ -185,9 +234,22 @@ function CategoryGroup({
           return (
             <div
               key={pi.id}
-              className="flex items-center gap-1.5 group py-0.5 pr-1"
+              className={`flex items-center gap-1.5 group py-0.5 pr-1 ${
+                checklistMode && pi.isChecked ? "opacity-50" : ""
+              }`}
             >
-              <span className="text-sm truncate flex-1 min-w-0">
+              {checklistMode && (
+                <Checkbox
+                  checked={pi.isChecked ?? false}
+                  onCheckedChange={(checked) =>
+                    onToggleChecked(pi.id, checked === true)
+                  }
+                  className="shrink-0"
+                />
+              )}
+              <span className={`text-sm truncate flex-1 min-w-0 ${
+                checklistMode && pi.isChecked ? "line-through" : ""
+              }`}>
                 {item.name}
               </span>
               <div className="flex items-center gap-1 shrink-0">
@@ -229,7 +291,7 @@ function CategoryGroup({
                   </Badge>
                 )}
                 <span className="text-xs font-mono tabular-nums text-muted-foreground w-16 text-right">
-                  {displayWeight(weight, "imperial")}
+                  {displayWeight(weight, unit)}
                 </span>
                 <Button
                   variant="ghost"

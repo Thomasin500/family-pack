@@ -7,7 +7,9 @@ import { PackColumn } from "./pack-column";
 import { SharedGearPool } from "./shared-gear-pool";
 import { Badge } from "@/components/ui/badge";
 import { displayWeight } from "@/lib/weight";
-import { MapPin, Calendar, ArrowLeft } from "lucide-react";
+import { useWeightUnit } from "@/components/providers/weight-unit-provider";
+import { MapPin, Calendar, ArrowLeft, ClipboardCheck } from "lucide-react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
@@ -16,6 +18,8 @@ interface TripWorkspaceProps {
 }
 
 export function TripWorkspace({ tripId }: TripWorkspaceProps) {
+  const { unit } = useWeightUnit();
+  const [checklistMode, setChecklistMode] = useState(false);
   const { data: trip, isLoading: tripLoading } = useTrip(tripId);
   const { data: categories } = useCategories();
   const { data: allItems } = useItems();
@@ -104,6 +108,15 @@ export function TripWorkspace({ tripId }: TripWorkspaceProps) {
                 {trip.season}
               </Badge>
             )}
+            <Button
+              variant={checklistMode ? "default" : "outline"}
+              size="sm"
+              onClick={() => setChecklistMode(!checklistMode)}
+              className="gap-1.5 ml-auto shrink-0"
+            >
+              <ClipboardCheck className="size-3.5" />
+              <span className="hidden sm:inline">Checklist</span>
+            </Button>
           </div>
           <div className="flex items-center gap-4 ml-10 text-sm text-muted-foreground">
             {trip.location && (
@@ -135,6 +148,7 @@ export function TripWorkspace({ tripId }: TripWorkspaceProps) {
               pack={pack}
               categories={categories ?? []}
               tripId={tripId}
+              checklistMode={checklistMode}
             />
           ))}
         </div>
@@ -163,7 +177,7 @@ export function TripWorkspace({ tripId }: TripWorkspaceProps) {
               >
                 <span className="text-sm font-medium">{pw.userName}</span>
                 <span className="text-sm font-mono tabular-nums text-muted-foreground">
-                  {displayWeight(pw.totalGrams, "imperial")}
+                  {displayWeight(pw.totalGrams, unit)}
                 </span>
               </div>
             ))}

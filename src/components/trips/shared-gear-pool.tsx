@@ -5,6 +5,7 @@ import { useAddToPack } from "@/hooks/use-trip-pack-items";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { displayWeight } from "@/lib/weight";
+import { useWeightUnit } from "@/components/providers/weight-unit-provider";
 import {
   Select,
   SelectContent,
@@ -23,6 +24,7 @@ interface SharedGearPoolProps {
 
 export function SharedGearPool({ items, packs, tripId }: SharedGearPoolProps) {
   const addToPack = useAddToPack(tripId);
+  const { unit } = useWeightUnit();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogPackId, setDialogPackId] = useState<string | null>(null);
 
@@ -114,7 +116,7 @@ function SharedItemRow({
       <div className="flex items-center gap-2 py-1">
         <span className="text-sm truncate flex-1 min-w-0">{item.name}</span>
         <span className="text-xs font-mono tabular-nums text-muted-foreground shrink-0">
-          {displayWeight(item.weightGrams ?? 0, "imperial")}
+          {displayWeight(item.weightGrams ?? 0, unit)}
         </span>
         <Button
           variant="outline"
@@ -131,7 +133,7 @@ function SharedItemRow({
     <div className="flex items-center gap-2 py-1">
       <span className="text-sm truncate flex-1 min-w-0">{item.name}</span>
       <span className="text-xs font-mono tabular-nums text-muted-foreground shrink-0">
-        {displayWeight(item.weightGrams ?? 0, "imperial")}
+        {displayWeight(item.weightGrams ?? 0, unit)}
       </span>
       <div className="flex items-center gap-1 shrink-0">
         <Select value={selectedPackId} onValueChange={setSelectedPackId}>
