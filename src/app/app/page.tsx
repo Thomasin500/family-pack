@@ -11,9 +11,17 @@ export default async function AppPage() {
   const allUsers = await db.select().from(users);
 
   return (
-    <div className="mx-auto max-w-2xl p-8">
-      <h1 className="mb-4 text-2xl font-bold">Family Pack</h1>
-      <div className="mb-6 rounded-lg border p-4">
+    <div className="mx-auto max-w-2xl p-8 text-center">
+      <Image
+        src="/logo.webp"
+        alt="Family Pack"
+        width={200}
+        height={200}
+        className="mx-auto mb-6 rounded-2xl"
+        priority
+      />
+      <h1 className="mb-8 text-3xl font-bold">Family Pack</h1>
+      <div className="mb-6 rounded-lg border p-4 text-left">
         <p className="text-lg">
           Logged in as: <strong>{session.user.name}</strong>
         </p>
@@ -28,7 +36,7 @@ export default async function AppPage() {
           />
         )}
       </div>
-      <div className="mb-6 rounded-lg border p-4">
+      <div className="mb-6 rounded-lg border p-4 text-left">
         <p className="text-sm text-neutral-500">
           Users in database: {allUsers.length}
         </p>
