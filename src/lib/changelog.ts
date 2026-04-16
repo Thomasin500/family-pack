@@ -8,6 +8,19 @@ export interface ChangelogEntry {
 // Newest first.
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    at: "2026-04-16T14:45:00-06:00",
+    title: "Household settings + trip category polish",
+    items: [
+      "New Household Settings page (/app/settings/household): tune pack-class tiers (Ultralight/Lightweight/Light/Traditional cut-offs in lb), human carry % thresholds, and pet carry % thresholds. Reset to defaults any time.",
+      "Category manager relocated — still accessible from the closet too, now also from settings. Shared list of household categories shown inline.",
+      "Trip tile base-weight color scale now reads from your household settings (not hard-coded).",
+      "Trip view: every category is collapsible with a bigger, bolder header, item count + subtotal weight, and the sort menu on the right.",
+      "Gear item names no longer truncate — they wrap. Hover shows the full title too.",
+      "Item weight now sits at the far right, with the delete ✕ button to the right of the weight (appears on hover).",
+      "Dashboard has a small 'Household settings →' link below the quick actions.",
+    ],
+  },
+  {
     at: "2026-04-16T13:50:00-06:00",
     title: "Collapsed packs + trip tile weights + editable suggestions",
     items: [

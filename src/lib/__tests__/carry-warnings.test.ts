@@ -25,7 +25,7 @@ describe("getCarryWarning — adult", () => {
 
   it("includes label and color", () => {
     const warning = getCarryWarning(22, "adult");
-    expect(warning.label).toBe("Heavy");
+    expect(warning.label).toBe("Warn");
     expect(warning.color).toContain("orange");
   });
 });

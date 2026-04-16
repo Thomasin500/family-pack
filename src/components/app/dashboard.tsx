@@ -134,6 +134,14 @@ export function Dashboard() {
               </button>
             </Link>
           </div>
+          <div className="flex items-center justify-end">
+            <Link
+              href="/app/settings/household"
+              className="inline-flex items-center gap-1.5 text-xs text-outline hover:text-foreground"
+            >
+              Household settings →
+            </Link>
+          </div>
 
           {/* Add Pet Form */}
           {showPetForm && (

@@ -85,7 +85,9 @@ export function TripWorkspace({ tripId }: TripWorkspaceProps) {
     (item: any) => item.ownerType === "shared" && !itemIdsInPacks.has(item.id)
   );
 
-  // Determine grid columns based on pack count
+  // 1 pack: single centered column. 2–3: grid. 4+: horizontal scroll with
+  // fixed-width cards (3 visible on wide screens, scroll to see the rest).
+  const manyPacks = packs.length >= 4;
   const gridClass =
     packs.length === 1
       ? "grid-cols-1 max-w-2xl mx-auto"
@@ -204,19 +206,45 @@ export function TripWorkspace({ tripId }: TripWorkspaceProps) {
             <UnassignedSharedBar items={sharedItems} packs={packs} tripId={tripId} />
           </div>
         )}
-        <div className={`grid gap-8 ${gridClass}`}>
-          {packs.map((pack: any) => (
-            <ErrorBoundary key={pack.id} fallbackLabel="Pack failed to load">
-              <PackColumn
-                pack={pack}
-                categories={categories ?? []}
-                tripId={tripId}
-                checklistMode={checklistMode}
-                allPacks={packs}
-              />
-            </ErrorBoundary>
-          ))}
-        </div>
+        {manyPacks ? (
+          <div
+            className="grid grid-flow-col auto-cols-[minmax(320px,1fr)] gap-8 overflow-x-auto pb-4 -mx-6 px-6 snap-x snap-mandatory"
+            style={{ gridTemplateColumns: `repeat(${packs.length}, minmax(320px, 1fr))` }}
+          >
+            {packs.map((pack: any) => (
+              <div key={pack.id} className="snap-start min-w-0 xl:min-w-[33.333%]">
+                <ErrorBoundary fallbackLabel="Pack failed to load">
+                  <PackColumn
+                    pack={pack}
+                    categories={categories ?? []}
+                    tripId={tripId}
+                    checklistMode={checklistMode}
+                    allPacks={packs}
+                  />
+                </ErrorBoundary>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className={`grid gap-8 ${gridClass}`}>
+            {packs.map((pack: any) => (
+              <ErrorBoundary key={pack.id} fallbackLabel="Pack failed to load">
+                <PackColumn
+                  pack={pack}
+                  categories={categories ?? []}
+                  tripId={tripId}
+                  checklistMode={checklistMode}
+                  allPacks={packs}
+                />
+              </ErrorBoundary>
+            ))}
+          </div>
+        )}
+        {manyPacks && (
+          <p className="mt-2 text-[11px] text-outline text-center">
+            ← scroll to see all {packs.length} packs →
+          </p>
+        )}
       </div>
 
       <EditTripDialog open={editDialogOpen} onOpenChange={setEditDialogOpen} trip={trip} />

@@ -7,7 +7,9 @@ import { displayWeight, bodyWeightPercent } from "@/lib/weight";
 import type { DisplayUnit } from "@/lib/weight";
 import { getCarryWarning } from "@/lib/carry-warnings";
 import { useWeightUnit } from "@/components/providers/weight-unit-provider";
+import { useHousehold } from "@/hooks/use-household";
 import { useUpdatePackItem } from "@/hooks/use-trip-pack-items";
+import type { HouseholdSettings } from "@/db/schema";
 import { Checkbox } from "@/components/ui/checkbox";
 import { LoadoutModal } from "./loadout-modal";
 import { X, Backpack, ChevronDown, ChevronRight, Plus } from "lucide-react";
@@ -34,6 +36,8 @@ export function PackColumn({ pack, tripId, checklistMode = false, allPacks }: Pa
   const updatePackItem = useUpdatePackItem(tripId);
   const { unit } = useWeightUnit();
   const confirm = useConfirm();
+  const { data: householdData } = useHousehold();
+  const householdSettings = householdData?.household?.settings as HouseholdSettings | null;
   const user = pack.user;
   const packItems: any[] = pack.packItems ?? [];
 
@@ -83,7 +87,17 @@ export function PackColumn({ pack, tripId, checklistMode = false, allPacks }: Pa
   const [addDialogOpen, setAddDialogOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const [sortModes, setSortModes] = useState<Record<string, SortMode>>({});
+  const [collapsedCats, setCollapsedCats] = useState<Set<string>>(new Set());
   const checkedCount = packItems.filter((pi: any) => pi.isChecked).length;
+
+  function toggleCategoryCollapsed(catId: string) {
+    setCollapsedCats((prev) => {
+      const next = new Set(prev);
+      if (next.has(catId)) next.delete(catId);
+      else next.add(catId);
+      return next;
+    });
+  }
 
   async function handleRemove(packItemId: string, itemName: string) {
     const ok = await confirm({
@@ -120,7 +134,7 @@ export function PackColumn({ pack, tripId, checklistMode = false, allPacks }: Pa
         {user?.bodyWeightKg && user.bodyWeightKg > 0 ? (
           (() => {
             const percent = bodyWeightPercent(totalCarried, user.bodyWeightKg);
-            const warning = getCarryWarning(percent, user.role ?? "adult");
+            const warning = getCarryWarning(percent, user.role ?? "adult", householdSettings);
             return (
               <div className={`text-lg font-extrabold tabular-nums ${warning.color}`}>
                 {percent.toFixed(1)}%
@@ -270,12 +284,14 @@ export function PackColumn({ pack, tripId, checklistMode = false, allPacks }: Pa
                 unit={unit}
                 sortMode={sortModes[category.id] ?? "insertion"}
                 onChangeSort={(mode) => setSortModes((prev) => ({ ...prev, [category.id]: mode }))}
+                collapsed={collapsedCats.has(category.id)}
+                onToggleCollapsed={() => toggleCategoryCollapsed(category.id)}
               />
             ))}
 
             {uncategorized.length > 0 && (
               <CategoryGroup
-                category={{ name: "Uncategorized", color: "#9ca3af" }}
+                category={{ id: "__uncategorized", name: "Uncategorized", color: "#9ca3af" }}
                 items={uncategorized}
                 onRemove={handleRemove}
                 checklistMode={checklistMode}
@@ -285,6 +301,8 @@ export function PackColumn({ pack, tripId, checklistMode = false, allPacks }: Pa
                 onChangeSort={(mode) =>
                   setSortModes((prev) => ({ ...prev, __uncategorized: mode }))
                 }
+                collapsed={collapsedCats.has("__uncategorized")}
+                onToggleCollapsed={() => toggleCategoryCollapsed("__uncategorized")}
               />
             )}
           </div>
@@ -317,6 +335,8 @@ function CategoryGroup({
   unit,
   sortMode,
   onChangeSort,
+  collapsed,
+  onToggleCollapsed,
 }: {
   category: any;
   items: any[];
@@ -326,6 +346,8 @@ function CategoryGroup({
   unit: DisplayUnit;
   sortMode: SortMode;
   onChangeSort: (mode: SortMode) => void;
+  collapsed: boolean;
+  onToggleCollapsed: () => void;
 }) {
   // Project the trip pack item's effective fields (respecting overrides) so sort works.
   const sortable = items.map((pi: any) => ({
@@ -336,68 +358,94 @@ function CategoryGroup({
     isConsumable: pi.isConsumableOverride ?? pi.item?.isConsumable ?? false,
   }));
   const sorted = sortItems(sortable, sortMode).map((s) => s.pi);
+  const subtotal = items.reduce(
+    (sum: number, pi: any) => sum + (pi.item?.weightGrams ?? 0) * (pi.quantity ?? 1),
+    0
+  );
 
   return (
     <div
       className="rounded-lg bg-surface-low p-3 border-l-4"
       style={{ borderLeftColor: category.color ?? "#6b7280" }}
     >
-      <div className="flex items-center justify-between mb-2">
-        <p className="text-[10px] font-bold uppercase tracking-widest text-outline">
-          {category.name}
-        </p>
-        <CategorySortMenu value={sortMode} onChange={onChangeSort} />
+      <div className="mb-2 cursor-pointer select-none" onClick={onToggleCollapsed}>
+        <div className="flex items-start gap-2">
+          <span className="text-outline shrink-0 mt-0.5">
+            {collapsed ? <ChevronRight className="size-4" /> : <ChevronDown className="size-4" />}
+          </span>
+          <h3
+            className="text-sm font-extrabold uppercase tracking-wider flex-1 min-w-0 break-words leading-tight"
+            style={{ color: category.color ?? "inherit" }}
+            title={category.name}
+          >
+            {category.name}
+          </h3>
+        </div>
+        <div className="mt-1 pl-6 flex items-center gap-3">
+          <span className="text-[10px] text-outline font-mono tabular-nums shrink-0">
+            {items.length} {items.length === 1 ? "item" : "items"}
+          </span>
+          <span className="text-xs font-bold font-mono tabular-nums text-on-surface-variant shrink-0">
+            {displayWeight(subtotal, unit)}
+          </span>
+          <div onClick={(e) => e.stopPropagation()} className="shrink-0 ml-auto">
+            <CategorySortMenu value={sortMode} onChange={onChangeSort} />
+          </div>
+        </div>
       </div>
-      <div className="space-y-1">
-        {sorted.map((pi: any) => {
-          const item = pi.item;
-          if (!item) return null;
-          const isWorn = pi.isWornOverride ?? item.isWorn ?? false;
-          const isConsumable = pi.isConsumableOverride ?? item.isConsumable ?? false;
-          const isShared = item.ownerType === "shared";
-          const weight = (item.weightGrams ?? 0) * (pi.quantity ?? 1);
+      {!collapsed && (
+        <div className="space-y-1">
+          {sorted.map((pi: any) => {
+            const item = pi.item;
+            if (!item) return null;
+            const isWorn = pi.isWornOverride ?? item.isWorn ?? false;
+            const isConsumable = pi.isConsumableOverride ?? item.isConsumable ?? false;
+            const isShared = item.ownerType === "shared";
+            const weight = (item.weightGrams ?? 0) * (pi.quantity ?? 1);
 
-          return (
-            <div
-              key={pi.id}
-              className={`flex items-center gap-2 group rounded-lg p-1.5 hover:bg-surface-bright transition-colors ${
-                checklistMode && pi.isChecked ? "opacity-40" : ""
-              }`}
-            >
-              {checklistMode && (
-                <Checkbox
-                  checked={pi.isChecked ?? false}
-                  onCheckedChange={(checked) => onToggleChecked(pi.id, checked === true)}
-                  className="shrink-0"
-                />
-              )}
-              <span
-                className={`text-sm font-medium truncate flex-1 min-w-0 ${
-                  checklistMode && pi.isChecked ? "line-through" : ""
+            return (
+              <div
+                key={pi.id}
+                className={`flex items-center gap-2 group rounded-lg p-1.5 hover:bg-surface-bright transition-colors ${
+                  checklistMode && pi.isChecked ? "opacity-40" : ""
                 }`}
               >
-                {item.name}
-              </span>
-              <div className="flex items-center gap-1.5 shrink-0">
-                {isShared && <Badge variant="secondary">Shared</Badge>}
-                {isWorn && <Badge variant="default">Worn</Badge>}
-                {isConsumable && <Badge variant="outline">C</Badge>}
-                <span className="text-xs font-mono tabular-nums text-on-surface-variant w-16 text-right">
+                {checklistMode && (
+                  <Checkbox
+                    checked={pi.isChecked ?? false}
+                    onCheckedChange={(checked) => onToggleChecked(pi.id, checked === true)}
+                    className="shrink-0"
+                  />
+                )}
+                <span
+                  className={`text-sm font-medium flex-1 min-w-0 break-words ${
+                    checklistMode && pi.isChecked ? "line-through" : ""
+                  }`}
+                  title={item.name}
+                >
+                  {item.name}
+                </span>
+                <div className="flex items-center gap-1.5 shrink-0">
+                  {isShared && <Badge variant="secondary">Shared</Badge>}
+                  {isWorn && <Badge variant="default">Worn</Badge>}
+                  {isConsumable && <Badge variant="outline">C</Badge>}
+                </div>
+                <span className="text-sm font-mono tabular-nums text-on-surface-variant w-20 text-right shrink-0">
                   {displayWeight(weight, unit)}
                 </span>
                 <Button
                   variant="ghost"
                   size="icon-xs"
-                  className="opacity-0 group-hover:opacity-100 transition-opacity"
+                  className="opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
                   onClick={() => onRemove(pi.id, item.name)}
                 >
                   <X className="size-3" />
                 </Button>
               </div>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }

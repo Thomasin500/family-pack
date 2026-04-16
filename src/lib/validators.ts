@@ -10,6 +10,36 @@ export const joinHouseholdSchema = z.object({
   inviteCode: z.string().min(1, "Invite code is required"),
 });
 
+const packClassGramsSchema = z.object({
+  ultralight: z.number().int().positive(),
+  lightweight: z.number().int().positive(),
+  light: z.number().int().positive(),
+  traditional: z.number().int().positive(),
+});
+
+const humanCarryPercentSchema = z.object({
+  ok: z.number().min(0).max(100),
+  warn: z.number().min(0).max(100),
+  max: z.number().min(0).max(100),
+});
+
+const petCarryPercentSchema = z.object({
+  ok: z.number().min(0).max(100),
+  warn: z.number().min(0).max(100),
+  max: z.number().min(0).max(100),
+});
+
+export const householdSettingsSchema = z.object({
+  packClassGrams: packClassGramsSchema.optional(),
+  humanCarryPercent: humanCarryPercentSchema.optional(),
+  petCarryPercent: petCarryPercentSchema.optional(),
+});
+
+export const updateHouseholdSchema = z.object({
+  name: z.string().min(1).max(100).optional(),
+  settings: householdSettingsSchema.optional(),
+});
+
 // ── Members ──
 
 export const addMemberSchema = z.object({

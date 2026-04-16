@@ -3,10 +3,10 @@ import { auth } from "@/lib/auth";
 import { db } from "@/db";
 import { households, users, categories } from "@/db/schema";
 import { eq } from "drizzle-orm";
-import { handleApiError, ApiError } from "@/lib/api-helpers";
+import { handleApiError, ApiError, getAuthenticatedUser } from "@/lib/api-helpers";
 import { nanoid } from "nanoid";
 import { DEFAULT_CATEGORIES } from "@/lib/constants";
-import { createHouseholdSchema } from "@/lib/validators";
+import { createHouseholdSchema, updateHouseholdSchema } from "@/lib/validators";
 
 export async function GET() {
   try {
@@ -66,6 +66,24 @@ export async function POST(req: NextRequest) {
     await db.insert(categories).values(defaultCats);
 
     return NextResponse.json({ household }, { status: 201 });
+  } catch (error) {
+    return handleApiError(error);
+  }
+}
+
+export async function PATCH(req: NextRequest) {
+  try {
+    const user = await getAuthenticatedUser();
+    const body = updateHouseholdSchema.parse(await req.json());
+    if (Object.keys(body).length === 0) throw new ApiError(400, "No fields to update");
+
+    const [updated] = await db
+      .update(households)
+      .set(body)
+      .where(eq(households.id, user.householdId!))
+      .returning();
+
+    return NextResponse.json(updated);
   } catch (error) {
     return handleApiError(error);
   }

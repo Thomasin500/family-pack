@@ -26,6 +26,21 @@ export function useCreateHousehold() {
   });
 }
 
+export function useUpdateHousehold() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: { name?: string; settings?: unknown }) =>
+      fetchApi("/api/household", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["household"] });
+    },
+  });
+}
+
 export function useJoinHousehold() {
   const queryClient = useQueryClient();
   return useMutation({

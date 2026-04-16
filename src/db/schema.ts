@@ -7,6 +7,7 @@ import {
   integer,
   boolean,
   date,
+  jsonb,
   primaryKey,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
@@ -23,10 +24,34 @@ export const catalogSourceEnum = pgEnum("catalog_source", ["seed", "community"])
 
 // ── Household ──
 
+/**
+ * Per-household customizable weight thresholds. All numbers are **grams**
+ * except `*CarryPercent` which are percent of body weight (0-100).
+ */
+export interface HouseholdSettings {
+  packClassGrams?: {
+    ultralight: number; // base weight < this = Ultralight
+    lightweight: number; // < this = Lightweight (else continue)
+    light: number; // < this = Light
+    traditional: number; // < this = Traditional, >= this = Heavy
+  };
+  humanCarryPercent?: {
+    ok: number; // Comfortable below this %
+    warn: number; // OK below this %
+    max: number; // Above this % = Overloaded
+  };
+  petCarryPercent?: {
+    ok: number;
+    warn: number;
+    max: number; // anything above = overloaded
+  };
+}
+
 export const households = pgTable("household", {
   id: uuid("id").defaultRandom().primaryKey(),
   name: text("name").notNull(),
   inviteCode: text("invite_code").notNull().unique(),
+  settings: jsonb("settings").$type<HouseholdSettings>(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 

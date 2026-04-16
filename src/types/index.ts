@@ -1,10 +1,22 @@
 // Shared TypeScript types matching the Drizzle schema.
 // Used by hooks and components for type safety.
 
+export interface HouseholdSettings {
+  packClassGrams?: {
+    ultralight: number;
+    lightweight: number;
+    light: number;
+    traditional: number;
+  };
+  humanCarryPercent?: { ok: number; warn: number; max: number };
+  petCarryPercent?: { ok: number; warn: number; max: number };
+}
+
 export interface Household {
   id: string;
   name: string;
   inviteCode: string;
+  settings: HouseholdSettings | null;
   createdAt: string;
 }
 
