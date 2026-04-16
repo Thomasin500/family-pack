@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/select";
 import { MapPin, Calendar, Users, Plus, Copy, Trash2, Search } from "lucide-react";
 import { toast } from "sonner";
+import { useConfirm } from "@/components/providers/confirm-provider";
 
 export function TripsPage() {
   const { data: trips, isLoading } = useTrips();
@@ -25,6 +26,7 @@ export function TripsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState<string>("newest");
   const router = useRouter();
+  const confirm = useConfirm();
 
   function handleDuplicate(e: React.MouseEvent, tripId: string) {
     e.stopPropagation();
@@ -36,16 +38,16 @@ export function TripsPage() {
     });
   }
 
-  function handleDelete(e: React.MouseEvent, tripId: string, tripName: string) {
+  async function handleDelete(e: React.MouseEvent, tripId: string, tripName: string) {
     e.stopPropagation();
-    toast(`Delete "${tripName}"?`, {
-      action: {
-        label: "Delete",
-        onClick: () =>
-          deleteTrip.mutate(tripId, { onSuccess: () => toast.success("Trip deleted") }),
-      },
-      cancel: { label: "Cancel", onClick: () => {} },
+    const ok = await confirm({
+      title: `Delete "${tripName}"?`,
+      description:
+        "The trip and all of its pack assignments will be removed. This can't be undone.",
+      confirmLabel: "Delete Trip",
+      destructive: true,
     });
+    if (ok) deleteTrip.mutate(tripId, { onSuccess: () => toast.success("Trip deleted") });
   }
 
   if (isLoading) {

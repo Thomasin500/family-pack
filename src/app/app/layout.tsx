@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import QueryProvider from "@/components/providers/query-provider";
 import { WeightUnitProvider } from "@/components/providers/weight-unit-provider";
+import { ConfirmProvider } from "@/components/providers/confirm-provider";
 import { NavBar } from "@/components/app/nav-bar";
 import { ChangelogFooter } from "@/components/app/changelog-footer";
 
@@ -18,11 +19,13 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   return (
     <QueryProvider>
       <WeightUnitProvider>
-        <div className="min-h-screen bg-background flex flex-col">
-          <NavBar user={user} />
-          <main className="flex-1">{children}</main>
-          <ChangelogFooter />
-        </div>
+        <ConfirmProvider>
+          <div className="min-h-screen bg-background flex flex-col">
+            <NavBar user={user} />
+            <main className="flex-1">{children}</main>
+            <ChangelogFooter />
+          </div>
+        </ConfirmProvider>
       </WeightUnitProvider>
     </QueryProvider>
   );

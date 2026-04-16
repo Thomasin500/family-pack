@@ -10,6 +10,7 @@ import {
 } from "@/hooks/use-household";
 import { useUpdateProfile } from "@/hooks/use-user-preferences";
 import { useWeightUnit } from "@/components/providers/weight-unit-provider";
+import { useConfirm } from "@/components/providers/confirm-provider";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -23,6 +24,7 @@ export function Dashboard() {
   const deleteMember = useDeleteMember();
   const updateProfile = useUpdateProfile();
   const { unit } = useWeightUnit();
+  const confirm = useConfirm();
 
   const [showPetForm, setShowPetForm] = useState(false);
   const [petName, setPetName] = useState("");
@@ -212,14 +214,15 @@ export function Dashboard() {
                       { onSuccess: () => toast.success("Updated") }
                     );
                   }}
-                  onDeleteMember={() => {
-                    toast(`Remove ${member.name}?`, {
-                      action: {
-                        label: "Remove",
-                        onClick: () => deleteMember.mutate(member.id),
-                      },
-                      cancel: { label: "Cancel", onClick: () => {} },
+                  onDeleteMember={async () => {
+                    const ok = await confirm({
+                      title: `Remove ${member.name}?`,
+                      description:
+                        "They'll no longer be part of the household. Their gear and trip memberships will also be removed.",
+                      confirmLabel: "Remove",
+                      destructive: true,
                     });
+                    if (ok) deleteMember.mutate(member.id);
                   }}
                 />
               ))}

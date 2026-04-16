@@ -18,7 +18,7 @@ const AddToPackDialog = dynamic(
   { ssr: false }
 );
 import { useState } from "react";
-import { toast } from "sonner";
+import { useConfirm } from "@/components/providers/confirm-provider";
 
 interface PackColumnProps {
   pack: any;
@@ -32,6 +32,7 @@ export function PackColumn({ pack, tripId, checklistMode = false, allPacks }: Pa
   const removeFromPack = useRemoveFromPack(tripId);
   const updatePackItem = useUpdatePackItem(tripId);
   const { unit } = useWeightUnit();
+  const confirm = useConfirm();
   const user = pack.user;
   const packItems: any[] = pack.packItems ?? [];
 
@@ -82,14 +83,14 @@ export function PackColumn({ pack, tripId, checklistMode = false, allPacks }: Pa
   const [collapsed, setCollapsed] = useState(false);
   const checkedCount = packItems.filter((pi: any) => pi.isChecked).length;
 
-  function handleRemove(packItemId: string, itemName: string) {
-    toast(`Remove "${itemName}" from pack?`, {
-      action: {
-        label: "Remove",
-        onClick: () => removeFromPack.mutate({ packId: pack.id, itemId: packItemId }),
-      },
-      cancel: { label: "Cancel", onClick: () => {} },
+  async function handleRemove(packItemId: string, itemName: string) {
+    const ok = await confirm({
+      title: `Remove "${itemName}" from pack?`,
+      description: "The item stays in your closet — it's just removed from this trip.",
+      confirmLabel: "Remove",
+      destructive: true,
     });
+    if (ok) removeFromPack.mutate({ packId: pack.id, itemId: packItemId });
   }
 
   function handleToggleChecked(packItemId: string, checked: boolean) {

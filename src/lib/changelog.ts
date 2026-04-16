@@ -8,6 +8,15 @@ export interface ChangelogEntry {
 export const CHANGELOG: ChangelogEntry[] = [
   {
     date: "2026-04-16",
+    title: "Confirm dialogs",
+    items: [
+      "Delete and remove prompts are now centered modals with a dimmed backdrop — easier to see and harder to miss-click.",
+      "Covers item delete, category delete, trip delete, remove-from-pack, and trip-member removal.",
+      "Success toasts (saved, duplicated, etc.) stay small in the corner.",
+    ],
+  },
+  {
+    date: "2026-04-16",
     title: "Closet polish pass",
     items: [
       "Saving a new item as Shared from a person's tab now works.",

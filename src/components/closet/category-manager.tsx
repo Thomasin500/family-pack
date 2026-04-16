@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Plus, Pencil, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
+import { useConfirm } from "@/components/providers/confirm-provider";
 
 const PRESET_COLORS = [
   "#ef4444",
@@ -39,6 +40,7 @@ export function CategoryManager({ open, onOpenChange, categories, items }: Categ
   const createCategory = useCreateCategory();
   const updateCategory = useUpdateCategory();
   const deleteCategory = useDeleteCategory();
+  const confirm = useConfirm();
 
   const [newName, setNewName] = useState("");
   const [newColor, setNewColor] = useState(PRESET_COLORS[5]);
@@ -85,34 +87,39 @@ export function CategoryManager({ open, onOpenChange, categories, items }: Categ
     );
   }
 
-  function handleDelete(cat: Category) {
+  async function handleDelete(cat: Category) {
     const count = getItemCount(cat.id);
     if (count === 0) {
-      deleteCategory.mutate({ id: cat.id }, { onSuccess: () => toast.success("Deleted") });
-    } else {
-      const otherCats = categories.filter((c) => c.id !== cat.id);
-      if (otherCats.length === 0) {
-        toast.error(
-          `Cannot delete "${cat.name}" — it has ${count} items and there are no other categories to move them to.`
-        );
-        return;
-      }
-      toast(`"${cat.name}" has ${count} item(s). Move them to another category?`, {
-        duration: 10000,
-        action: {
-          label: `Move to "${otherCats[0].name}"`,
-          onClick: () => {
-            deleteCategory.mutate(
-              { id: cat.id, force: true, moveTo: otherCats[0].id },
-              {
-                onSuccess: () =>
-                  toast.success(`Items moved to "${otherCats[0].name}" and category deleted`),
-              }
-            );
-          },
-        },
-        cancel: { label: "Cancel", onClick: () => {} },
+      const ok = await confirm({
+        title: `Delete "${cat.name}"?`,
+        description: "This category has no items and will be removed.",
+        confirmLabel: "Delete",
+        destructive: true,
       });
+      if (ok) deleteCategory.mutate({ id: cat.id }, { onSuccess: () => toast.success("Deleted") });
+      return;
+    }
+    const otherCats = categories.filter((c) => c.id !== cat.id);
+    if (otherCats.length === 0) {
+      toast.error(
+        `Cannot delete "${cat.name}" — it has ${count} items and there are no other categories to move them to.`
+      );
+      return;
+    }
+    const target = otherCats[0];
+    const ok = await confirm({
+      title: `Delete "${cat.name}"?`,
+      description: `"${cat.name}" has ${count} item${count === 1 ? "" : "s"}. They'll be moved to "${target.name}" before the category is deleted.`,
+      confirmLabel: `Move & Delete`,
+      destructive: true,
+    });
+    if (ok) {
+      deleteCategory.mutate(
+        { id: cat.id, force: true, moveTo: target.id },
+        {
+          onSuccess: () => toast.success(`Items moved to "${target.name}" and category deleted`),
+        }
+      );
     }
   }
 

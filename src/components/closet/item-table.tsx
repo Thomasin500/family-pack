@@ -37,7 +37,7 @@ import {
   ArrowUpWideNarrow,
   ArrowUpDown,
 } from "lucide-react";
-import { toast } from "sonner";
+import { useConfirm } from "@/components/providers/confirm-provider";
 import type { Item, Category } from "@/types";
 
 interface ItemTableProps {
@@ -365,6 +365,7 @@ export function ItemTable({ items, categories, readOnly = false }: ItemTableProp
   const updateCategory = useUpdateCategory();
   const { unit } = useWeightUnit();
   const { data: itemHistory } = useItemHistory();
+  const confirm = useConfirm();
   const [collapsedIds, setCollapsedIds] = useState<Set<string>>(new Set());
   const [sortModes, setSortModes] = useState<Record<string, SortMode>>({});
 
@@ -492,15 +493,15 @@ export function ItemTable({ items, categories, readOnly = false }: ItemTableProp
                   deleteItem.mutate(
                     { id, force },
                     {
-                      onError: (err: any) => {
+                      onError: async (err: any) => {
                         if (err?.tripCount) {
-                          toast(`This item is in ${err.tripCount} trip(s). Delete anyway?`, {
-                            action: {
-                              label: "Delete Anyway",
-                              onClick: () => deleteItem.mutate({ id, force: true }),
-                            },
-                            cancel: { label: "Cancel", onClick: () => {} },
+                          const ok = await confirm({
+                            title: "Delete item in use?",
+                            description: `This item is in ${err.tripCount} trip pack${err.tripCount === 1 ? "" : "s"}. Deleting will remove it from those trips.`,
+                            confirmLabel: "Delete Anyway",
+                            destructive: true,
                           });
+                          if (ok) deleteItem.mutate({ id, force: true });
                         }
                       },
                     }
@@ -585,6 +586,7 @@ function CategorySection({
   onDelete: (id: string, force?: boolean) => void;
   dragHandleProps?: Record<string, any>;
 }) {
+  const confirm = useConfirm();
   const SortIcon =
     sortMode === "name"
       ? ArrowDownAZ
@@ -743,14 +745,14 @@ function CategorySection({
                       variant="ghost"
                       size="icon-xs"
                       className="opacity-0 group-hover:opacity-100 transition-opacity"
-                      onClick={() => {
-                        toast(`Delete "${item.name}"?`, {
-                          action: {
-                            label: "Delete",
-                            onClick: () => onDelete(item.id),
-                          },
-                          cancel: { label: "Cancel", onClick: () => {} },
+                      onClick={async () => {
+                        const ok = await confirm({
+                          title: `Delete "${item.name}"?`,
+                          description: "This removes the item from your closet.",
+                          confirmLabel: "Delete",
+                          destructive: true,
                         });
+                        if (ok) onDelete(item.id);
                       }}
                       aria-label="Delete item"
                     >

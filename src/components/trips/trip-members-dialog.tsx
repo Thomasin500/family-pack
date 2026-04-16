@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Plus, X, PawPrint } from "lucide-react";
 import { toast } from "sonner";
+import { useConfirm } from "@/components/providers/confirm-provider";
 
 interface TripMembersDialogProps {
   open: boolean;
@@ -24,6 +25,7 @@ export function TripMembersDialog({
   const { data: household } = useHousehold();
   const addMember = useAddTripMember();
   const removeMember = useRemoveTripMember();
+  const confirm = useConfirm();
 
   const allMembers = household?.members ?? [];
   const onTrip = allMembers.filter((m: any) => currentMemberIds.includes(m.id));
@@ -38,20 +40,16 @@ export function TripMembersDialog({
     );
   }
 
-  function handleRemove(userId: string, name: string) {
-    toast(`Remove ${name} from trip? Their pack and items will be deleted.`, {
-      action: {
-        label: "Remove",
-        onClick: () =>
-          removeMember.mutate(
-            { tripId, userId },
-            {
-              onSuccess: () => toast.success("Member removed"),
-            }
-          ),
-      },
-      cancel: { label: "Cancel", onClick: () => {} },
+  async function handleRemove(userId: string, name: string) {
+    const ok = await confirm({
+      title: `Remove ${name} from trip?`,
+      description: "Their pack and everything in it will be deleted from this trip.",
+      confirmLabel: "Remove",
+      destructive: true,
     });
+    if (ok) {
+      removeMember.mutate({ tripId, userId }, { onSuccess: () => toast.success("Member removed") });
+    }
   }
 
   return (
