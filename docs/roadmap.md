@@ -3,7 +3,7 @@
 > Condensed roadmap covering all spec features, organized into build phases.
 > Cross-reference with `docs/spec.md` for full feature details and `docs/context.md` for project context.
 
-**Last updated:** April 15, 2026
+**Last updated:** April 16, 2026
 
 ---
 
@@ -61,18 +61,66 @@ _Built April 15, 2026. Bug fixes, UX improvements, and missing CRUD operations._
 
 ---
 
+## Phase 4.6: Beta-ready Polish — DONE
+
+_Built April 16, 2026. A long iteration pass driven by beta-testing feedback._
+
+| Feature                                  | What                                                                                                                                                                                                      | Status   |
+| ---------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
+| Confirm-dialog system                    | All destructive prompts (delete item, delete category, delete trip, remove pack item, remove trip member, delete member, leave household) now use a centered shadcn Dialog with backdrop + Cancel/Confirm | **Done** |
+| Click-outside editor dismissal           | `useClickOutside` hook — every inline editor closes when clean; shows a red-ring "Save or Cancel" warning when dirty. Applied across closet, dashboard, category manager, shared-assign chip              | **Done** |
+| Changelog drawer                         | `src/lib/changelog.ts` typed entries rendered via a bottom drawer on every `/app/*` page. Drawer header is fully clickable to toggle; Roadmap pill pinned to the far right                                | **Done** |
+| Roadmap page                             | `/app/roadmap` renders `src/lib/roadmap.ts`. Completed phases collapsed in a group, active phases expanded. Status badges + colored bullets                                                               | **Done** |
+| Roadmap suggestions                      | New `roadmap_suggestion` table, POST/GET/PATCH/DELETE API. Per-phase + general "Suggest" buttons. Inline edit (title / description / phase). Author-only content edits, household-wide delete + status    | **Done** |
+| `npm run suggestions:list` dev tool      | CLI that prints all suggestions across households with author/household/timestamp, grouped by phase. Points at local or Neon via `DATABASE_URL`                                                           | **Done** |
+| Unified trip add flow                    | Shared gear now appears in the per-pack Add Items dialog. Large shared-gear panel replaced by a thin `UnassignedSharedBar` that only shows when there's unassigned shared gear                            | **Done** |
+| Trip tile per-person weights             | Each tile shows a name column plus Base + Carry columns per pack member, with pack-class color on base. Reads from household settings                                                                     | **Done** |
+| Trip category collapse + subheader       | Each category in a pack column has a chevron, bigger/bolder header in category color, item count + subtotal + sort menu on a subline                                                                      | **Done** |
+| Item weights pushed right + delete after | Weights right-aligned; delete ✕ appears on hover to the right of the weight. Item names no longer truncate (wrap + `title` tooltip)                                                                       | **Done** |
+| Trip workspace scaling                   | 1 pack centered, 2–3 in a grid, 4+ → horizontal snap-scroll with 320px min-width cards and a "← scroll to see all N packs →" hint                                                                         | **Done** |
+| Household settings page                  | `/app/settings/household` — configurable pack-class tiers, 4-tier human carry %, 4-tier pet carry %, category manager, Leave-Household Danger Zone. Gear icon in nav goes here                            | **Done** |
+| Leave household (gear follows)           | `POST /api/household/leave` nulls `householdId` on self + managed pets/children without killing session. Personal items auto-import into the next household via member-scoped query                       | **Done** |
+| Change item owner                        | Closet inline editor has an Owner dropdown (every household member + Shared). Item hops tabs on save                                                                                                      | **Done** |
+| Sort menus (closet + trip)               | Shared `CategorySortMenu` with Type / Name A-Z / Name Z-A / Weight ↑ / Weight ↓. Type sort groups worn → carried → consumable. Sort trigger label: "Sort by: <icon>"                                      | **Done** |
+| Security + schema hygiene                | `/api/catalog/select` now authed. `/api/health` doesn't leak user count. Security headers in `next.config.ts`. All FKs have explicit `ON DELETE SET NULL`. `items.ownerId` polymorphic pattern documented | **Done** |
+| Session-invalidation helper              | `invalidateUserSessions(userId)` used when a managed member is deleted; ready for future admin-driven adult removal                                                                                       | **Done** |
+| Cursor-pointer on all buttons            | Every shadcn Button variant gets `cursor-pointer` — no more ambiguous pointer on hover                                                                                                                    | **Done** |
+
+---
+
+## Phase 4.7: Quick Wins & Polish — NEXT
+
+_Small, batchable fixes driven by beta-testing feedback. Ship these together before Phase 5 so the app feels tighter before the stats panel lands._
+
+| Feature                        | What                                                                                                                                                                                                               | Effort | Status      |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------ | ----------- |
+| Split unit prefs               | Two-axis preference: `itemsUnit` (per-item display) + `totalsUnit` (per-pack + summary display). Totals default to lb, items default to oz. Toggle cycles `itemsUnit`; totals unit set in household/user settings. | S-M    | Not started |
+| Theme toggle first-click fix   | Read theme from `localStorage("theme")` inside `useEffect` in `nav-bar.tsx` so state matches the SSR class. Removes the "click twice to toggle" bug.                                                               | XS     | Not started |
+| Lighten dark / darken light    | Pull the dark bg/surface tokens up a step, pull the light tokens down a step. Coordinate with the design-exports palette.                                                                                          | S      | Not started |
+| Pack class color parity        | Human pack-class tiers and pet carry-threshold tiers should share one color scale (same green/yellow/orange/red ramp). Drive both from a shared `tierColor(level)` helper.                                         | XS     | Not started |
+| Hide collapsed category chrome | When a trip pack category is collapsed, hide the "Sort by" menu and subtotal subline. Only show the header, item count, and collapsed total.                                                                       | XS     | Not started |
+| Collapse-all button            | Single header control on closet + trip pack columns to collapse/expand every category at once.                                                                                                                     | XS     | Not started |
+| % body weight color scale      | Add a subtle inline legend/tooltip on %bw badges showing what weights map to each color tier. Driven by household settings thresholds.                                                                             | XS     | Not started |
+| End date picker fix            | Edit trip dialog — end date field should pre-fill with end date, not start date.                                                                                                                                   | XS     | Not started |
+| Revamp pet creation            | Replace inline dashboard pet form with a proper guided dialog (name, breed/size, body weight, carry %, managed-by adult). Mirror the polish of the trip/member dialogs.                                            | S      | Not started |
+| Closet sort/reorder polish     | Make auto-sort predictable (edits don't cause items to jump out of view), surface the explicit sort menu more prominently, remember sort-order per category.                                                       | S      | Partial     |
+| Trip pack totals position (Q)  | Design question: top of card, bottom, or both? Prototype and pick. See `docs/bugs.md`.                                                                                                                             | S      | Not started |
+
+---
+
 ## Phase 5: Trip Stats & Visualization — NEXT
 
-_Make the trip workspace visually rich and data-driven. Pulled forward from Phases 6, 7, 9. This is where the app stops feeling like a spreadsheet._
+_Make the trip workspace visually rich and data-driven. Pulled forward from Phases 6, 7, 9. This is where the app stops feeling like a spreadsheet. Pack-class labels landed ahead of time in Phase 4.6 via the household settings page and the trip tile color scale._
 
-| Feature                 | What                                                                                                                                                                                                  | Effort | Status      |
-| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | ----------- |
-| Trip stats panel        | Collapsible bottom/side panel on workspace. Per-person weight breakdown, category bar charts (recharts), pack class labels, shared gear balance, total household weight. Toggle via button in header. | M      | Not started |
-| Shared weight balance   | Stacked bar showing shared vs personal vs activity gear per person. Smart summary: "Thomas carries 68% of shared gear." Delta indicator. Separates fairness from personal choice.                     | S-M    | Not started |
-| Pack class labels       | Ultralight/Lightweight/Light/Traditional/Heavy based on base weight. Dog: Trail Runner/Partner/Pack Dog/Overloaded. Displayed in stats panel + pack column headers.                                   | S      | Not started |
-| Smart trip tags         | Auto-derived from pack contents: Warm Rated, Cold Weather, Fishing, Multi-Day, Ultralight, Lightweight, Bear Safe, Dog Friendly, Minimalist, Well-Equipped. Shown on trip cards + workspace header.   | S      | Not started |
-| Trip metadata expansion | Show/edit terrain, temp range, description in workspace. New schema fields: `distanceMiles`, `durationDays`, `elevationGainFt`, `elevationHighFt`. Display in header + stats panel + edit dialog.     | S-M    | Not started |
-| Category weight charts  | Horizontal bar chart per category using recharts, per-person or stacked comparison view. Displayed in stats panel.                                                                                    | S      | Not started |
+| Feature                         | What                                                                                                                                                                                                  | Effort | Status      |
+| ------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | ----------- |
+| Trip stats panel                | Collapsible bottom/side panel on workspace. Per-person weight breakdown, category bar charts (recharts), pack class labels, shared gear balance, total household weight. Toggle via button in header. | M      | Not started |
+| Shared weight balance           | Stacked bar showing shared vs personal vs activity gear per person. Smart summary: "Thomas carries 68% of shared gear." Delta indicator. Separates fairness from personal choice.                     | S-M    | Not started |
+| Personal vs shared % (per pack) | Each pack card shows a small inline breakdown: "72% personal, 28% shared" (or similar). Visible at-a-glance without opening the stats panel. Counterpart to the group-level balance view above.       | S      | Not started |
+| Pack class labels (UI)          | Visible labels (Ultralight / Lightweight / Light / Traditional / Heavy) on pack column headers. Thresholds already configurable per-household via `/app/settings/household`.                          | S      | Partial     |
+| Smart trip tags                 | Auto-derived from pack contents: Warm Rated, Cold Weather, Fishing, Multi-Day, Ultralight, Lightweight, Bear Safe, Dog Friendly, Minimalist, Well-Equipped. Shown on trip cards + workspace header.   | S      | Not started |
+| Trip metadata expansion         | Show/edit terrain, temp range, description in workspace. New schema fields: `distanceMiles`, `durationDays`, `elevationGainFt`, `elevationHighFt`. Display in header + stats panel + edit dialog.     | S-M    | Not started |
+| Category weight charts          | Horizontal bar chart per category using recharts, per-person or stacked comparison view. Displayed in stats panel.                                                                                    | S      | Not started |
 
 ### Pack Class Labels
 
@@ -164,6 +212,19 @@ _Pay down debt before scaling further. Core tech debt completed April 15, 2026._
 
 ---
 
+## Phase 8.5: Location & Weather
+
+_Tie trips to real places so we can layer in external data (starting with weather)._
+
+| Feature                  | What                                                                                                                                                                                                  | Effort | Status      |
+| ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | ----------- |
+| Geocoded trip location   | Replace freeform location text with a typeahead backed by a geocoding API (Nominatim / Mapbox / Google). Store `lat`, `lng`, `placeId`, `displayName`. Keep freeform as fallback.                     | M      | Not started |
+| Weather forecast panel   | For trips within forecast window (0-14 days), show daily forecast (high/low/precip/wind) for the trip location on the workspace header and share page. Use NOAA / Open-Meteo (free, no key needed).   | M      | Not started |
+| Seasonal climate hint    | For trips beyond forecast window, show 30-year climate normals (typical high/low/precip for that place and month). Drives readiness warnings (e.g., "below freezing expected — no insulation layer"). | S-M    | Not started |
+| Weather-driven readiness | Feed forecast into the readiness system — missing rain gear when precip forecast, missing insulation below threshold temps, etc.                                                                      | S      | Not started |
+
+---
+
 ## Phase 9: Intelligence & Readiness
 
 _The features that make the app feel smart._
@@ -193,16 +254,19 @@ _The features that make the app feel smart._
 
 _Tier 4. Only when the core is rock solid._
 
-| Feature                 | What                                                              | Effort | Status      |
-| ----------------------- | ----------------------------------------------------------------- | ------ | ----------- |
-| Public trip gallery     | Browse by trail/conditions/base weight                            | L      | Not started |
-| Fork/remix public lists | Copy community lists into your closet                             | M      | Not started |
-| Offline PWA             | Service worker, offline checklist, installable                    | L      | Not started |
-| Trip planning           | Calorie calc (Pandolf equation), water planning, macros           | M      | Not started |
-| Gear intelligence       | Lighter alternatives, weight optimization tips, community weights | M-L    | Not started |
-| Image upload            | Gear photos via Vercel Blob                                       | S-M    | Not started |
-| Gear condition tracking | Lifespan, wear tracking                                           | S      | Not started |
-| Cost tracking           | Gear investment per category, over time                           | S      | Not started |
+| Feature                 | What                                                                                                                                                                | Effort | Status      |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | ----------- |
+| Public trip gallery     | Browse by trail/conditions/base weight                                                                                                                              | L      | Not started |
+| Fork/remix public lists | Copy community lists into your closet                                                                                                                               | M      | Not started |
+| Offline PWA             | Service worker, offline checklist, installable                                                                                                                      | L      | Not started |
+| Trip planning           | Calorie calc (Pandolf equation), water planning, macros                                                                                                             | M      | Not started |
+| Food in the closet      | Resolve design Q in `docs/bugs.md` — decide whether food lives in closet, trip-only, or a separate pantry. Build the model.                                         | M      | Not started |
+| Water weight tracking   | Trip-specific water volume entries (separate from closet containers). Filled-container total rolls into carried weight.                                             | S-M    | Not started |
+| Food weight guessamator | Quick estimator: duration + calories/day + packaging → estimated food weight. Adds a single "Estimated food" line item to trip without needing a full meal library. | S      | Not started |
+| Gear intelligence       | Lighter alternatives, weight optimization tips, community weights                                                                                                   | M-L    | Not started |
+| Image upload            | Gear photos via Vercel Blob                                                                                                                                         | S-M    | Not started |
+| Gear condition tracking | Lifespan, wear tracking                                                                                                                                             | S      | Not started |
+| Cost tracking           | Gear investment per category, over time                                                                                                                             | S      | Not started |
 
 ---
 
@@ -241,17 +305,18 @@ _Features pushed out of the near-term plan. Still in spec, revisit when the need
 | **1-4** | Foundation through core    | ~30      | ~30/140 (21%) — **DONE** |
 | **4.5** | Quick wins + fixes         | ~20      | ~50 (36%) — **DONE**     |
 | **8**   | Tech debt (core)           | 5        | ~55 (39%) — **DONE**     |
-| **5**   | Trip stats & visualization | 6        | ~61 (44%)                |
-| **6**   | Party view & loadout       | 5        | ~66 (47%)                |
-| **7**   | Drag-and-drop + cut list   | 4        | ~70 (50%)                |
-| **8b**  | Polish (mobile, sharing)   | 3        | ~73 (52%)                |
-| **9**   | Intelligence & readiness   | 4        | ~77 (55%)                |
-| **10**  | Import/export + advanced   | 5        | ~82 (59%)                |
-| **11**  | Community & scale          | 8        | ~90 (64%)                |
+| **4.6** | Beta-ready polish          | ~18      | ~73 (52%) — **DONE**     |
+| **5**   | Trip stats & visualization | 6        | ~79 (56%)                |
+| **6**   | Party view & loadout       | 5        | ~84 (60%)                |
+| **7**   | Drag-and-drop + cut list   | 4        | ~88 (63%)                |
+| **8b**  | Polish (mobile, sharing)   | 3        | ~91 (65%)                |
+| **9**   | Intelligence & readiness   | 4        | ~95 (68%)                |
+| **10**  | Import/export + advanced   | 5        | ~100 (71%)               |
+| **11**  | Community & scale          | 8        | ~108 (77%)               |
 
-Phase 8 core tech debt (Zod, types, error boundaries, favicon, backups) completed April 15. Remaining Phase 8 items (mobile, sharing, profile UI) deferred to 8b after the fun stuff.
+Phase 4.6 (beta-ready polish) shipped April 16 — household settings, roadmap page + suggestions, unified trip flow, collapsible categories, click-outside editors, confirm dialogs, trip workspace scroll, security headers + schema hygiene, and more.
 
-Phases 5-6 are where the app becomes visually distinctive — stats panels, weight balance, party view, pack class labels. These are the features no competitor has. Phase 7 adds the drag-and-drop polish.
+Phases 5-6 are where the app becomes visually distinctive — stats panels, weight balance, party view, pack class labels. Some pack-class UI landed in 4.6 already via household settings.
 
 ---
 

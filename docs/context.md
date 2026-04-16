@@ -2,7 +2,7 @@
 
 > Use this document to brief a new Claude session on the full context of the Family Pack project. Paste this at the start of a conversation to pick up where we left off.
 
-**Last updated:** April 15, 2026
+**Last updated:** April 16, 2026
 
 ---
 
@@ -290,20 +290,48 @@ Key files:
 - **Custom favicon** — Backpack logo as favicon (16/32/48px), apple-touch-icon (180px), PWA icons (192/512px). Logo in nav bar.
 - **Database backups** — GitHub Actions workflow runs `pg_dump` every 4 hours, stores gzipped artifacts with 30-day retention. Manual trigger available.
 
+### Built in Phase 4.6: Beta-ready Polish (April 16, 2026)
+
+A long iteration pass on UX + self-service features so the app is ready to hand to beta testers. ~18 shipped items:
+
+- **Confirm-dialog system** — `src/components/providers/confirm-provider.tsx` with `useConfirm()`. All destructive prompts (delete item, delete category, delete trip, remove pack item, remove trip member, delete managed member, leave household) use a centered shadcn Dialog with backdrop. Everyday success toasts stay small/corner.
+- **Click-outside editor dismissal** — `useClickOutside` hook; every inline editor closes when clean, shows red-ring "Save or Cancel" warning when dirty. Applied to closet rows, weights, categories, dashboard weight/pet, shared-assign chip.
+- **Changelog drawer** — typed entries in `src/lib/changelog.ts`, rendered via a bottom drawer on every `/app/*` page. Drawer header is fully clickable; Roadmap pill pinned to the absolute far right of the footer via absolute positioning.
+- **Roadmap page (`/app/roadmap`)** — `src/lib/roadmap.ts` rendered as a vertical timeline. Completed phases collapse into a group at the top, active phases below. Status icons + badges.
+- **Roadmap suggestions (new DB table `roadmap_suggestion`)** — POST/GET/PATCH/DELETE routes at `/api/roadmap/suggestions`. Per-phase + general "Suggest" buttons on the roadmap page. Inline edit (title / description / phase) for authors. Household-scoped visibility. `npm run suggestions:list` CLI for dev triage across households.
+- **Unified trip add flow** — shared gear shows in the per-pack Add Items dialog; the large shared-gear panel replaced by a thin `UnassignedSharedBar` that only appears when there's unassigned shared gear.
+- **Trip tile per-person weights** — each tile shows Pack / Base / Carry columns, with pack-class color on the base weight. Reads from household settings. First-names only for compactness.
+- **Trip category subheader** — each category in a pack column has a chevron collapse, bigger/bolder name in the category color, item count + subtotal + sort menu on a separate subline. Weights right-aligned; delete ✕ on hover after the weight. Item names wrap instead of truncating.
+- **Trip workspace scaling** — 1 pack centered, 2–3 in a grid, 4+ → horizontal snap-scroll with 320px min-width cards and a "← scroll to see all N packs →" hint.
+- **Household Settings page (`/app/settings/household`)** — new. Configurable pack-class tiers (Ultralight/Lightweight/Light/Traditional cutoffs in lb), 4-tier human carry %, 4-tier pet carry %, category manager (same modal as closet), Danger Zone with Leave Household. Reached via a gear icon in the nav (replaces the old dashboard link).
+- **Leave Household** — `POST /api/household/leave` nulls `householdId` on self + managed pets/children without killing the session. User lands back on HouseholdSetup with gear intact; joining a new household auto-imports it via member-scoped query.
+- **Change item owner** — closet inline editor has an Owner dropdown (every household member + Shared). Item hops tabs on save. PATCH route now enforces shared/personal owner consistency.
+- **Sort menus** — shared `CategorySortMenu` with Type / Name A→Z / Name Z→A / Weight ↑ / Weight ↓. Default sort groups worn → carried → consumable. Trigger reads "Sort by: <icon>".
+- **Security + schema hygiene pass** — `/api/catalog/select` requires auth. `/api/health` no longer leaks user count. Security headers in `next.config.ts` (X-Frame, X-Content-Type, Referrer, Permissions, HSTS). All FKs have explicit `ON DELETE SET NULL`. `items.ownerId` polymorphic pattern documented in-schema.
+- **Session-invalidation helper** — `invalidateUserSessions(userId)` wired into the existing member DELETE path for future adult-removal flows.
+- **4-tier carry warnings** — Comfortable / OK / Warn / Overloaded for both humans and pets, driven by household settings.
+- **Cursor-pointer on all Button variants** — no more ambiguous pointer on hover.
+
 ### Next Up (Phase 5: Trip Stats & Visualization)
 
 - Trip stats collapsible panel (per-person weight breakdown, category bar charts, shared gear balance)
-- Pack class labels (Ultralight/Lightweight/Light/Traditional/Heavy)
+- Pack class labels rendered in the trip workspace (thresholds already configurable via household settings)
 - Smart auto-derived trip tags (Cold Weather, Dog Friendly, Ultralight, etc.)
 - Trip metadata expansion (distance, duration, elevation fields)
 - Category weight charts (recharts)
 
+### Schema status (as of April 16)
+
+- All schema changes pushed to local Docker + Neon prod.
+- Recent additions: `roadmap_suggestion` table; `household.settings` jsonb column; FK `ON DELETE SET NULL` on users.householdId, items.categoryId, items.catalogProductId, trips.createdByUserId, tripPackItems.ownedByUserId.
+- `drizzle-kit push` to Neon: **use the direct (non-pooled) URL**. Runtime still uses the pooled URL. After a push, if Vercel functions hit stale `relation does not exist` errors, flush the Neon cache — the serverless edge caches table metadata.
+
 ### Known Issues / Tech Debt
 
-- ~69 `any` type warnings remaining in component files (down from 83; ESLint set to warn)
-- No drag-and-drop between packs yet (items added via dialog + per-column button; dnd-kit installed)
-- Schema change (`completedAt`) needs `drizzle-kit push` on Neon prod before deploy
-- No web app manifest yet (icons are ready for it)
+- ~70 `any` type warnings remaining in component files (ESLint set to warn; non-blocking)
+- No drag-and-drop between packs yet (Phase 7 planned; dnd-kit installed)
+- No web app manifest yet (PWA icons are ready for it)
+- Mobile trip workspace (tabbed person switcher) still to-do (Phase 8b)
 - Full bug list with UX issues at `docs/bugs.md`
 
 ---

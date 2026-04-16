@@ -67,9 +67,69 @@ export const ROADMAP: RoadmapPhase[] = [
     ],
   },
   {
+    id: "phase-4-6",
+    name: "Phase 4.6 · Beta-ready Polish",
+    status: "done",
+    summary:
+      "Confirm dialogs, click-outside editors, changelog drawer, roadmap + suggestions, household settings, unified trip add flow.",
+    features: [
+      { title: "Confirm-dialog system for all destructive actions" },
+      { title: "Click-outside inline editors with dirty-state warning" },
+      { title: "Changelog drawer + /app/roadmap page" },
+      { title: "Roadmap suggestions (per-phase + general)" },
+      { title: "Household settings page (pack-class tiers, carry %, categories, leave household)" },
+      { title: "Unified trip add flow with UnassignedSharedBar" },
+      { title: "Trip tile per-person Base + Carry weights" },
+      { title: "Trip workspace scaling (1 / grid / snap-scroll)" },
+    ],
+  },
+  {
+    id: "phase-4-7",
+    name: "Phase 4.7 · Quick Wins & Polish",
+    status: "next",
+    summary:
+      "Batchable small fixes from beta feedback — unit split, theme polish, color parity, pet flow revamp.",
+    features: [
+      {
+        title: "Split unit prefs",
+        description: "Separate itemsUnit + totalsUnit so totals stay in lb while items flex",
+      },
+      {
+        title: "Theme toggle first-click fix",
+        description: "Initialize from localStorage inside useEffect to match SSR class",
+      },
+      {
+        title: "Lighten dark / darken light",
+        description: "Step the bg/surface tokens on each side to reduce glare",
+      },
+      {
+        title: "Pack-class color parity",
+        description: "Human tiers + pet carry tiers share one green→red scale",
+      },
+      {
+        title: "Hide collapsed category chrome",
+        description: "No 'Sort by' or subtotal subline when a trip category is collapsed",
+      },
+      { title: "Collapse-all button on closet + trip packs" },
+      {
+        title: "% body weight color scale legend",
+        description: "Subtle inline legend/tooltip on %bw badges",
+      },
+      { title: "End date picker pre-fills end date, not start" },
+      {
+        title: "Revamp pet creation",
+        description: "Proper guided dialog replacing the dashboard inline form",
+      },
+      {
+        title: "Closet sort/reorder polish",
+        description: "Stop items jumping out of view, remember per-category sort",
+      },
+    ],
+  },
+  {
     id: "phase-5",
     name: "Phase 5 · Trip Stats & Visualization",
-    status: "next",
+    status: "planned",
     summary:
       "Stats panel, shared-weight balance, pack class labels, smart trip tags, category charts.",
     features: [
@@ -80,6 +140,10 @@ export const ROADMAP: RoadmapPhase[] = [
       {
         title: "Shared weight balance indicator",
         description: "Who's carrying what share of shared gear",
+      },
+      {
+        title: "Personal vs shared % per pack",
+        description: "Inline badge on each pack card — '72% personal, 28% shared'",
       },
       {
         title: "Pack class labels",
@@ -128,6 +192,30 @@ export const ROADMAP: RoadmapPhase[] = [
     ],
   },
   {
+    id: "phase-8-5",
+    name: "Phase 8.5 · Location & Weather",
+    status: "planned",
+    summary: "Geocoded trip locations + forecast and climate data to drive readiness warnings.",
+    features: [
+      {
+        title: "Geocoded trip location",
+        description: "Typeahead with lat/lng/placeId, freeform fallback",
+      },
+      {
+        title: "Weather forecast panel",
+        description: "Open-Meteo / NOAA daily forecast for trips within 0–14 days",
+      },
+      {
+        title: "Seasonal climate hint",
+        description: "30-year normals for trips beyond the forecast window",
+      },
+      {
+        title: "Weather-driven readiness",
+        description: "Flag missing rain/insulation based on forecast vs gear",
+      },
+    ],
+  },
+  {
     id: "phase-9",
     name: "Phase 9 · Intelligence & Readiness",
     status: "planned",
@@ -161,6 +249,18 @@ export const ROADMAP: RoadmapPhase[] = [
       { title: "Fork / remix public lists into your closet" },
       { title: "Offline-capable PWA with checklist sync" },
       { title: "Calorie calculator (Pandolf equation) + water planning" },
+      {
+        title: "Food in the closet",
+        description: "Resolve design Q — closet, trip-only, or separate pantry",
+      },
+      {
+        title: "Water weight tracking",
+        description: "Trip-specific water volume rolls into carried weight",
+      },
+      {
+        title: "Food weight guessamator",
+        description: "Duration × calories/day × packaging → estimated food weight",
+      },
       { title: "Image uploads via Vercel Blob" },
     ],
   },
