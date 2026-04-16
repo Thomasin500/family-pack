@@ -46,9 +46,7 @@ export function NewTripDialog({ open, onOpenChange }: NewTripDialogProps) {
 
   function toggleMember(memberId: string) {
     setSelectedMembers((prev) =>
-      prev.includes(memberId)
-        ? prev.filter((id) => id !== memberId)
-        : [...prev, memberId]
+      prev.includes(memberId) ? prev.filter((id) => id !== memberId) : [...prev, memberId]
     );
   }
 
@@ -73,7 +71,7 @@ export function NewTripDialog({ open, onOpenChange }: NewTripDialogProps) {
         startDate: startDate || undefined,
         endDate: endDate || undefined,
         location: location.trim() || undefined,
-        season: season || undefined,
+        season: season && season !== "none" ? season : undefined,
         terrain: terrain.trim() || undefined,
         memberIds: selectedMembers,
       });
@@ -91,9 +89,7 @@ export function NewTripDialog({ open, onOpenChange }: NewTripDialogProps) {
       <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-md">
         <DialogHeader>
           <DialogTitle>New Trip</DialogTitle>
-          <DialogDescription>
-            Plan a backpacking trip for your household.
-          </DialogDescription>
+          <DialogDescription>Plan a backpacking trip for your household.</DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -149,6 +145,7 @@ export function NewTripDialog({ open, onOpenChange }: NewTripDialogProps) {
                   <SelectValue placeholder="Select..." />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="none">None</SelectItem>
                   <SelectItem value="spring">Spring</SelectItem>
                   <SelectItem value="summer">Summer</SelectItem>
                   <SelectItem value="fall">Fall</SelectItem>
@@ -208,27 +205,17 @@ export function NewTripDialog({ open, onOpenChange }: NewTripDialogProps) {
               </div>
             )}
             {selectedMembers.length === 0 && (
-              <p className="text-xs text-muted-foreground">
-                Select at least one member.
-              </p>
+              <p className="text-xs text-muted-foreground">Select at least one member.</p>
             )}
           </div>
 
           <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-            >
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Cancel
             </Button>
             <Button
               type="submit"
-              disabled={
-                !name.trim() ||
-                selectedMembers.length === 0 ||
-                createTrip.isPending
-              }
+              disabled={!name.trim() || selectedMembers.length === 0 || createTrip.isPending}
             >
               {createTrip.isPending ? "Creating..." : "Create Trip"}
             </Button>

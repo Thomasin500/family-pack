@@ -39,7 +39,7 @@ export function useUpdateItem() {
       await queryClient.cancelQueries({ queryKey: ["items"] });
       const previous = queryClient.getQueryData(["items"]);
       queryClient.setQueryData(["items"], (old: any[]) =>
-        old?.map((item: any) => item.id === updated.id ? { ...item, ...updated } : item)
+        old?.map((item: any) => (item.id === updated.id ? { ...item, ...updated } : item))
       );
       return { previous };
     },
@@ -55,8 +55,8 @@ export function useUpdateItem() {
 export function useDeleteItem() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) =>
-      fetchApi(`/api/items/${id}`, {
+    mutationFn: ({ id, force = false }: { id: string; force?: boolean }) =>
+      fetchApi(`/api/items/${id}${force ? "?force=true" : ""}`, {
         method: "DELETE",
       }),
     onSuccess: () => {

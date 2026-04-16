@@ -10,7 +10,8 @@ import { ItemTable } from "@/components/closet/item-table";
 import { WeightSummary } from "@/components/closet/weight-summary";
 import dynamic from "next/dynamic";
 import { Input } from "@/components/ui/input";
-import { Plus, Search } from "lucide-react";
+import { Plus, Search, Settings2 } from "lucide-react";
+import { CategoryManager } from "@/components/closet/category-manager";
 
 const AddItemDialog = dynamic(
   () => import("@/components/closet/add-item-dialog").then((m) => m.AddItemDialog),
@@ -23,6 +24,7 @@ export function ClosetPage() {
   const { data: categories, isLoading: categoriesLoading } = useCategories();
 
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [categoryManagerOpen, setCategoryManagerOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<string>("");
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -48,7 +50,7 @@ export function ClosetPage() {
     if (currentUser) {
       result.push({
         id: currentUser.id,
-        label: "Mine",
+        label: currentUser.name ?? "Mine",
         ownerType: "personal",
         ownerId: currentUser.id,
         readOnly: false,
@@ -103,8 +105,17 @@ export function ClosetPage() {
 
   return (
     <div className="mx-auto max-w-7xl px-6 py-8 pb-48">
-      <div className="mb-8">
-        <h1 className="text-4xl font-extrabold tracking-tight mb-8">Gear Closet</h1>
+      <div className="mb-8 flex items-center justify-between">
+        <h1 className="text-4xl font-extrabold tracking-tight">Gear Closet</h1>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => setCategoryManagerOpen(true)}
+          title="Manage categories"
+          className="text-outline hover:text-foreground"
+        >
+          <Settings2 className="size-5" />
+        </Button>
       </div>
 
       <Tabs value={tab} onValueChange={setActiveTab}>
@@ -184,6 +195,13 @@ export function ClosetPage() {
           }
         />
       )}
+
+      <CategoryManager
+        open={categoryManagerOpen}
+        onOpenChange={setCategoryManagerOpen}
+        categories={cats}
+        items={items}
+      />
 
       <AddItemDialog
         open={dialogOpen}

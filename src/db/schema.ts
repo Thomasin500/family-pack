@@ -208,6 +208,7 @@ export const trips = pgTable("trip", {
   tempRangeLowF: integer("temp_range_low_f"),
   tempRangeHighF: integer("temp_range_high_f"),
   isActive: boolean("is_active").default(true),
+  completedAt: timestamp("completed_at"),
   householdId: uuid("household_id")
     .references(() => households.id)
     .notNull(),

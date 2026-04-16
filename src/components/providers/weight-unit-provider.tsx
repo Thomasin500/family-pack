@@ -1,34 +1,48 @@
 "use client";
 
-import { createContext, useContext } from "react";
-import { useUserPreferences, useUpdateWeightUnit } from "@/hooks/use-user-preferences";
+import { createContext, useContext, useState } from "react";
+import type { DisplayUnit } from "@/lib/weight";
 
-type WeightUnit = "imperial" | "metric";
+const UNIT_CYCLE: DisplayUnit[] = ["oz", "lb", "g", "kg"];
+const STORAGE_KEY = "family-pack-display-unit";
+
+function getStoredUnit(): DisplayUnit {
+  if (typeof window === "undefined") return "oz";
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY) as DisplayUnit | null;
+    if (stored && UNIT_CYCLE.includes(stored)) return stored;
+  } catch {
+    // SSR or localStorage unavailable
+  }
+  return "oz";
+}
 
 interface WeightUnitContextValue {
-  unit: WeightUnit;
+  unit: DisplayUnit;
+  system: "imperial" | "metric";
   toggle: () => void;
-  isLoading: boolean;
 }
 
 const WeightUnitContext = createContext<WeightUnitContextValue>({
-  unit: "imperial",
+  unit: "oz",
+  system: "imperial",
   toggle: () => {},
-  isLoading: true,
 });
 
 export function WeightUnitProvider({ children }: { children: React.ReactNode }) {
-  const { data, isLoading } = useUserPreferences();
-  const updateUnit = useUpdateWeightUnit();
-
-  const unit: WeightUnit = data?.weightUnitPref ?? "imperial";
+  const [unit, setUnit] = useState<DisplayUnit>(getStoredUnit);
 
   function toggle() {
-    updateUnit.mutate(unit === "imperial" ? "metric" : "imperial");
+    const idx = UNIT_CYCLE.indexOf(unit);
+    const next = UNIT_CYCLE[(idx + 1) % UNIT_CYCLE.length];
+    setUnit(next);
+    localStorage.setItem(STORAGE_KEY, next);
   }
 
+  const system: "imperial" | "metric" = unit === "g" || unit === "kg" ? "metric" : "imperial";
+
   return (
-    <WeightUnitContext.Provider value={{ unit, toggle, isLoading }}>
+    <WeightUnitContext.Provider value={{ unit, system, toggle }}>
       {children}
     </WeightUnitContext.Provider>
   );

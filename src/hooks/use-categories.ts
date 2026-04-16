@@ -43,12 +43,18 @@ export function useUpdateCategory() {
 export function useDeleteCategory() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) =>
-      fetchApi(`/api/categories/${id}`, {
+    mutationFn: ({ id, force, moveTo }: { id: string; force?: boolean; moveTo?: string }) => {
+      const params = new URLSearchParams();
+      if (force) params.set("force", "true");
+      if (moveTo) params.set("moveTo", moveTo);
+      const qs = params.toString();
+      return fetchApi(`/api/categories/${id}${qs ? `?${qs}` : ""}`, {
         method: "DELETE",
-      }),
+      });
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["categories"] });
+      queryClient.invalidateQueries({ queryKey: ["items"] });
     },
   });
 }

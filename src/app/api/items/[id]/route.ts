@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
-import { items, users } from "@/db/schema";
-import { eq, and, or, inArray } from "drizzle-orm";
+import { items, users, tripPackItems } from "@/db/schema";
+import { eq, and, or, inArray, count } from "drizzle-orm";
 import { getAuthenticatedUser, handleApiError, ApiError } from "@/lib/api-helpers";
 
 function householdItemFilter(householdId: string, memberIds: string[]) {
@@ -11,10 +11,7 @@ function householdItemFilter(householdId: string, memberIds: string[]) {
   );
 }
 
-export async function PATCH(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const user = await getAuthenticatedUser();
     const { id } = await params;
@@ -41,10 +38,7 @@ export async function PATCH(
   }
 }
 
-export async function DELETE(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const user = await getAuthenticatedUser();
     const { id } = await params;
@@ -55,6 +49,27 @@ export async function DELETE(
       .from(users)
       .where(eq(users.householdId, householdId));
     const memberIds = members.map((m) => m.id);
+
+    const url = new URL(req.url);
+    const force = url.searchParams.get("force") === "true";
+
+    if (!force) {
+      const [usage] = await db
+        .select({ count: count() })
+        .from(tripPackItems)
+        .where(eq(tripPackItems.itemId, id));
+
+      if (usage.count > 0) {
+        return NextResponse.json(
+          {
+            error: "Item is in trips",
+            tripCount: usage.count,
+            message: `This item is in ${usage.count} trip pack(s). Delete anyway?`,
+          },
+          { status: 409 }
+        );
+      }
+    }
 
     const [deleted] = await db
       .delete(items)

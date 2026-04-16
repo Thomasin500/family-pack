@@ -1,0 +1,233 @@
+"use client";
+
+import { useState } from "react";
+import { useCreateCategory, useUpdateCategory, useDeleteCategory } from "@/hooks/use-categories";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Plus, Pencil, Trash2, X } from "lucide-react";
+import { toast } from "sonner";
+
+const PRESET_COLORS = [
+  "#ef4444",
+  "#f97316",
+  "#eab308",
+  "#22c55e",
+  "#14b8a6",
+  "#3b82f6",
+  "#6366f1",
+  "#a855f7",
+  "#ec4899",
+  "#6b7280",
+];
+
+interface Category {
+  id: string;
+  name: string;
+  color: string;
+  sortOrder: number;
+}
+
+interface CategoryManagerProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  categories: Category[];
+  items: any[];
+}
+
+export function CategoryManager({ open, onOpenChange, categories, items }: CategoryManagerProps) {
+  const createCategory = useCreateCategory();
+  const updateCategory = useUpdateCategory();
+  const deleteCategory = useDeleteCategory();
+
+  const [newName, setNewName] = useState("");
+  const [newColor, setNewColor] = useState(PRESET_COLORS[5]);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editName, setEditName] = useState("");
+  const [editColor, setEditColor] = useState("");
+
+  const sorted = [...categories].sort((a, b) => a.sortOrder - b.sortOrder);
+
+  function getItemCount(categoryId: string): number {
+    return items.filter((i: any) => i.categoryId === categoryId).length;
+  }
+
+  function handleCreate(e: React.FormEvent) {
+    e.preventDefault();
+    if (!newName.trim()) return;
+    createCategory.mutate(
+      { name: newName.trim(), color: newColor, sortOrder: categories.length },
+      {
+        onSuccess: () => {
+          setNewName("");
+          toast.success("Category created");
+        },
+      }
+    );
+  }
+
+  function startEdit(cat: Category) {
+    setEditingId(cat.id);
+    setEditName(cat.name);
+    setEditColor(cat.color);
+  }
+
+  function saveEdit() {
+    if (!editingId || !editName.trim()) return;
+    updateCategory.mutate(
+      { id: editingId, name: editName.trim(), color: editColor },
+      {
+        onSuccess: () => {
+          setEditingId(null);
+          toast.success("Updated");
+        },
+      }
+    );
+  }
+
+  function handleDelete(cat: Category) {
+    const count = getItemCount(cat.id);
+    if (count === 0) {
+      deleteCategory.mutate({ id: cat.id }, { onSuccess: () => toast.success("Deleted") });
+    } else {
+      const otherCats = categories.filter((c) => c.id !== cat.id);
+      if (otherCats.length === 0) {
+        toast.error(
+          `Cannot delete "${cat.name}" — it has ${count} items and there are no other categories to move them to.`
+        );
+        return;
+      }
+      toast(`"${cat.name}" has ${count} item(s). Move them to another category?`, {
+        duration: 10000,
+        action: {
+          label: `Move to "${otherCats[0].name}"`,
+          onClick: () => {
+            deleteCategory.mutate(
+              { id: cat.id, force: true, moveTo: otherCats[0].id },
+              {
+                onSuccess: () =>
+                  toast.success(`Items moved to "${otherCats[0].name}" and category deleted`),
+              }
+            );
+          },
+        },
+        cancel: { label: "Cancel", onClick: () => {} },
+      });
+    }
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>Manage Categories</DialogTitle>
+        </DialogHeader>
+
+        <div className="space-y-2">
+          {sorted.map((cat) => {
+            const count = getItemCount(cat.id);
+            const isEditing = editingId === cat.id;
+
+            if (isEditing) {
+              return (
+                <div key={cat.id} className="flex items-center gap-2 rounded-lg bg-surface-low p-2">
+                  <div className="flex gap-1">
+                    {PRESET_COLORS.map((c) => (
+                      <button
+                        key={c}
+                        type="button"
+                        className={`size-4 rounded-full border-2 ${editColor === c ? "border-foreground" : "border-transparent"}`}
+                        style={{ backgroundColor: c }}
+                        onClick={() => setEditColor(c)}
+                      />
+                    ))}
+                  </div>
+                  <Input
+                    className="h-7 text-sm flex-1"
+                    value={editName}
+                    onChange={(e) => setEditName(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") saveEdit();
+                      if (e.key === "Escape") setEditingId(null);
+                    }}
+                    autoFocus
+                  />
+                  <Button size="sm" onClick={saveEdit} disabled={!editName.trim()}>
+                    Save
+                  </Button>
+                  <Button variant="ghost" size="icon-xs" onClick={() => setEditingId(null)}>
+                    <X className="size-3" />
+                  </Button>
+                </div>
+              );
+            }
+
+            return (
+              <div
+                key={cat.id}
+                className="group flex items-center gap-3 rounded-lg bg-surface-low p-3"
+              >
+                <div
+                  className="size-4 rounded-full shrink-0"
+                  style={{ backgroundColor: cat.color }}
+                />
+                <div className="flex-1 min-w-0">
+                  <span className="text-sm font-bold">{cat.name}</span>
+                  <span className="text-xs text-outline ml-2">
+                    {count} {count === 1 ? "item" : "items"}
+                  </span>
+                </div>
+                <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <Button
+                    variant="ghost"
+                    size="icon-xs"
+                    onClick={() => startEdit(cat)}
+                    title="Edit"
+                  >
+                    <Pencil className="size-3" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon-xs"
+                    onClick={() => handleDelete(cat)}
+                    title="Delete"
+                    className="text-destructive"
+                  >
+                    <Trash2 className="size-3" />
+                  </Button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        <form
+          onSubmit={handleCreate}
+          className="flex items-center gap-2 pt-4 border-t border-outline-variant/10"
+        >
+          <div className="flex gap-1 shrink-0">
+            {PRESET_COLORS.slice(0, 5).map((c) => (
+              <button
+                key={c}
+                type="button"
+                className={`size-4 rounded-full border-2 ${newColor === c ? "border-foreground" : "border-transparent"}`}
+                style={{ backgroundColor: c }}
+                onClick={() => setNewColor(c)}
+              />
+            ))}
+          </div>
+          <Input
+            className="h-7 text-sm flex-1"
+            placeholder="New category..."
+            value={newName}
+            onChange={(e) => setNewName(e.target.value)}
+          />
+          <Button type="submit" size="sm" disabled={!newName.trim() || createCategory.isPending}>
+            <Plus className="size-3" />
+            Add
+          </Button>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+}

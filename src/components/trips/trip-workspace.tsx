@@ -9,12 +9,13 @@ import dynamic from "next/dynamic";
 const SharedGearPool = dynamic(() => import("./shared-gear-pool").then((m) => m.SharedGearPool), {
   ssr: false,
 });
-import { Badge } from "@/components/ui/badge";
-import { displayWeight } from "@/lib/weight";
-import { useWeightUnit } from "@/components/providers/weight-unit-provider";
-import { MapPin, Calendar, ArrowLeft, ClipboardCheck } from "lucide-react";
-import { useState } from "react";
+import { useUpdateTrip } from "@/hooks/use-trips";
+import { MapPin, Calendar, Pencil, CheckCircle2, RotateCcw, Users } from "lucide-react";
+import { useState, useCallback } from "react";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { EditTripDialog } from "./edit-trip-dialog";
+import { TripMembersDialog } from "./trip-members-dialog";
 import Link from "next/link";
 
 interface TripWorkspaceProps {
@@ -22,8 +23,23 @@ interface TripWorkspaceProps {
 }
 
 export function TripWorkspace({ tripId }: TripWorkspaceProps) {
-  const { unit } = useWeightUnit();
-  const [checklistMode, setChecklistMode] = useState(false);
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+  const checklistMode = searchParams.get("checklist") === "true";
+  const toggleChecklist = useCallback(() => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (checklistMode) {
+      params.delete("checklist");
+    } else {
+      params.set("checklist", "true");
+    }
+    const qs = params.toString();
+    router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
+  }, [checklistMode, searchParams, router, pathname]);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [membersDialogOpen, setMembersDialogOpen] = useState(false);
+  const updateTrip = useUpdateTrip();
   const { data: trip, isLoading: tripLoading } = useTrip(tripId);
   const { data: categories } = useCategories();
   const { data: allItems } = useItems();
@@ -67,22 +83,6 @@ export function TripWorkspace({ tripId }: TripWorkspaceProps) {
     (item: any) => item.ownerType === "shared" && !itemIdsInPacks.has(item.id)
   );
 
-  // Calculate per-pack weight totals for the summary bar
-  const packWeights = packs.map((pack: any) => {
-    const items = pack.packItems ?? [];
-    let total = 0;
-    for (const pi of items) {
-      const w = pi.item?.weightGrams ?? 0;
-      const qty = pi.quantity ?? 1;
-      total += w * qty;
-    }
-    return {
-      userId: pack.userId,
-      userName: pack.user?.name ?? "Unknown",
-      totalGrams: total,
-    };
-  });
-
   // Determine grid columns based on pack count
   const gridClass =
     packs.length === 1
@@ -105,7 +105,25 @@ export function TripWorkspace({ tripId }: TripWorkspaceProps) {
                 <span>&rsaquo;</span>
                 <span className="text-foreground">{trip.name}</span>
               </nav>
-              <h1 className="text-3xl font-extrabold tracking-tight">{trip.name}</h1>
+              <div className="flex items-center gap-2">
+                <h1 className="text-3xl font-extrabold tracking-tight">{trip.name}</h1>
+                <Button
+                  variant="ghost"
+                  size="icon-xs"
+                  onClick={() => setEditDialogOpen(true)}
+                  aria-label="Edit trip details"
+                >
+                  <Pencil className="size-4 text-outline" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon-xs"
+                  onClick={() => setMembersDialogOpen(true)}
+                  aria-label="Manage trip members"
+                >
+                  <Users className="size-4 text-outline" />
+                </Button>
+              </div>
               <div className="flex items-center gap-4 mt-1 text-sm text-outline">
                 {trip.location && (
                   <span className="flex items-center gap-1">
@@ -128,7 +146,7 @@ export function TripWorkspace({ tripId }: TripWorkspaceProps) {
                   Checklist
                 </span>
                 <button
-                  onClick={() => setChecklistMode(!checklistMode)}
+                  onClick={toggleChecklist}
                   className={`relative w-10 h-5 rounded-full transition-colors ${
                     checklistMode ? "bg-primary" : "bg-surface-highest"
                   }`}
@@ -140,10 +158,42 @@ export function TripWorkspace({ tripId }: TripWorkspaceProps) {
                   />
                 </button>
               </div>
+              {trip.completedAt ? (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => updateTrip.mutate({ id: trip.id, completedAt: null })}
+                  className="text-xs"
+                >
+                  <RotateCcw className="size-3.5" />
+                  Reopen
+                </Button>
+              ) : (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() =>
+                    updateTrip.mutate({ id: trip.id, completedAt: new Date().toISOString() })
+                  }
+                  className="text-xs"
+                >
+                  <CheckCircle2 className="size-3.5" />
+                  Complete
+                </Button>
+              )}
             </div>
           </div>
         </div>
       </div>
+
+      {/* Completed banner */}
+      {trip.completedAt && (
+        <div className="bg-primary/10 border-b border-primary/20 px-6 py-2 text-center">
+          <span className="text-sm font-bold text-primary">
+            Trip completed {formatDate(trip.completedAt)}
+          </span>
+        </div>
+      )}
 
       {/* Pack Columns */}
       <div className="flex-1 px-6 py-8 max-w-7xl mx-auto">
@@ -155,6 +205,7 @@ export function TripWorkspace({ tripId }: TripWorkspaceProps) {
               categories={categories ?? []}
               tripId={tripId}
               checklistMode={checklistMode}
+              allPacks={packs}
             />
           ))}
         </div>
@@ -164,6 +215,14 @@ export function TripWorkspace({ tripId }: TripWorkspaceProps) {
           <SharedGearPool items={sharedItems} packs={packs} tripId={tripId} />
         </div>
       </div>
+
+      <EditTripDialog open={editDialogOpen} onOpenChange={setEditDialogOpen} trip={trip} />
+      <TripMembersDialog
+        open={membersDialogOpen}
+        onOpenChange={setMembersDialogOpen}
+        tripId={tripId}
+        currentMemberIds={(trip.members ?? []).map((m: any) => m.userId ?? m.user?.id)}
+      />
     </div>
   );
 }

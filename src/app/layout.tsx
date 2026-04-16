@@ -14,10 +14,13 @@ const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
 });
 
+const isLocal = process.env.NODE_ENV === "development";
+const titleSuffix = isLocal ? "Family Pack - LOCAL" : "Family Pack";
+
 export const metadata: Metadata = {
   title: {
-    default: "Family Pack",
-    template: "%s — Family Pack",
+    default: titleSuffix,
+    template: `%s — ${titleSuffix}`,
   },
   description:
     "Backpacking gear management for couples, families, and pets. Track weights, plan trips, and balance packs across your whole household.",

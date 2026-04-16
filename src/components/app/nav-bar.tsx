@@ -84,31 +84,14 @@ export function NavBar({ user }: NavBarProps) {
         </div>
 
         <div className="flex items-center gap-3">
-          {/* Imperial / Metric segmented toggle */}
-          <div className="flex rounded-full bg-surface-high p-1">
-            <button
-              onClick={unit === "metric" ? toggle : undefined}
-              className={cn(
-                "rounded-full px-3 py-1 text-xs font-bold transition-all",
-                unit === "imperial"
-                  ? "bg-primary-container text-on-primary-container"
-                  : "text-outline hover:text-foreground"
-              )}
-            >
-              Imperial
-            </button>
-            <button
-              onClick={unit === "imperial" ? toggle : undefined}
-              className={cn(
-                "rounded-full px-3 py-1 text-xs font-bold transition-all",
-                unit === "metric"
-                  ? "bg-primary-container text-on-primary-container"
-                  : "text-outline hover:text-foreground"
-              )}
-            >
-              Metric
-            </button>
-          </div>
+          {/* Weight unit cycle toggle */}
+          <button
+            onClick={toggle}
+            className="rounded-full bg-surface-high px-3 py-1 text-xs font-bold uppercase tracking-wider text-outline hover:text-foreground hover:bg-surface-highest transition-all"
+            title="Click to cycle: oz → lb → g → kg"
+          >
+            {unit}
+          </button>
 
           {/* Dark / Light toggle */}
           <Button

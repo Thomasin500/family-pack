@@ -62,6 +62,36 @@ export function useDeleteTrip() {
   });
 }
 
+export function useAddTripMember() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ tripId, userId }: { tripId: string; userId: string }) =>
+      fetchApi(`/api/trips/${tripId}/members`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId }),
+      }),
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["trip", variables.tripId] });
+      queryClient.invalidateQueries({ queryKey: ["trips"] });
+    },
+  });
+}
+
+export function useRemoveTripMember() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ tripId, userId }: { tripId: string; userId: string }) =>
+      fetchApi(`/api/trips/${tripId}/members?userId=${userId}`, {
+        method: "DELETE",
+      }),
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["trip", variables.tripId] });
+      queryClient.invalidateQueries({ queryKey: ["trips"] });
+    },
+  });
+}
+
 export function useDuplicateTrip() {
   const queryClient = useQueryClient();
   return useMutation({

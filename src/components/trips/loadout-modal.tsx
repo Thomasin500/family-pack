@@ -3,6 +3,7 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { displayWeight } from "@/lib/weight";
+import type { DisplayUnit } from "@/lib/weight";
 import { useWeightUnit } from "@/components/providers/weight-unit-provider";
 import { PACK_ZONES, getZoneForItem } from "@/lib/pack-zones";
 
@@ -108,7 +109,7 @@ function ZoneSection({
   zone: { id: string; label: string; description: string };
   items: any[];
   totalGrams: number;
-  unit: "imperial" | "metric";
+  unit: DisplayUnit;
 }) {
   const zoneColors: Record<string, string> = {
     brain: "border-l-violet-500",

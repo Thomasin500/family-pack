@@ -1,5 +1,15 @@
 import { describe, it, expect } from "vitest";
-import { gramsToOz, ozToGrams, gramsToLb, displayWeight, bodyWeightPercent } from "../weight";
+import {
+  gramsToOz,
+  ozToGrams,
+  gramsToLb,
+  displayWeight,
+  bodyWeightPercent,
+  inputToGrams,
+  gramsToInput,
+  unitSuffix,
+  inputStep,
+} from "../weight";
 
 describe("gramsToOz", () => {
   it("converts 0 grams", () => {
@@ -35,46 +45,132 @@ describe("gramsToLb", () => {
   });
 });
 
-describe("displayWeight — imperial", () => {
+describe("displayWeight — oz mode", () => {
   it("shows oz for small weights", () => {
-    expect(displayWeight(100, "imperial")).toBe("3.5 oz");
+    expect(displayWeight(100, "oz")).toBe("3.5 oz");
   });
 
-  it("shows lb + oz for weights >= 32oz (907g)", () => {
-    expect(displayWeight(1000, "imperial")).toBe("2 lb 3.3 oz");
-  });
-
-  it("shows clean lb when no remainder", () => {
-    // 908g = 32.03oz which triggers the lb display
-    expect(displayWeight(908, "imperial")).toBe("2 lb");
+  it("shows oz for large weights (no auto-scale to lb)", () => {
+    expect(displayWeight(1000, "oz")).toBe("35.3 oz");
   });
 
   it("handles 0 grams", () => {
-    expect(displayWeight(0, "imperial")).toBe("0.0 oz");
+    expect(displayWeight(0, "oz")).toBe("0.0 oz");
   });
 });
 
-describe("displayWeight — metric", () => {
-  it("shows grams for < 1000g", () => {
-    expect(displayWeight(500, "metric")).toBe("500 g");
+describe("displayWeight — lb mode", () => {
+  it("shows oz for weights under 1 lb", () => {
+    expect(displayWeight(100, "lb")).toBe("3.5 oz");
   });
 
-  it("shows kg for >= 1000g", () => {
-    expect(displayWeight(1500, "metric")).toBe("1.5 kg");
+  it("shows lb + oz for weights >= 1 lb", () => {
+    expect(displayWeight(1000, "lb")).toBe("2 lb 3.3 oz");
   });
 
-  it("shows kg at exactly 1000g", () => {
-    expect(displayWeight(1000, "metric")).toBe("1.0 kg");
+  it("shows clean lb when no remainder", () => {
+    expect(displayWeight(908, "lb")).toBe("2 lb");
   });
 
   it("handles 0 grams", () => {
-    expect(displayWeight(0, "metric")).toBe("0 g");
+    expect(displayWeight(0, "lb")).toBe("0.0 oz");
+  });
+});
+
+describe("displayWeight — g mode", () => {
+  it("shows grams (no auto-scale to kg)", () => {
+    expect(displayWeight(500, "g")).toBe("500 g");
+  });
+
+  it("shows grams for large values", () => {
+    expect(displayWeight(1500, "g")).toBe("1500 g");
+  });
+
+  it("handles 0 grams", () => {
+    expect(displayWeight(0, "g")).toBe("0 g");
+  });
+});
+
+describe("displayWeight — kg mode", () => {
+  it("shows kg for any value", () => {
+    expect(displayWeight(500, "kg")).toBe("0.50 kg");
+  });
+
+  it("shows kg for >= 1000g", () => {
+    expect(displayWeight(1500, "kg")).toBe("1.50 kg");
+  });
+
+  it("shows kg at exactly 1000g", () => {
+    expect(displayWeight(1000, "kg")).toBe("1.00 kg");
+  });
+
+  it("handles 0 grams", () => {
+    expect(displayWeight(0, "kg")).toBe("0.00 kg");
+  });
+});
+
+describe("displayWeight — legacy values", () => {
+  it("imperial falls back to oz", () => {
+    expect(displayWeight(100, "imperial")).toBe("3.5 oz");
+  });
+
+  it("metric falls back to g", () => {
+    expect(displayWeight(500, "metric")).toBe("500 g");
+  });
+});
+
+describe("inputToGrams", () => {
+  it("g: passes through", () => {
+    expect(inputToGrams(100, "g")).toBe(100);
+  });
+
+  it("kg: multiplies by 1000", () => {
+    expect(inputToGrams(1.5, "kg")).toBe(1500);
+  });
+
+  it("oz: converts from oz", () => {
+    expect(inputToGrams(1, "oz")).toBe(28);
+  });
+
+  it("lb: converts from oz (edit in oz)", () => {
+    expect(inputToGrams(16, "lb")).toBe(454);
+  });
+});
+
+describe("gramsToInput", () => {
+  it("g: returns grams string", () => {
+    expect(gramsToInput(500, "g")).toBe("500");
+  });
+
+  it("oz: returns oz string", () => {
+    expect(gramsToInput(28, "oz")).toBe("1.0");
+  });
+
+  it("kg: returns kg string", () => {
+    expect(gramsToInput(1500, "kg")).toBe("1.50");
+  });
+});
+
+describe("unitSuffix", () => {
+  it("returns correct suffixes", () => {
+    expect(unitSuffix("g")).toBe("g");
+    expect(unitSuffix("kg")).toBe("kg");
+    expect(unitSuffix("oz")).toBe("oz");
+    expect(unitSuffix("lb")).toBe("oz");
+  });
+});
+
+describe("inputStep", () => {
+  it("returns correct steps", () => {
+    expect(inputStep("g")).toBe("1");
+    expect(inputStep("kg")).toBe("0.01");
+    expect(inputStep("oz")).toBe("0.1");
+    expect(inputStep("lb")).toBe("0.1");
   });
 });
 
 describe("bodyWeightPercent", () => {
   it("calculates carry percentage correctly", () => {
-    // 5000g carry / 25kg body = 5000 / 25000 * 100 = 20%
     expect(bodyWeightPercent(5000, 25)).toBe(20);
   });
 

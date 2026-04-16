@@ -4,12 +4,30 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { displayWeight, gramsToOz, ozToGrams } from "@/lib/weight";
+import { displayWeight, gramsToInput, inputToGrams, unitSuffix, inputStep } from "@/lib/weight";
+import type { DisplayUnit } from "@/lib/weight";
 import { useUpdateItem, useDeleteItem } from "@/hooks/use-items";
+import { useUpdateCategory } from "@/hooks/use-categories";
 import { useItemHistory } from "@/hooks/use-item-history";
 import { getVeterancyLevel, getVeterancyColor } from "@/lib/gear-veterancy";
 import { useWeightUnit } from "@/components/providers/weight-unit-provider";
-import { Trash2 } from "lucide-react";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+  useSortable,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import { Trash2, ChevronDown, ChevronRight, GripVertical } from "lucide-react";
 import { toast } from "sonner";
 
 interface Item {
@@ -46,9 +64,27 @@ function getItemType(item: Item): { label: string; variant: "default" | "muted" 
   return { label: "Carried", variant: "muted" };
 }
 
-function InlineEditName({ item, onSave }: { item: Item; onSave: (value: string) => void }) {
+function cycleItemType(item: Item): { isWorn: boolean; isConsumable: boolean } {
+  if (item.isWorn) return { isWorn: false, isConsumable: true }; // Worn → Consumable
+  if (item.isConsumable) return { isWorn: false, isConsumable: false }; // Consumable → Carried
+  return { isWorn: true, isConsumable: false }; // Carried → Worn
+}
+
+function InlineEditItem({
+  item,
+  categories,
+  onSave,
+}: {
+  item: Item;
+  categories: Category[];
+  onSave: (fields: Partial<Item>) => void;
+}) {
   const [editing, setEditing] = useState(false);
-  const [editValue, setEditValue] = useState("");
+  const [nameVal, setNameVal] = useState("");
+  const [brandVal, setBrandVal] = useState("");
+  const [modelVal, setModelVal] = useState("");
+  const [categoryVal, setCategoryVal] = useState("");
+  const [notesVal, setNotesVal] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -56,17 +92,30 @@ function InlineEditName({ item, onSave }: { item: Item; onSave: (value: string) 
   }, [editing]);
 
   function startEditing() {
-    setEditValue(item.name);
+    setNameVal(item.name);
+    setBrandVal(item.brand ?? "");
+    setModelVal(item.model ?? "");
+    setCategoryVal(item.categoryId ?? "");
+    setNotesVal(item.notes ?? "");
     setEditing(true);
   }
 
-  const commit = useCallback(() => {
+  function commit() {
     setEditing(false);
-    const trimmed = editValue.trim();
-    if (trimmed && trimmed !== item.name) {
-      onSave(trimmed);
+    const updates: Partial<Item> = {};
+    const trimmedName = nameVal.trim();
+    if (trimmedName && trimmedName !== item.name) updates.name = trimmedName;
+    const trimmedBrand = brandVal.trim();
+    if (trimmedBrand !== (item.brand ?? "")) updates.brand = trimmedBrand || "";
+    const trimmedModel = modelVal.trim();
+    if (trimmedModel !== (item.model ?? "")) updates.model = trimmedModel || "";
+    if (categoryVal !== (item.categoryId ?? "")) updates.categoryId = categoryVal || "";
+    const trimmedNotes = notesVal.trim();
+    if (trimmedNotes !== (item.notes ?? "")) updates.notes = trimmedNotes || "";
+    if (Object.keys(updates).length > 0) {
+      onSave(updates);
     }
-  }, [editValue, item.name, onSave]);
+  }
 
   if (!editing) {
     return (
@@ -77,22 +126,89 @@ function InlineEditName({ item, onSave }: { item: Item; onSave: (value: string) 
             {[item.brand, item.model].filter(Boolean).join(" ")}
           </div>
         )}
+        {item.notes && (
+          <div className="text-xs text-outline/60 truncate max-w-[200px]">{item.notes}</div>
+        )}
       </button>
     );
   }
 
   return (
-    <Input
-      ref={inputRef}
-      className="h-7 text-sm"
-      value={editValue}
-      onChange={(e) => setEditValue(e.target.value)}
-      onBlur={commit}
-      onKeyDown={(e) => {
-        if (e.key === "Enter") commit();
-        if (e.key === "Escape") setEditing(false);
-      }}
-    />
+    <div className="space-y-1.5">
+      <Input
+        ref={inputRef}
+        className="h-7 text-sm font-bold"
+        placeholder="Name"
+        value={nameVal}
+        onChange={(e) => setNameVal(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") commit();
+          if (e.key === "Escape") setEditing(false);
+        }}
+      />
+      <div className="flex gap-1.5">
+        <Input
+          className="h-6 text-xs flex-1"
+          placeholder="Brand"
+          value={brandVal}
+          onChange={(e) => setBrandVal(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") commit();
+            if (e.key === "Escape") setEditing(false);
+          }}
+        />
+        <Input
+          className="h-6 text-xs flex-1"
+          placeholder="Model"
+          value={modelVal}
+          onChange={(e) => setModelVal(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") commit();
+            if (e.key === "Escape") setEditing(false);
+          }}
+        />
+      </div>
+      <div className="flex gap-1.5">
+        <select
+          className="h-6 text-xs rounded border border-input bg-background px-2 flex-1"
+          value={categoryVal}
+          onChange={(e) => setCategoryVal(e.target.value)}
+        >
+          <option value="">Uncategorized</option>
+          {categories.map((c) => (
+            <option key={c.id} value={c.id}>
+              {c.name}
+            </option>
+          ))}
+        </select>
+      </div>
+      <Input
+        className="h-6 text-xs"
+        placeholder="Notes..."
+        value={notesVal}
+        onChange={(e) => setNotesVal(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") commit();
+          if (e.key === "Escape") setEditing(false);
+        }}
+      />
+      <div className="flex gap-1.5 justify-end">
+        <button
+          type="button"
+          className="text-[10px] text-outline hover:text-foreground"
+          onClick={() => setEditing(false)}
+        >
+          Cancel
+        </button>
+        <button
+          type="button"
+          className="text-[10px] font-bold text-primary hover:text-primary/80"
+          onClick={commit}
+        >
+          Save
+        </button>
+      </div>
+    </div>
   );
 }
 
@@ -102,7 +218,7 @@ function InlineEditWeight({
   onSave,
 }: {
   item: Item;
-  unit: "imperial" | "metric";
+  unit: DisplayUnit;
   onSave: (grams: number) => void;
 }) {
   const [editing, setEditing] = useState(false);
@@ -117,11 +233,7 @@ function InlineEditWeight({
   }, [editing]);
 
   function startEditing() {
-    if (unit === "metric") {
-      setEditValue(item.weightGrams.toString());
-    } else {
-      setEditValue(gramsToOz(item.weightGrams).toFixed(1));
-    }
+    setEditValue(gramsToInput(item.weightGrams, unit));
     setEditing(true);
   }
 
@@ -129,7 +241,7 @@ function InlineEditWeight({
     setEditing(false);
     const parsed = parseFloat(editValue);
     if (!isNaN(parsed) && parsed >= 0) {
-      const newGrams = unit === "metric" ? Math.round(parsed) : ozToGrams(parsed);
+      const newGrams = inputToGrams(parsed, unit);
       if (newGrams !== item.weightGrams) {
         onSave(newGrams);
       }
@@ -154,7 +266,7 @@ function InlineEditWeight({
         ref={inputRef}
         className="h-7 w-16 text-sm tabular-nums"
         type="number"
-        step={unit === "metric" ? "1" : "0.1"}
+        step={inputStep(unit)}
         min="0"
         value={editValue}
         onChange={(e) => setEditValue(e.target.value)}
@@ -164,7 +276,7 @@ function InlineEditWeight({
           if (e.key === "Escape") setEditing(false);
         }}
       />
-      <span className="text-xs text-outline">{unit === "metric" ? "g" : "oz"}</span>
+      <span className="text-xs text-outline">{unitSuffix(unit)}</span>
     </div>
   );
 }
@@ -172,8 +284,44 @@ function InlineEditWeight({
 export function ItemTable({ items, categories, readOnly = false }: ItemTableProps) {
   const updateItem = useUpdateItem();
   const deleteItem = useDeleteItem();
+  const updateCategory = useUpdateCategory();
   const { unit } = useWeightUnit();
   const { data: itemHistory } = useItemHistory();
+  const [collapsedIds, setCollapsedIds] = useState<Set<string>>(new Set());
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+  );
+
+  function toggleCollapse(catId: string) {
+    setCollapsedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(catId)) next.delete(catId);
+      else next.add(catId);
+      return next;
+    });
+  }
+
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+
+    const oldIndex = grouped.findIndex((g) => g.category.id === active.id);
+    const newIndex = grouped.findIndex((g) => g.category.id === over.id);
+    if (oldIndex === -1 || newIndex === -1) return;
+
+    // Reorder and persist
+    const reordered = [...grouped];
+    const [moved] = reordered.splice(oldIndex, 1);
+    reordered.splice(newIndex, 0, moved);
+
+    reordered.forEach((g, i) => {
+      if (g.category.id !== "__uncategorized" && g.category.sortOrder !== i) {
+        updateCategory.mutate({ id: g.category.id, sortOrder: i });
+      }
+    });
+  }
 
   if (items.length === 0) {
     return (
@@ -224,25 +372,88 @@ export function ItemTable({ items, categories, readOnly = false }: ItemTableProp
     });
   }
 
+  const categoryIds = grouped.map((g) => g.category.id);
+
   return (
-    <div className="space-y-8">
-      {grouped.map(({ category, items: catItems }) => {
-        const subtotal = catItems.reduce((s, i) => s + (i.weightGrams ?? 0), 0);
-        return (
-          <CategorySection
-            key={category.id}
-            category={category}
-            items={catItems}
-            subtotal={subtotal}
-            readOnly={readOnly}
-            unit={unit}
-            itemHistory={itemHistory}
-            onUpdateName={(id, name) => updateItem.mutate({ id, name })}
-            onUpdateWeight={(id, weightGrams) => updateItem.mutate({ id, weightGrams })}
-            onDelete={(id) => deleteItem.mutate(id)}
-          />
-        );
-      })}
+    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+      <SortableContext items={categoryIds} strategy={verticalListSortingStrategy}>
+        <div className="space-y-8">
+          {grouped.map(({ category, items: catItems }) => {
+            const subtotal = catItems.reduce((s, i) => s + (i.weightGrams ?? 0), 0);
+            const isCollapsed = collapsedIds.has(category.id);
+            return (
+              <SortableCategorySection
+                key={category.id}
+                category={category}
+                items={catItems}
+                subtotal={subtotal}
+                readOnly={readOnly}
+                unit={unit}
+                itemHistory={itemHistory}
+                allCategories={categories}
+                collapsed={isCollapsed}
+                onToggleCollapse={() => toggleCollapse(category.id)}
+                onUpdateItem={(id, fields) => updateItem.mutate({ id, ...fields })}
+                onUpdateWeight={(id, weightGrams) => updateItem.mutate({ id, weightGrams })}
+                onUpdateType={(id, isWorn, isConsumable) =>
+                  updateItem.mutate({ id, isWorn, isConsumable })
+                }
+                onDelete={(id, force) => {
+                  deleteItem.mutate(
+                    { id, force },
+                    {
+                      onError: (err: any) => {
+                        if (err?.tripCount) {
+                          toast(`This item is in ${err.tripCount} trip(s). Delete anyway?`, {
+                            action: {
+                              label: "Delete Anyway",
+                              onClick: () => deleteItem.mutate({ id, force: true }),
+                            },
+                            cancel: { label: "Cancel", onClick: () => {} },
+                          });
+                        }
+                      },
+                    }
+                  );
+                }}
+              />
+            );
+          })}
+        </div>
+      </SortableContext>
+    </DndContext>
+  );
+}
+
+function SortableCategorySection(props: {
+  category: Category;
+  items: Item[];
+  subtotal: number;
+  readOnly: boolean;
+  unit: DisplayUnit;
+  itemHistory?: Record<string, number>;
+  allCategories: Category[];
+  collapsed: boolean;
+  onToggleCollapse: () => void;
+  onUpdateItem: (id: string, fields: Partial<Item>) => void;
+  onUpdateWeight: (id: string, weightGrams: number) => void;
+  onUpdateType: (id: string, isWorn: boolean, isConsumable: boolean) => void;
+  onDelete: (id: string, force?: boolean) => void;
+}) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: props.category.id,
+    disabled: props.category.id === "__uncategorized",
+  });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <div ref={setNodeRef} style={style}>
+      <CategorySection {...props} dragHandleProps={{ ...attributes, ...listeners }} />
     </div>
   );
 }
@@ -254,19 +465,29 @@ function CategorySection({
   readOnly,
   unit,
   itemHistory,
-  onUpdateName,
+  allCategories,
+  collapsed,
+  onToggleCollapse,
+  onUpdateItem,
   onUpdateWeight,
+  onUpdateType,
   onDelete,
+  dragHandleProps,
 }: {
   category: Category;
   items: Item[];
   subtotal: number;
   readOnly: boolean;
-  unit: "imperial" | "metric";
+  unit: DisplayUnit;
   itemHistory?: Record<string, number>;
-  onUpdateName: (id: string, name: string) => void;
+  allCategories: Category[];
+  collapsed: boolean;
+  onToggleCollapse: () => void;
+  onUpdateItem: (id: string, fields: Partial<Item>) => void;
   onUpdateWeight: (id: string, weightGrams: number) => void;
-  onDelete: (id: string) => void;
+  onUpdateType: (id: string, isWorn: boolean, isConsumable: boolean) => void;
+  onDelete: (id: string, force?: boolean) => void;
+  dragHandleProps?: Record<string, any>;
 }) {
   return (
     <section className="relative overflow-hidden rounded-xl bg-card p-6">
@@ -277,13 +498,34 @@ function CategorySection({
       />
 
       {/* Category header */}
-      <div className="mb-4 flex items-end justify-between pl-2">
-        <h2
-          className="text-xs font-bold uppercase tracking-[0.2em]"
-          style={{ color: category.color }}
-        >
-          {category.name}
-        </h2>
+      <div
+        className="mb-4 flex items-center justify-between pl-2 cursor-pointer select-none"
+        onClick={onToggleCollapse}
+      >
+        <div className="flex items-center gap-2">
+          {!readOnly && category.id !== "__uncategorized" && (
+            <div
+              className="cursor-grab text-outline hover:text-foreground"
+              onClick={(e) => e.stopPropagation()}
+              {...dragHandleProps}
+            >
+              <GripVertical className="size-3.5" />
+            </div>
+          )}
+          <div className="text-outline">
+            {collapsed ? (
+              <ChevronRight className="size-3.5" />
+            ) : (
+              <ChevronDown className="size-3.5" />
+            )}
+          </div>
+          <h2
+            className="text-xs font-bold uppercase tracking-[0.2em]"
+            style={{ color: category.color }}
+          >
+            {category.name}
+          </h2>
+        </div>
         <span className="font-mono text-xs text-outline">
           {items.length} {items.length === 1 ? "ITEM" : "ITEMS"} &bull;{" "}
           {displayWeight(subtotal, unit).toUpperCase()}
@@ -291,88 +533,108 @@ function CategorySection({
       </div>
 
       {/* Item rows */}
-      <div className="space-y-1">
-        {items.map((item, idx) => {
-          const type = getItemType(item);
-          const tripCount = itemHistory?.[item.id] ?? 0;
-          const level = getVeterancyLevel(tripCount);
+      {!collapsed && (
+        <div className="space-y-1">
+          {items.map((item, idx) => {
+            const type = getItemType(item);
+            const tripCount = itemHistory?.[item.id] ?? 0;
+            const level = getVeterancyLevel(tripCount);
 
-          return (
-            <div
-              key={item.id}
-              className={`group flex items-center justify-between rounded-lg p-3 transition-colors hover:bg-surface-bright ${
-                idx % 2 === 0 ? "bg-transparent" : "bg-background/40"
-              }`}
-            >
-              <div className="flex flex-1 items-center gap-4">
-                {/* Name + brand */}
-                <div className="flex-1">
-                  {readOnly ? (
-                    <div>
-                      <div className="font-bold">{item.name}</div>
-                      {(item.brand || item.model) && (
-                        <div className="text-xs text-outline">
-                          {[item.brand, item.model].filter(Boolean).join(" ")}
-                        </div>
-                      )}
-                    </div>
-                  ) : (
-                    <InlineEditName item={item} onSave={(name) => onUpdateName(item.id, name)} />
-                  )}
+            return (
+              <div
+                key={item.id}
+                className={`group flex items-center justify-between rounded-lg p-3 transition-colors hover:bg-surface-bright ${
+                  idx % 2 === 0 ? "bg-transparent" : "bg-background/40"
+                }`}
+              >
+                <div className="flex flex-1 items-center gap-4">
+                  {/* Name + brand */}
+                  <div className="flex-1">
+                    {readOnly ? (
+                      <div>
+                        <div className="font-bold">{item.name}</div>
+                        {(item.brand || item.model) && (
+                          <div className="text-xs text-outline">
+                            {[item.brand, item.model].filter(Boolean).join(" ")}
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <InlineEditItem
+                        item={item}
+                        categories={allCategories}
+                        onSave={(fields) => onUpdateItem(item.id, fields)}
+                      />
+                    )}
+                  </div>
+
+                  {/* Badges */}
+                  <div className="hidden items-center gap-1.5 md:flex">
+                    {readOnly ? (
+                      <Badge variant={type.variant}>{type.label}</Badge>
+                    ) : (
+                      <Badge
+                        variant={type.variant}
+                        className="cursor-pointer select-none hover:brightness-110 active:scale-95 transition-all"
+                        onClick={() => {
+                          const next = cycleItemType(item);
+                          onUpdateType(item.id, next.isWorn, next.isConsumable);
+                        }}
+                        title="Click to cycle: Carried → Worn → Consumable"
+                      >
+                        {type.label}
+                      </Badge>
+                    )}
+                    {level !== "New" && (
+                      <Badge variant="outline">
+                        <span className={getVeterancyColor(level)}>{level}</span>
+                      </Badge>
+                    )}
+                  </div>
                 </div>
 
-                {/* Badges */}
-                <div className="hidden items-center gap-1.5 md:flex">
-                  <Badge variant={type.variant}>{type.label}</Badge>
-                  {level !== "New" && (
-                    <Badge variant="outline">
-                      <span className={getVeterancyColor(level)}>{level}</span>
-                    </Badge>
+                {/* Weight */}
+                <div className="flex items-center gap-3">
+                  <div className="text-right">
+                    {readOnly ? (
+                      <span className="font-mono tabular-nums text-on-surface-variant">
+                        {displayWeight(item.weightGrams, unit)}
+                      </span>
+                    ) : (
+                      <InlineEditWeight
+                        item={item}
+                        unit={unit}
+                        onSave={(grams) => onUpdateWeight(item.id, grams)}
+                      />
+                    )}
+                  </div>
+
+                  {/* Delete (hover only) */}
+                  {!readOnly && (
+                    <Button
+                      variant="ghost"
+                      size="icon-xs"
+                      className="opacity-0 group-hover:opacity-100 transition-opacity"
+                      onClick={() => {
+                        toast(`Delete "${item.name}"?`, {
+                          action: {
+                            label: "Delete",
+                            onClick: () => onDelete(item.id),
+                          },
+                          cancel: { label: "Cancel", onClick: () => {} },
+                        });
+                      }}
+                      aria-label="Delete item"
+                    >
+                      <Trash2 className="size-3 text-destructive" />
+                    </Button>
                   )}
                 </div>
               </div>
-
-              {/* Weight */}
-              <div className="flex items-center gap-3">
-                <div className="text-right">
-                  {readOnly ? (
-                    <span className="font-mono tabular-nums text-on-surface-variant">
-                      {displayWeight(item.weightGrams, unit)}
-                    </span>
-                  ) : (
-                    <InlineEditWeight
-                      item={item}
-                      unit={unit}
-                      onSave={(grams) => onUpdateWeight(item.id, grams)}
-                    />
-                  )}
-                </div>
-
-                {/* Delete (hover only) */}
-                {!readOnly && (
-                  <Button
-                    variant="ghost"
-                    size="icon-xs"
-                    className="opacity-0 group-hover:opacity-100 transition-opacity"
-                    onClick={() => {
-                      toast(`Delete "${item.name}"?`, {
-                        action: {
-                          label: "Delete",
-                          onClick: () => onDelete(item.id),
-                        },
-                        cancel: { label: "Cancel", onClick: () => {} },
-                      });
-                    }}
-                    aria-label="Delete item"
-                  >
-                    <Trash2 className="size-3 text-destructive" />
-                  </Button>
-                )}
-              </div>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      )}
     </section>
   );
 }

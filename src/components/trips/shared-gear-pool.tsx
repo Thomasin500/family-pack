@@ -3,8 +3,8 @@
 import { useState } from "react";
 import { useAddToPack } from "@/hooks/use-trip-pack-items";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { displayWeight } from "@/lib/weight";
+import type { DisplayUnit } from "@/lib/weight";
 import { useWeightUnit } from "@/components/providers/weight-unit-provider";
 import {
   Select,
@@ -103,7 +103,7 @@ function SharedItemRow({
   item: any;
   packs: any[];
   onAssign: (itemId: string, packId: string) => void;
-  unit: "imperial" | "metric";
+  unit: DisplayUnit;
 }) {
   const [selectedPackId, setSelectedPackId] = useState("");
 
