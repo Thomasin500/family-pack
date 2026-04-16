@@ -17,6 +17,7 @@ export async function GET() {
         },
         packs: {
           with: {
+            user: true,
             packItems: {
               with: { item: true },
             },

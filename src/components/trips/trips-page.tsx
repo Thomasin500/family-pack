@@ -28,6 +28,56 @@ interface PackWeights {
   carried: number;
 }
 
+/**
+ * Pack-class color scale based on base weight (lb). Matches the roadmap labels:
+ *   <10 Ultralight, 10–15 Lightweight, 15–20 Light, 20–30 Traditional, 30+ Heavy.
+ * Pets use a milder (gentler scale) since their base is always small.
+ */
+function baseWeightColorClass(grams: number, role: "adult" | "child" | "pet"): string {
+  const lb = grams / 453.592;
+  if (role === "pet") {
+    // Dog carry thresholds are applied on % body weight elsewhere; here we just
+    // keep it readable.
+    return "text-primary";
+  }
+  if (lb < 10) return "text-primary"; // Ultralight
+  if (lb < 15) return "text-primary/80"; // Lightweight
+  if (lb < 20) return "text-foreground"; // Light
+  if (lb < 30) return "text-secondary"; // Traditional
+  return "text-destructive"; // Heavy
+}
+
+function PackWeightRow({
+  firstName,
+  role,
+  base,
+  carried,
+  unit,
+}: {
+  firstName: string;
+  role: "adult" | "child" | "pet";
+  base: number;
+  carried: number;
+  unit: ReturnType<typeof useWeightUnit>["unit"];
+}) {
+  return (
+    <>
+      <span className="font-bold text-sm truncate">
+        {role === "pet" ? "🐾 " : ""}
+        {firstName}
+      </span>
+      <span
+        className={`font-mono tabular-nums text-xs text-right ${baseWeightColorClass(base, role)}`}
+      >
+        {displayWeight(base, unit)}
+      </span>
+      <span className="font-mono tabular-nums text-sm text-right">
+        {displayWeight(carried, unit)}
+      </span>
+    </>
+  );
+}
+
 function computePerPackWeights(trip: any): PackWeights[] {
   const out: PackWeights[] = [];
   for (const pack of trip.packs ?? []) {
@@ -232,28 +282,30 @@ export function TripsPage() {
                       </div>
                     )}
                     {perPack.length > 0 && (
-                      <ul className="pt-1 space-y-0.5">
-                        {perPack.map((p) => {
-                          const firstName = (p.name ?? "").split(/\s+/)[0] || p.name;
-                          return (
-                            <li key={p.userId} className="flex items-baseline gap-3 text-sm">
-                              <span className="font-bold shrink-0">
-                                {p.role === "pet" ? "🐾 " : ""}
-                                {firstName}
-                              </span>
-                              <span className="ml-auto font-mono tabular-nums text-xs text-outline">
-                                {displayWeight(p.base, unit)}{" "}
-                                <span className="text-outline/50">base</span>
-                                {" · "}
-                                <span className="text-on-surface-variant">
-                                  {displayWeight(p.carried, unit)}
-                                </span>{" "}
-                                <span className="text-outline/50">carry</span>
-                              </span>
-                            </li>
-                          );
-                        })}
-                      </ul>
+                      <div className="pt-1">
+                        <div className="grid grid-cols-[1fr_auto_auto] gap-x-4 gap-y-0.5 items-baseline">
+                          <span />
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-outline text-right">
+                            Base
+                          </span>
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-outline text-right">
+                            Carry
+                          </span>
+                          {perPack.map((p) => {
+                            const firstName = (p.name ?? "").split(/\s+/)[0] || p.name;
+                            return (
+                              <PackWeightRow
+                                key={p.userId}
+                                firstName={firstName}
+                                role={p.role}
+                                base={p.base}
+                                carried={p.carried}
+                                unit={unit}
+                              />
+                            );
+                          })}
+                        </div>
+                      </div>
                     )}
                     <div className="flex items-center justify-between pt-2">
                       <div className="flex items-center gap-3 text-sm text-outline">

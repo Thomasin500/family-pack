@@ -88,7 +88,7 @@ export function TripWorkspace({ tripId }: TripWorkspaceProps) {
   // Determine grid columns based on pack count
   const gridClass =
     packs.length === 1
-      ? "grid-cols-1 max-w-2xl"
+      ? "grid-cols-1 max-w-2xl mx-auto"
       : packs.length === 2
         ? "grid-cols-1 md:grid-cols-2"
         : "grid-cols-1 md:grid-cols-2 lg:grid-cols-3";
