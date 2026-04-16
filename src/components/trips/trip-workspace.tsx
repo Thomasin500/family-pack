@@ -230,7 +230,8 @@ export function TripWorkspace({ tripId }: TripWorkspaceProps) {
 }
 
 function formatDate(dateStr: string): string {
-  const date = new Date(dateStr + "T00:00:00");
+  // dateStr may be a date-only "2026-07-15" or a full ISO timestamp "2026-04-15T14:32:45.000Z"
+  const date = dateStr.includes("T") ? new Date(dateStr) : new Date(dateStr + "T00:00:00");
   return date.toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",

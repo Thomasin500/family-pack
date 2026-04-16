@@ -147,18 +147,20 @@ _The remaining trip workspace power features._
 
 ---
 
-## Phase 8: Tech Debt + Polish
+## Phase 8: Tech Debt + Polish — PARTIAL
 
-_Pay down debt before scaling further._
+_Pay down debt before scaling further. Core tech debt completed April 15, 2026._
 
-| Feature           | What                                                                                                       | Effort | Status      |
-| ----------------- | ---------------------------------------------------------------------------------------------------------- | ------ | ----------- |
-| Zod validation    | Validate all PATCH/POST request bodies with Zod schemas. Stop spreading raw `...body` into DB updates.     | M      | Not started |
-| Type the hooks    | Replace `any[]` returns in all hooks with proper types matching Drizzle schema. Kills ~60 lint warnings.   | M      | Not started |
-| Error boundaries  | React error boundary per pack column + per closet section. Graceful failure without page crash.            | S      | Not started |
-| Mobile responsive | Tabbed person-switcher on trip workspace, touch-friendly checklist, responsive closet grid, swipe gestures | M-L    | Not started |
-| Sharing pages     | Public read-only trip/pack links (`/share/[tripId]`), purpose-built clean display page                     | M      | Not started |
-| User profile UI   | Dedicated profile page with body stats form, pet profile editing (currently scattered across dashboard)    | S      | Not started |
+| Feature             | What                                                                                                          | Effort | Status      |
+| ------------------- | ------------------------------------------------------------------------------------------------------------- | ------ | ----------- |
+| Zod validation      | 14 Zod schemas in `src/lib/validators.ts`, every POST/PATCH route validated. ZodError handling in api-helpers | M      | **Done**    |
+| Type the hooks      | All 8 hooks return proper types from `src/types/index.ts`. Lint warnings 83 → 69.                             | M      | **Done**    |
+| Error boundaries    | ErrorBoundary component wrapping pack columns + closet item table with retry button                           | S      | **Done**    |
+| Custom favicon/logo | Backpack logo as favicon (16/32/48px), apple-touch-icon, PWA icons (192/512px), logo in nav bar               | S      | **Done**    |
+| DB backups          | GitHub Actions pg_dump every 4 hours, 30-day retention, manual trigger via workflow_dispatch                  | S      | **Done**    |
+| Mobile responsive   | Tabbed person-switcher on trip workspace, touch-friendly checklist, responsive closet grid, swipe gestures    | M-L    | Not started |
+| Sharing pages       | Public read-only trip/pack links (`/share/[tripId]`), purpose-built clean display page                        | M      | Not started |
+| User profile UI     | Dedicated profile page with body stats form, pet profile editing (currently scattered across dashboard)       | S      | Not started |
 
 ---
 
@@ -238,15 +240,18 @@ _Features pushed out of the near-term plan. Still in spec, revisit when the need
 | ------- | -------------------------- | -------- | ------------------------ |
 | **1-4** | Foundation through core    | ~30      | ~30/140 (21%) — **DONE** |
 | **4.5** | Quick wins + fixes         | ~20      | ~50 (36%) — **DONE**     |
-| **5**   | Trip stats & visualization | 6        | ~56 (40%)                |
-| **6**   | Party view & loadout       | 5        | ~61 (44%)                |
-| **7**   | Drag-and-drop + cut list   | 4        | ~65 (46%)                |
-| **8**   | Tech debt + polish         | 6        | ~71 (51%)                |
-| **9**   | Intelligence & readiness   | 4        | ~75 (54%)                |
-| **10**  | Import/export + advanced   | 5        | ~80 (57%)                |
-| **11**  | Community & scale          | 8        | ~88 (63%)                |
+| **8**   | Tech debt (core)           | 5        | ~55 (39%) — **DONE**     |
+| **5**   | Trip stats & visualization | 6        | ~61 (44%)                |
+| **6**   | Party view & loadout       | 5        | ~66 (47%)                |
+| **7**   | Drag-and-drop + cut list   | 4        | ~70 (50%)                |
+| **8b**  | Polish (mobile, sharing)   | 3        | ~73 (52%)                |
+| **9**   | Intelligence & readiness   | 4        | ~77 (55%)                |
+| **10**  | Import/export + advanced   | 5        | ~82 (59%)                |
+| **11**  | Community & scale          | 8        | ~90 (64%)                |
 
-Phases 5-6 are where the app becomes visually distinctive — stats panels, weight balance, party view, pack class labels. These are the features no competitor has. Phase 7 adds the drag-and-drop polish. Phase 8 pays down tech debt before the intelligence features in Phase 9.
+Phase 8 core tech debt (Zod, types, error boundaries, favicon, backups) completed April 15. Remaining Phase 8 items (mobile, sharing, profile UI) deferred to 8b after the fun stuff.
+
+Phases 5-6 are where the app becomes visually distinctive — stats panels, weight balance, party view, pack class labels. These are the features no competitor has. Phase 7 adds the drag-and-drop polish.
 
 ---
 

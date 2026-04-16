@@ -96,11 +96,35 @@ export function PackColumn({ pack, tripId, checklistMode = false, allPacks }: Pa
     updatePackItem.mutate({ packId: pack.id, itemId: packItemId, isChecked: checked });
   }
 
+  const [collapsedUnit, setCollapsedUnit] = useState<"lb" | "oz" | "kg" | "g">("lb");
+
+  function cycleCollapsedUnit() {
+    setCollapsedUnit((prev) => {
+      const order: Array<"lb" | "oz" | "kg" | "g"> = ["lb", "oz", "kg", "g"];
+      return order[(order.indexOf(prev) + 1) % order.length];
+    });
+  }
+
+  function formatCollapsedWeight(grams: number): string {
+    switch (collapsedUnit) {
+      case "lb":
+        return (grams / 453.592).toFixed(1) + " lb";
+      case "oz":
+        return (grams / 28.3495).toFixed(1) + " oz";
+      case "kg":
+        return (grams / 1000).toFixed(1) + " kg";
+      case "g":
+        return grams + " g";
+    }
+  }
+
   return (
-    <div className="flex flex-col rounded-xl bg-card border border-outline-variant/10">
+    <div
+      className={`flex flex-col rounded-xl bg-card border border-outline-variant/10 ${collapsed ? "!border-transparent" : ""}`}
+    >
       {/* Person Header */}
       <div
-        className="flex items-center gap-3 px-4 py-3 border-b border-outline-variant/10 cursor-pointer select-none"
+        className={`flex items-center gap-3 px-4 py-3 cursor-pointer select-none ${collapsed ? "rounded-xl bg-surface-low" : "border-b border-outline-variant/10"}`}
         onClick={() => setCollapsed(!collapsed)}
       >
         <div className="text-outline">
@@ -111,52 +135,95 @@ export function PackColumn({ pack, tripId, checklistMode = false, allPacks }: Pa
         </div>
         <div className="min-w-0 flex-1">
           <h2 className="text-base font-bold truncate">{user?.name}&apos;s Pack</h2>
-          {collapsed && (
-            <p className="text-xs text-outline font-mono tabular-nums">
-              {displayWeight(totalCarried, unit)} &bull; {packItems.length} items
-            </p>
-          )}
         </div>
-        <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
-          <Button
-            variant="ghost"
-            size="icon-xs"
-            onClick={() => setAddDialogOpen(true)}
-            title="Add gear to pack"
-            className="text-outline hover:text-primary"
-          >
-            <Plus className="size-3.5" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon-xs"
-            onClick={() => setLoadoutOpen(true)}
-            title="View loadout"
-            className="text-outline hover:text-primary"
-          >
-            <Backpack className="size-3.5" />
-          </Button>
-          {checklistMode && packItems.length > 0 && (
-            <Badge variant="default">
-              {checkedCount}/{packItems.length}
-            </Badge>
-          )}
-        </div>
+        {collapsed ? (
+          <div className="flex items-center gap-3" onClick={(e) => e.stopPropagation()}>
+            <button
+              type="button"
+              className="font-mono text-sm font-bold tabular-nums text-on-surface-variant hover:text-primary transition-colors"
+              onClick={cycleCollapsedUnit}
+              title="Click to change unit"
+            >
+              {formatCollapsedWeight(totalCarried)}
+            </button>
+            <span className="text-xs text-outline">{packItems.length} items</span>
+          </div>
+        ) : (
+          <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+            <Button
+              variant="ghost"
+              size="icon-xs"
+              onClick={() => setAddDialogOpen(true)}
+              title="Add gear to pack"
+              className="text-outline hover:text-primary"
+            >
+              <Plus className="size-3.5" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon-xs"
+              onClick={() => setLoadoutOpen(true)}
+              title="View loadout"
+              className="text-outline hover:text-primary"
+            >
+              <Backpack className="size-3.5" />
+            </Button>
+            {checklistMode && packItems.length > 0 && (
+              <Badge variant="default">
+                {checkedCount}/{packItems.length}
+              </Badge>
+            )}
+          </div>
+        )}
       </div>
 
       {!collapsed && (
         <>
-          {/* Checklist progress bar */}
-          {checklistMode && packItems.length > 0 && (
-            <div className="px-4 py-2">
-              <div className="h-1.5 w-full rounded-full bg-surface-high overflow-hidden">
-                <div
-                  className="h-full rounded-full bg-primary transition-all duration-300"
-                  style={{ width: `${(checkedCount / packItems.length) * 100}%` }}
-                />
-              </div>
-            </div>
-          )}
+          {/* Checklist progress bar — segmented by category */}
+          {checklistMode &&
+            packItems.length > 0 &&
+            (() => {
+              const pct = Math.round((checkedCount / packItems.length) * 100);
+              // Build per-category segments
+              const segments: { color: string; total: number; checked: number }[] = [];
+              for (const { category, items: catItems } of sortedCategories) {
+                const total = catItems.length;
+                const checked = catItems.filter((pi: any) => pi.isChecked).length;
+                segments.push({ color: category.color ?? "#6b7280", total, checked });
+              }
+              if (uncategorized.length > 0) {
+                const checked = uncategorized.filter((pi: any) => pi.isChecked).length;
+                segments.push({ color: "#9ca3af", total: uncategorized.length, checked });
+              }
+              return (
+                <div className="px-4 py-2">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-[10px] font-bold text-outline uppercase tracking-wider">
+                      Packing Progress
+                    </span>
+                    <span className="text-xs font-bold tabular-nums text-primary">{pct}%</span>
+                  </div>
+                  <div className="flex h-2 w-full rounded-full overflow-hidden bg-surface-high gap-px">
+                    {segments.map((seg, i) => {
+                      const widthPct = (seg.total / packItems.length) * 100;
+                      const fillPct = seg.total > 0 ? (seg.checked / seg.total) * 100 : 0;
+                      return (
+                        <div
+                          key={i}
+                          className="relative overflow-hidden transition-all duration-300"
+                          style={{ width: `${widthPct}%`, backgroundColor: `${seg.color}22` }}
+                        >
+                          <div
+                            className="absolute inset-y-0 left-0 transition-all duration-300"
+                            style={{ width: `${fillPct}%`, backgroundColor: seg.color }}
+                          />
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })()}
 
           {/* Items by Category */}
           <div className="flex-1 overflow-y-auto p-3 space-y-3">

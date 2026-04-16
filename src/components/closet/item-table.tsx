@@ -49,6 +49,74 @@ function cycleItemType(item: Item): { isWorn: boolean; isConsumable: boolean } {
   return { isWorn: true, isConsumable: false }; // Carried → Worn
 }
 
+function InlineNotes({ value, onSave }: { value: string; onSave: (notes: string) => void }) {
+  const [editing, setEditing] = useState(false);
+  const [text, setText] = useState(value);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    if (editing) {
+      textareaRef.current?.focus();
+      // auto-resize to fit content
+      if (textareaRef.current) {
+        textareaRef.current.style.height = "auto";
+        textareaRef.current.style.height = textareaRef.current.scrollHeight + "px";
+      }
+    }
+  }, [editing]);
+
+  function startEditing() {
+    setText(value);
+    setEditing(true);
+  }
+
+  function commit() {
+    setEditing(false);
+    const trimmed = text.trim();
+    if (trimmed !== value) {
+      onSave(trimmed);
+    }
+  }
+
+  if (!editing) {
+    return (
+      <button
+        type="button"
+        className="block text-left text-xs text-outline/60 hover:text-outline cursor-text transition-colors w-full"
+        onClick={startEditing}
+      >
+        {value ? (
+          <span className="whitespace-pre-wrap">{value}</span>
+        ) : (
+          <span className="italic text-outline/30">Add a note...</span>
+        )}
+      </button>
+    );
+  }
+
+  return (
+    <textarea
+      ref={textareaRef}
+      className="w-full text-xs rounded border border-input bg-background px-2 py-1 resize-none focus:outline-none focus:ring-1 focus:ring-primary"
+      rows={2}
+      placeholder="Notes..."
+      value={text}
+      onChange={(e) => {
+        setText(e.target.value);
+        e.target.style.height = "auto";
+        e.target.style.height = e.target.scrollHeight + "px";
+      }}
+      onBlur={commit}
+      onKeyDown={(e) => {
+        if (e.key === "Escape") {
+          setText(value);
+          setEditing(false);
+        }
+      }}
+    />
+  );
+}
+
 function InlineEditItem({
   item,
   categories,
@@ -98,17 +166,17 @@ function InlineEditItem({
 
   if (!editing) {
     return (
-      <button type="button" className="text-left cursor-text group/name" onClick={startEditing}>
-        <div className="font-bold text-foreground">{item.name}</div>
-        {(item.brand || item.model) && (
-          <div className="text-xs text-outline">
-            {[item.brand, item.model].filter(Boolean).join(" ")}
-          </div>
-        )}
-        {item.notes && (
-          <div className="text-xs text-outline/60 truncate max-w-[200px]">{item.notes}</div>
-        )}
-      </button>
+      <div className="space-y-0.5">
+        <button type="button" className="text-left cursor-text group/name" onClick={startEditing}>
+          <div className="font-bold text-foreground">{item.name}</div>
+          {(item.brand || item.model) && (
+            <div className="text-xs text-outline">
+              {[item.brand, item.model].filter(Boolean).join(" ")}
+            </div>
+          )}
+        </button>
+        <InlineNotes value={item.notes ?? ""} onSave={(notes) => onSave({ notes })} />
+      </div>
     );
   }
 
@@ -525,59 +593,57 @@ function CategorySection({
             return (
               <div
                 key={item.id}
-                className={`group flex items-center justify-between rounded-lg p-3 transition-colors hover:bg-surface-bright ${
+                className={`group flex items-start gap-4 rounded-lg p-3 transition-colors hover:bg-surface-bright ${
                   idx % 2 === 0 ? "bg-transparent" : "bg-background/40"
                 }`}
               >
-                <div className="flex flex-1 items-center gap-4">
-                  {/* Name + brand */}
-                  <div className="flex-1">
-                    {readOnly ? (
-                      <div>
-                        <div className="font-bold">{item.name}</div>
-                        {(item.brand || item.model) && (
-                          <div className="text-xs text-outline">
-                            {[item.brand, item.model].filter(Boolean).join(" ")}
-                          </div>
-                        )}
-                      </div>
-                    ) : (
-                      <InlineEditItem
-                        item={item}
-                        categories={allCategories}
-                        onSave={(fields) => onUpdateItem(item.id, fields)}
-                      />
-                    )}
-                  </div>
-
-                  {/* Badges */}
-                  <div className="hidden items-center gap-1.5 md:flex">
-                    {readOnly ? (
-                      <Badge variant={type.variant}>{type.label}</Badge>
-                    ) : (
-                      <Badge
-                        variant={type.variant}
-                        className="cursor-pointer select-none hover:brightness-110 active:scale-95 transition-all"
-                        onClick={() => {
-                          const next = cycleItemType(item);
-                          onUpdateType(item.id, next.isWorn, next.isConsumable);
-                        }}
-                        title="Click to cycle: Carried → Worn → Consumable"
-                      >
-                        {type.label}
-                      </Badge>
-                    )}
-                    {level !== "New" && (
-                      <Badge variant="outline">
-                        <span className={getVeterancyColor(level)}>{level}</span>
-                      </Badge>
-                    )}
-                  </div>
+                {/* Name + brand */}
+                <div className="flex-1 min-w-0">
+                  {readOnly ? (
+                    <div>
+                      <div className="font-bold">{item.name}</div>
+                      {(item.brand || item.model) && (
+                        <div className="text-xs text-outline">
+                          {[item.brand, item.model].filter(Boolean).join(" ")}
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <InlineEditItem
+                      item={item}
+                      categories={allCategories}
+                      onSave={(fields) => onUpdateItem(item.id, fields)}
+                    />
+                  )}
                 </div>
 
-                {/* Weight */}
-                <div className="flex items-center gap-3">
-                  <div className="text-right">
+                {/* Badges */}
+                <div className="hidden items-center gap-1.5 md:flex shrink-0">
+                  {readOnly ? (
+                    <Badge variant={type.variant}>{type.label}</Badge>
+                  ) : (
+                    <Badge
+                      variant={type.variant}
+                      className="cursor-pointer select-none hover:brightness-110 active:scale-95 transition-all"
+                      onClick={() => {
+                        const next = cycleItemType(item);
+                        onUpdateType(item.id, next.isWorn, next.isConsumable);
+                      }}
+                      title="Click to cycle: Carried → Worn → Consumable"
+                    >
+                      {type.label}
+                    </Badge>
+                  )}
+                  {level !== "New" && (
+                    <Badge variant="outline">
+                      <span className={getVeterancyColor(level)}>{level}</span>
+                    </Badge>
+                  )}
+                </div>
+
+                {/* Weight — right-aligned */}
+                <div className="flex items-center gap-3 shrink-0 ml-6">
+                  <div className="text-right min-w-[4.5rem]">
                     {readOnly ? (
                       <span className="font-mono tabular-nums text-on-surface-variant">
                         {displayWeight(item.weightGrams, unit)}

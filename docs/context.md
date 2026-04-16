@@ -282,6 +282,14 @@ Key files:
 - **Household improvements** — Member/pet edit API (PATCH/DELETE), pet edit UI (inline name/weight/breed), pet weight clickable
 - **System improvements** — Structured API errors (ApiResponseError class), item delete warns if in trip, category delete safety (409 + moveTo), dead code cleanup, "- LOCAL" in browser tab
 
+### Built in Phase 8: Tech Debt (April 15, 2026)
+
+- **Zod validation on all API routes** — 14 Zod schemas in `src/lib/validators.ts`, every POST/PATCH route validated. No more raw `...body` spreads. ZodError caught in `handleApiError` with 400 response.
+- **Typed hooks** — All 8 hook files return proper types (`Item[]`, `Trip`, `Category[]`, etc.) instead of `any[]`. Shared types in `src/types/index.ts`.
+- **Error boundaries** — `ErrorBoundary` component wrapping pack columns and closet item table. Graceful failure with retry button.
+- **Custom favicon** — Backpack logo as favicon (16/32/48px), apple-touch-icon (180px), PWA icons (192/512px). Logo in nav bar.
+- **Database backups** — GitHub Actions workflow runs `pg_dump` every 4 hours, stores gzipped artifacts with 30-day retention. Manual trigger available.
+
 ### Next Up (Phase 5: Trip Stats & Visualization)
 
 - Trip stats collapsible panel (per-person weight breakdown, category bar charts, shared gear balance)
@@ -292,11 +300,10 @@ Key files:
 
 ### Known Issues / Tech Debt
 
-- ~83 `any` type warnings across component/hook files (ESLint set to warn)
-- API PATCH routes spread raw body without Zod schema validation
+- ~69 `any` type warnings remaining in component files (down from 83; ESLint set to warn)
 - No drag-and-drop between packs yet (items added via dialog + per-column button; dnd-kit installed)
-- No custom favicon (still default Next.js icon) or web app manifest
 - Schema change (`completedAt`) needs `drizzle-kit push` on Neon prod before deploy
+- No web app manifest yet (icons are ready for it)
 
 ---
 
@@ -312,34 +319,38 @@ Key files:
 
 ## Key Files
 
-| Path                           | Purpose                                                                                                                                                                           |
-| ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `docs/spec.md`                 | Full product specification (~1,800 lines)                                                                                                                                         |
-| `docs/context.md`              | This file — session context for new Claude conversations                                                                                                                          |
-| `docs/roadmap.md`              | Condensed feature roadmap with 10 phases, all spec features mapped                                                                                                                |
-| `src/db/schema.ts`             | Full Drizzle schema (14 tables, all enums, relations, type exports)                                                                                                               |
-| `src/db/index.ts`              | Dual driver connection (pg local, Neon prod) with .env.local fallback                                                                                                             |
-| `src/lib/auth.ts`              | Auth.js config (Google OAuth + Drizzle adapter)                                                                                                                                   |
-| `src/lib/api-helpers.ts`       | getAuthenticatedUser(), handleApiError(), ApiError class                                                                                                                          |
-| `src/lib/weight.ts`            | Weight conversion utilities (4-way unit support: oz/lb/g/kg, displayWeight, inputToGrams, gramsToInput)                                                                           |
-| `src/lib/fetch.ts`             | fetchApi helper + ApiResponseError class (preserves structured error bodies)                                                                                                      |
-| `src/lib/gear-veterancy.ts`    | Veterancy level calculation + color mapping                                                                                                                                       |
-| `src/lib/pack-zones.ts`        | Pack zone definitions + category-to-zone mapping for loadout view                                                                                                                 |
-| `src/lib/constants.ts`         | Default categories, carry limit constants                                                                                                                                         |
-| `src/lib/fetch.ts`             | Shared fetchApi helper for hooks                                                                                                                                                  |
-| `src/app/api/`                 | 16 API route files (household, categories, items, items/history, trips, pack items, catalog search, user/preferences)                                                             |
-| `src/hooks/`                   | 9 TanStack Query hook files (household, categories, items, item-history, trips, pack items, catalog search, user-preferences)                                                     |
-| `src/components/providers/`    | QueryProvider, WeightUnitProvider (React context for imperial/metric)                                                                                                             |
-| `src/components/app/`          | Nav bar (with unit toggle), dashboard (with body weight input), household setup                                                                                                   |
-| `src/components/closet/`       | Closet page (with search), item table (with veterancy labels), add item dialog, catalog typeahead (with popularity tracking), weight summary                                      |
-| `src/components/trips/`        | Trips page (with duplicate), trip workspace (with checklist toggle), pack column (with checklist + loadout + carry warnings), shared gear pool, add to pack dialog, loadout modal |
-| `src/lib/carry-warnings.ts`    | Body weight % warning thresholds (human vs pet)                                                                                                                                   |
-| `src/lib/catalog-promotion.ts` | Community catalog growth — auto-promotes stable items when packed                                                                                                                 |
-| `src/lib/__tests__/`           | 7 Vitest test files — 65 tests (weight, veterancy, zones, carry-warnings, fetch, api-helpers, utils)                                                                              |
-| `data/catalog/`                | Catalog pipeline: known-brands.json, source extracts, merged-catalog.json (9,065 items), merge-report.txt                                                                         |
-| `scripts/catalog/`             | Catalog extraction + merge pipeline (extract-gwdb, extract-lighterpack, extract-featherweight, merge-catalog, brand-matcher)                                                      |
-| `scripts/seed-catalog.ts`      | Seeds 98 catalog products                                                                                                                                                         |
-| `scripts/seed-dev-data.ts`     | Seeds dev household, users, items, categories, trip                                                                                                                               |
-| `docker-compose.yml`           | Local Postgres for development                                                                                                                                                    |
-| `vitest.config.ts`             | Vitest test configuration with @ alias                                                                                                                                            |
-| `.github/workflows/ci.yml`     | CI pipeline (typecheck + lint)                                                                                                                                                    |
+| Path                                   | Purpose                                                                                                                                                                                      |
+| -------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `docs/spec.md`                         | Full product specification (~1,800 lines)                                                                                                                                                    |
+| `docs/context.md`                      | This file — session context for new Claude conversations                                                                                                                                     |
+| `docs/roadmap.md`                      | Condensed feature roadmap with 10 phases, all spec features mapped                                                                                                                           |
+| `src/db/schema.ts`                     | Full Drizzle schema (14 tables, all enums, relations, type exports)                                                                                                                          |
+| `src/db/index.ts`                      | Dual driver connection (pg local, Neon prod) with .env.local fallback                                                                                                                        |
+| `src/lib/auth.ts`                      | Auth.js config (Google OAuth + Drizzle adapter)                                                                                                                                              |
+| `src/lib/api-helpers.ts`               | getAuthenticatedUser(), handleApiError() (catches ApiError + ZodError), ApiError class                                                                                                       |
+| `src/lib/validators.ts`                | Zod schemas for all API request bodies (14 schemas: createItem, updateTrip, addPackItem, etc.)                                                                                               |
+| `src/types/index.ts`                   | Shared TypeScript interfaces for all entities (Item, Trip, Category, User, TripPack, TripPackItem, etc.)                                                                                     |
+| `src/lib/weight.ts`                    | Weight conversion utilities (4-way unit support: oz/lb/g/kg, displayWeight, inputToGrams, gramsToInput)                                                                                      |
+| `src/lib/fetch.ts`                     | fetchApi helper + ApiResponseError class (preserves structured error bodies)                                                                                                                 |
+| `src/lib/gear-veterancy.ts`            | Veterancy level calculation + color mapping                                                                                                                                                  |
+| `src/lib/pack-zones.ts`                | Pack zone definitions + category-to-zone mapping for loadout view                                                                                                                            |
+| `src/lib/constants.ts`                 | Default categories, carry limit constants                                                                                                                                                    |
+| `src/app/api/`                         | 21 API route files — all POST/PATCH validated with Zod schemas                                                                                                                               |
+| `src/hooks/`                           | 8 TanStack Query hook files — all typed with proper return types from `src/types/`                                                                                                           |
+| `src/components/providers/`            | QueryProvider, WeightUnitProvider (4-way cycle: oz/lb/g/kg, localStorage-backed)                                                                                                             |
+| `src/components/ui/error-boundary.tsx` | React ErrorBoundary class component with retry button                                                                                                                                        |
+| `src/components/app/`                  | Nav bar (with unit toggle + logo), dashboard (with pet edit + body weight), household setup                                                                                                  |
+| `src/components/closet/`               | Closet page, item table (inline editing, dnd-kit reorder, collapsible categories), add item dialog, catalog typeahead, weight summary, category manager                                      |
+| `src/components/trips/`                | Trips page (search/sort/delete), trip workspace (checklist/complete/edit/members), pack column (collapsible, add-to-pack), shared gear pool, edit trip dialog, members dialog, loadout modal |
+| `src/lib/carry-warnings.ts`            | Body weight % warning thresholds (human vs pet)                                                                                                                                              |
+| `src/lib/catalog-promotion.ts`         | Community catalog growth — auto-promotes stable items when packed                                                                                                                            |
+| `src/lib/__tests__/`                   | 7 Vitest test files — 82 tests (weight, veterancy, zones, carry-warnings, fetch, api-helpers, utils)                                                                                         |
+| `data/catalog/`                        | Catalog pipeline: known-brands.json, source extracts, merged-catalog.json (9,065 items), merge-report.txt                                                                                    |
+| `scripts/catalog/`                     | Catalog extraction + merge pipeline (extract-gwdb, extract-lighterpack, extract-featherweight, merge-catalog, brand-matcher)                                                                 |
+| `scripts/seed-catalog.ts`              | Seeds 98 hand-curated catalog products                                                                                                                                                       |
+| `scripts/seed-catalog-merged.ts`       | Seeds full 9,065-item merged catalog                                                                                                                                                         |
+| `scripts/seed-dev-data.ts`             | Seeds dev household, users, items, categories, trip                                                                                                                                          |
+| `docker-compose.yml`                   | Local Postgres for development                                                                                                                                                               |
+| `vitest.config.ts`                     | Vitest test configuration with @ alias                                                                                                                                                       |
+| `.github/workflows/ci.yml`             | CI pipeline (typecheck + lint)                                                                                                                                                               |
+| `.github/workflows/backup.yml`         | Database backup — pg_dump every 4 hours, 30-day artifact retention                                                                                                                           |
