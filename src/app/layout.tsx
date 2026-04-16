@@ -24,6 +24,13 @@ export const metadata: Metadata = {
   },
   description:
     "Backpacking gear management for couples, families, and pets. Track weights, plan trips, and balance packs across your whole household.",
+  icons: {
+    icon: [
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+    ],
+    apple: "/apple-touch-icon.png",
+  },
   openGraph: {
     title: "Family Pack",
     description: "Backpacking gear management for couples, families, and pets.",
