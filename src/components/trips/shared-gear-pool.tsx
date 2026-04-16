@@ -85,9 +85,7 @@ export function SharedGearPool({ items, packs, tripId }: SharedGearPoolProps) {
           onOpenChange={setDialogOpen}
           tripId={tripId}
           packId={dialogPackId}
-          userId={packs.find((p: any) => p.id === dialogPackId)?.userId}
           packs={packs}
-          onChangePackId={setDialogPackId}
         />
       )}
     </div>

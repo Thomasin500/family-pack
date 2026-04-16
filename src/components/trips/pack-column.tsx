@@ -316,6 +316,7 @@ export function PackColumn({ pack, tripId, checklistMode = false, allPacks }: Pa
         packId={pack.id}
         packs={allPacks ?? [pack]}
         onChangePackId={() => {}}
+        key={pack.id}
       />
     </div>
   );

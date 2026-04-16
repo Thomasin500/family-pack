@@ -14,7 +14,6 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -30,18 +29,16 @@ interface AddToPackDialogProps {
   onOpenChange: (open: boolean) => void;
   tripId: string;
   packId: string;
-  userId?: string;
   packs: any[];
-  onChangePackId: (packId: string) => void;
+  onChangePackId?: (packId: string) => void;
 }
 
 export function AddToPackDialog({
   open,
   onOpenChange,
   tripId,
-  packId,
+  packId: initialPackId,
   packs,
-  onChangePackId,
 }: AddToPackDialogProps) {
   const { data: allItems } = useItems();
   const { data: categories } = useCategories();
@@ -49,9 +46,26 @@ export function AddToPackDialog({
   const addToPack = useAddToPack(tripId);
   const { unit } = useWeightUnit();
 
+  const [selectedPackId, setSelectedPackId] = useState(initialPackId);
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [addedItemIds, setAddedItemIds] = useState<Set<string>>(new Set());
+
+  const packId = selectedPackId;
+
+  function handleOpenChange(nextOpen: boolean) {
+    if (nextOpen) {
+      // Reset state when dialog opens
+      setSelectedPackId(initialPackId);
+      setAddedItemIds(new Set());
+      setSearch("");
+      setCategoryFilter("all");
+    }
+    onOpenChange(nextOpen);
+  }
+
+  const currentPack = packs.find((p: any) => p.id === packId);
+  const packUserId = currentPack?.user?.id ?? currentPack?.userId;
 
   // Collect all item IDs already in any pack for this trip
   const itemIdsInTrip = useMemo(() => {
@@ -64,13 +78,18 @@ export function AddToPackDialog({
     return ids;
   }, [trip]);
 
-  // Filter items: not already in trip, matching search and category
+  // Filter items: show only this user's personal items + shared items, not already in trip
   const filteredItems = useMemo(() => {
     if (!allItems) return [];
     return allItems.filter((item: any) => {
-      // Exclude items already in the trip (unless freshly added in this session)
+      // Exclude items already in the trip
       if (itemIdsInTrip.has(item.id) && !addedItemIds.has(item.id)) return false;
       if (addedItemIds.has(item.id)) return false;
+
+      // Only show: this pack owner's personal items + shared household items
+      if (item.ownerType === "personal" && item.ownerId !== packUserId) {
+        return false;
+      }
 
       // Category filter
       if (categoryFilter !== "all" && item.categoryId !== categoryFilter) {
@@ -87,7 +106,7 @@ export function AddToPackDialog({
 
       return true;
     });
-  }, [allItems, itemIdsInTrip, addedItemIds, categoryFilter, search]);
+  }, [allItems, itemIdsInTrip, addedItemIds, categoryFilter, search, packUserId]);
 
   async function handleAddItem(itemId: string) {
     try {
@@ -98,26 +117,26 @@ export function AddToPackDialog({
     }
   }
 
-  const currentPack = packs.find((p: any) => p.id === packId);
+  function handleChangePackId(newPackId: string) {
+    setSelectedPackId(newPackId);
+    setAddedItemIds(new Set());
+  }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="max-h-[85vh] flex flex-col sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>Add Items to Pack</DialogTitle>
           <DialogDescription>
-            Choose items from the closet to add to{" "}
-            {currentPack?.user?.name ?? "this"} pack.
+            Choose items from the closet to add to {currentPack?.user?.name ?? "this"} pack.
           </DialogDescription>
         </DialogHeader>
 
         {/* Pack selector (if multiple packs) */}
         {packs.length > 1 && (
           <div className="flex items-center gap-2">
-            <span className="text-sm text-muted-foreground shrink-0">
-              Pack:
-            </span>
-            <Select value={packId} onValueChange={onChangePackId}>
+            <span className="text-sm text-muted-foreground shrink-0">Pack:</span>
+            <Select value={packId} onValueChange={handleChangePackId}>
               <SelectTrigger className="h-8 text-sm">
                 <SelectValue />
               </SelectTrigger>
@@ -193,9 +212,7 @@ export function AddToPackDialog({
                   <span className="text-sm truncate flex-1 min-w-0">
                     {item.name}
                     {item.brand && (
-                      <span className="text-muted-foreground ml-1">
-                        ({item.brand})
-                      </span>
+                      <span className="text-muted-foreground ml-1">({item.brand})</span>
                     )}
                   </span>
                   <span className="text-xs font-mono tabular-nums text-muted-foreground shrink-0">
@@ -211,8 +228,7 @@ export function AddToPackDialog({
           <div className="flex items-center gap-1.5 text-sm text-muted-foreground pt-2 border-t">
             <Check className="size-3.5" />
             <span>
-              {addedItemIds.size} {addedItemIds.size === 1 ? "item" : "items"}{" "}
-              added
+              {addedItemIds.size} {addedItemIds.size === 1 ? "item" : "items"} added
             </span>
           </div>
         )}

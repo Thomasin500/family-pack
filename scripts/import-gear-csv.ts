@@ -19,7 +19,7 @@
 import { readFileSync } from "fs";
 import { db } from "../src/db";
 import { categories, items } from "../src/db/schema";
-import { eq, and } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import knownBrandsData from "../data/catalog/known-brands.json";
 
 // ── CONFIG — paste your prod UUIDs here ──
@@ -66,7 +66,8 @@ function parseType(type: string): { isWorn: boolean; isConsumable: boolean } {
   const t = type.trim().toLowerCase();
   if (t === "worn") return { isWorn: true, isConsumable: false };
   if (t === "consumable") return { isWorn: false, isConsumable: true };
-  return { isWorn: false, isConsumable: false }; // "Carried" or anything else
+  // "Carried", "Partner Carries", or anything else → default carried
+  return { isWorn: false, isConsumable: false };
 }
 
 // ── Category colors (reuse from dev seed) ──
@@ -84,6 +85,8 @@ const CATEGORY_COLORS: Record<string, string> = {
   Electronics: "#eab308",
   "Pet Gear": "#8B6914",
   "Birch's Stuff": "#8B6914",
+  "Kitchen, Food, & Water": "#ea6b1e",
+  Hygiene: "#d4648a",
 };
 
 // ── Main ──
@@ -125,13 +128,18 @@ async function main() {
   console.log(`Parsed ${rows.length} rows from CSV`);
 
   // ── Lookup/create categories ──
-  const existingCats = await db
-    .select()
-    .from(categories)
-    .where(eq(categories.householdId, CONFIG.householdId));
+  const catByName = new Map<string, any>();
+  let nextSortOrder = 0;
 
-  const catByName = new Map(existingCats.map((c) => [c.name, c]));
-  let nextSortOrder = existingCats.length;
+  if (!dryRun) {
+    const existingCats = await db
+      .select()
+      .from(categories)
+      .where(eq(categories.householdId, CONFIG.householdId));
+
+    for (const c of existingCats) catByName.set(c.name, c);
+    nextSortOrder = existingCats.length;
+  }
 
   async function getOrCreateCategory(name: string) {
     if (catByName.has(name)) return catByName.get(name)!;
@@ -209,6 +217,9 @@ async function main() {
     // Type flags
     const { isWorn, isConsumable } = parseType(type);
 
+    // Optional notes column
+    const notes = row["Notes"] || undefined;
+
     if (!dryRun) {
       await db.insert(items).values({
         name: itemName,
@@ -220,6 +231,7 @@ async function main() {
         ownerId: ownerConfig.ownerId,
         isWorn,
         isConsumable,
+        notes: notes || undefined,
       });
     }
 

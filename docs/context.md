@@ -304,6 +304,7 @@ Key files:
 - No drag-and-drop between packs yet (items added via dialog + per-column button; dnd-kit installed)
 - Schema change (`completedAt`) needs `drizzle-kit push` on Neon prod before deploy
 - No web app manifest yet (icons are ready for it)
+- Full bug list with UX issues at `docs/bugs.md`
 
 ---
 
@@ -324,6 +325,7 @@ Key files:
 | `docs/spec.md`                         | Full product specification (~1,800 lines)                                                                                                                                                    |
 | `docs/context.md`                      | This file — session context for new Claude conversations                                                                                                                                     |
 | `docs/roadmap.md`                      | Condensed feature roadmap with 10 phases, all spec features mapped                                                                                                                           |
+| `docs/bugs.md`                         | Active bug list and UX issues                                                                                                                                                                |
 | `src/db/schema.ts`                     | Full Drizzle schema (14 tables, all enums, relations, type exports)                                                                                                                          |
 | `src/db/index.ts`                      | Dual driver connection (pg local, Neon prod) with .env.local fallback                                                                                                                        |
 | `src/lib/auth.ts`                      | Auth.js config (Google OAuth + Drizzle adapter)                                                                                                                                              |
