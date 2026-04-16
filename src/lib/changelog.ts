@@ -8,7 +8,25 @@ export interface ChangelogEntry {
 // Newest first.
 export const CHANGELOG: ChangelogEntry[] = [
   {
-    at: "2026-04-16T17:10:00-06:00",
+    at: "2026-04-16T12:22:00-06:00",
+    title: "Sort UX polish + calmer drawer",
+    items: [
+      "Default sort labeled 'Worn / Carried / Consumable' and actually groups by those types (worn first, carried, then consumables), tie-broken by name.",
+      "Sort trigger always shows the same up/down sort icon so it reads as a button, not a status; the active color just shifts to indicate a non-default sort.",
+      "Changelog drawer no longer dims the page or locks scroll — it's a calm bottom panel you can ignore. Toggle and close controls sit at the top of the drawer.",
+    ],
+  },
+  {
+    at: "2026-04-16T12:18:00-06:00",
+    title: "Sort menus + drawer changelog",
+    items: [
+      "Every category (Gear Closet and each pack-column group on a trip) now has a sort menu: Default, Name A→Z, Name Z→A, Weight light→heavy, Weight heavy→light.",
+      "Changelog footer now opens as a drawer from the bottom of the viewport — fixed height, list scrolls internally, backdrop dims the rest of the page.",
+      "Timestamps always render in the viewer's local timezone.",
+    ],
+  },
+  {
+    at: "2026-04-16T12:10:00-06:00",
     title: "Click-outside closes editors",
     items: [
       "Inline editors (closet rows, weights, categories, body weight, pet details, shared-item assign) now close when you click outside.",
@@ -17,7 +35,7 @@ export const CHANGELOG: ChangelogEntry[] = [
     ],
   },
   {
-    at: "2026-04-16T16:20:00-06:00",
+    at: "2026-04-16T12:00:00-06:00",
     title: "Unified trip add flow",
     items: [
       "Shared gear shows up in the per-pack Add Items dialog alongside personal gear — one flow for both.",
@@ -26,7 +44,7 @@ export const CHANGELOG: ChangelogEntry[] = [
     ],
   },
   {
-    at: "2026-04-16T14:30:00-06:00",
+    at: "2026-04-16T11:55:00-06:00",
     title: "Confirm dialogs",
     items: [
       "Delete and remove prompts are now centered modals with a dimmed backdrop — easier to see and harder to miss-click.",
@@ -35,7 +53,7 @@ export const CHANGELOG: ChangelogEntry[] = [
     ],
   },
   {
-    at: "2026-04-16T11:40:00-06:00",
+    at: "2026-04-16T11:42:00-06:00",
     title: "Closet polish pass",
     items: [
       "Saving a new item as Shared from a person's tab now works.",

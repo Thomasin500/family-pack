@@ -28,16 +28,8 @@ import {
   useSortable,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import {
-  Trash2,
-  ChevronDown,
-  ChevronRight,
-  GripVertical,
-  ArrowDownAZ,
-  ArrowDownWideNarrow,
-  ArrowUpWideNarrow,
-  ArrowUpDown,
-} from "lucide-react";
+import { Trash2, ChevronDown, ChevronRight, GripVertical } from "lucide-react";
+import { CategorySortMenu, sortItems, type SortMode } from "@/components/ui/sort-menu";
 import { useConfirm } from "@/components/providers/confirm-provider";
 import type { Item, Category } from "@/types";
 
@@ -409,28 +401,6 @@ function InlineEditWeight({
   );
 }
 
-type SortMode = "insertion" | "name" | "weight-asc" | "weight-desc";
-
-function nextSortMode(mode: SortMode): SortMode {
-  if (mode === "insertion") return "name";
-  if (mode === "name") return "weight-asc";
-  if (mode === "weight-asc") return "weight-desc";
-  return "insertion";
-}
-
-function sortItems(items: Item[], mode: SortMode): Item[] {
-  if (mode === "insertion") return items;
-  const copy = [...items];
-  if (mode === "name") {
-    copy.sort((a, b) => a.name.localeCompare(b.name));
-  } else if (mode === "weight-asc") {
-    copy.sort((a, b) => a.weightGrams - b.weightGrams);
-  } else {
-    copy.sort((a, b) => b.weightGrams - a.weightGrams);
-  }
-  return copy;
-}
-
 export function ItemTable({ items, categories, readOnly = false }: ItemTableProps) {
   const updateItem = useUpdateItem();
   const deleteItem = useDeleteItem();
@@ -441,8 +411,8 @@ export function ItemTable({ items, categories, readOnly = false }: ItemTableProp
   const [collapsedIds, setCollapsedIds] = useState<Set<string>>(new Set());
   const [sortModes, setSortModes] = useState<Record<string, SortMode>>({});
 
-  function cycleSort(catId: string) {
-    setSortModes((prev) => ({ ...prev, [catId]: nextSortMode(prev[catId] ?? "insertion") }));
+  function setSort(catId: string, mode: SortMode) {
+    setSortModes((prev) => ({ ...prev, [catId]: mode }));
   }
 
   const sensors = useSensors(
@@ -554,7 +524,7 @@ export function ItemTable({ items, categories, readOnly = false }: ItemTableProp
                 allCategories={categories}
                 collapsed={isCollapsed}
                 sortMode={sortMode}
-                onCycleSort={() => cycleSort(category.id)}
+                onChangeSort={(mode) => setSort(category.id, mode)}
                 onToggleCollapse={() => toggleCollapse(category.id)}
                 onUpdateItem={(id, fields) => updateItem.mutate({ id, ...fields })}
                 onUpdateWeight={(id, weightGrams) => updateItem.mutate({ id, weightGrams })}
@@ -598,7 +568,7 @@ function SortableCategorySection(props: {
   allCategories: Category[];
   collapsed: boolean;
   sortMode: SortMode;
-  onCycleSort: () => void;
+  onChangeSort: (mode: SortMode) => void;
   onToggleCollapse: () => void;
   onUpdateItem: (id: string, fields: Partial<Item>) => void;
   onUpdateWeight: (id: string, weightGrams: number) => void;
@@ -633,7 +603,7 @@ function CategorySection({
   allCategories,
   collapsed,
   sortMode,
-  onCycleSort,
+  onChangeSort,
   onToggleCollapse,
   onUpdateItem,
   onUpdateWeight,
@@ -650,7 +620,7 @@ function CategorySection({
   allCategories: Category[];
   collapsed: boolean;
   sortMode: SortMode;
-  onCycleSort: () => void;
+  onChangeSort: (mode: SortMode) => void;
   onToggleCollapse: () => void;
   onUpdateItem: (id: string, fields: Partial<Item>) => void;
   onUpdateWeight: (id: string, weightGrams: number) => void;
@@ -659,20 +629,6 @@ function CategorySection({
   dragHandleProps?: Record<string, any>;
 }) {
   const confirm = useConfirm();
-  const SortIcon =
-    sortMode === "name"
-      ? ArrowDownAZ
-      : sortMode === "weight-asc"
-        ? ArrowUpWideNarrow
-        : sortMode === "weight-desc"
-          ? ArrowDownWideNarrow
-          : ArrowUpDown;
-  const sortLabel = {
-    insertion: "Default order — click to sort",
-    name: "Sorted by name — click for weight ↑",
-    "weight-asc": "Sorted by weight ↑ — click for weight ↓",
-    "weight-desc": "Sorted by weight ↓ — click to reset",
-  }[sortMode];
   return (
     <section className="relative overflow-hidden rounded-xl bg-card p-6">
       {/* Category color bar */}
@@ -710,23 +666,8 @@ function CategorySection({
             {category.name}
           </h2>
         </div>
-        <div className="flex items-center gap-2">
-          {!readOnly && !collapsed && (
-            <button
-              type="button"
-              className={`rounded p-1 transition-colors hover:bg-surface-high ${
-                sortMode === "insertion" ? "text-outline" : "text-primary"
-              }`}
-              onClick={(e) => {
-                e.stopPropagation();
-                onCycleSort();
-              }}
-              title={sortLabel}
-              aria-label={sortLabel}
-            >
-              <SortIcon className="size-3.5" />
-            </button>
-          )}
+        <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+          {!readOnly && !collapsed && <CategorySortMenu value={sortMode} onChange={onChangeSort} />}
           <span
             className={`font-mono tabular-nums text-outline ${collapsed ? "text-base font-bold" : "text-xs"}`}
           >

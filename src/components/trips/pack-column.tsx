@@ -11,6 +11,7 @@ import { useUpdatePackItem } from "@/hooks/use-trip-pack-items";
 import { Checkbox } from "@/components/ui/checkbox";
 import { LoadoutModal } from "./loadout-modal";
 import { X, Backpack, ChevronDown, ChevronRight, Plus } from "lucide-react";
+import { CategorySortMenu, sortItems, type SortMode } from "@/components/ui/sort-menu";
 import dynamic from "next/dynamic";
 
 const AddToPackDialog = dynamic(
@@ -81,6 +82,7 @@ export function PackColumn({ pack, tripId, checklistMode = false, allPacks }: Pa
   const [loadoutOpen, setLoadoutOpen] = useState(false);
   const [addDialogOpen, setAddDialogOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
+  const [sortModes, setSortModes] = useState<Record<string, SortMode>>({});
   const checkedCount = packItems.filter((pi: any) => pi.isChecked).length;
 
   async function handleRemove(packItemId: string, itemName: string) {
@@ -254,6 +256,8 @@ export function PackColumn({ pack, tripId, checklistMode = false, allPacks }: Pa
                 checklistMode={checklistMode}
                 onToggleChecked={handleToggleChecked}
                 unit={unit}
+                sortMode={sortModes[category.id] ?? "insertion"}
+                onChangeSort={(mode) => setSortModes((prev) => ({ ...prev, [category.id]: mode }))}
               />
             ))}
 
@@ -265,6 +269,10 @@ export function PackColumn({ pack, tripId, checklistMode = false, allPacks }: Pa
                 checklistMode={checklistMode}
                 onToggleChecked={handleToggleChecked}
                 unit={unit}
+                sortMode={sortModes["__uncategorized"] ?? "insertion"}
+                onChangeSort={(mode) =>
+                  setSortModes((prev) => ({ ...prev, __uncategorized: mode }))
+                }
               />
             )}
           </div>
@@ -330,6 +338,8 @@ function CategoryGroup({
   checklistMode,
   onToggleChecked,
   unit,
+  sortMode,
+  onChangeSort,
 }: {
   category: any;
   items: any[];
@@ -337,17 +347,32 @@ function CategoryGroup({
   checklistMode: boolean;
   onToggleChecked: (packItemId: string, checked: boolean) => void;
   unit: DisplayUnit;
+  sortMode: SortMode;
+  onChangeSort: (mode: SortMode) => void;
 }) {
+  // Project the trip pack item's effective fields (respecting overrides) so sort works.
+  const sortable = items.map((pi: any) => ({
+    pi,
+    name: pi.item?.name ?? "",
+    weightGrams: (pi.item?.weightGrams ?? 0) * (pi.quantity ?? 1),
+    isWorn: pi.isWornOverride ?? pi.item?.isWorn ?? false,
+    isConsumable: pi.isConsumableOverride ?? pi.item?.isConsumable ?? false,
+  }));
+  const sorted = sortItems(sortable, sortMode).map((s) => s.pi);
+
   return (
     <div
       className="rounded-lg bg-surface-low p-3 border-l-4"
       style={{ borderLeftColor: category.color ?? "#6b7280" }}
     >
-      <p className="text-[10px] font-bold uppercase tracking-widest text-outline mb-2">
-        {category.name}
-      </p>
+      <div className="flex items-center justify-between mb-2">
+        <p className="text-[10px] font-bold uppercase tracking-widest text-outline">
+          {category.name}
+        </p>
+        <CategorySortMenu value={sortMode} onChange={onChangeSort} />
+      </div>
       <div className="space-y-1">
-        {items.map((pi: any) => {
+        {sorted.map((pi: any) => {
           const item = pi.item;
           if (!item) return null;
           const isWorn = pi.isWornOverride ?? item.isWorn ?? false;
