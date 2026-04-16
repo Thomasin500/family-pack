@@ -329,6 +329,23 @@ export const catalogProducts = pgTable("catalog_product", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+// ── Roadmap Suggestions ──
+
+export const roadmapSuggestions = pgTable("roadmap_suggestion", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  userId: uuid("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  householdId: uuid("household_id")
+    .notNull()
+    .references(() => households.id, { onDelete: "cascade" }),
+  phaseId: text("phase_id"),
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  status: text("status").notNull().default("open"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 // ── Type Exports ──
 
 export type User = typeof users.$inferSelect;
@@ -345,3 +362,5 @@ export type TripPack = typeof tripPacks.$inferSelect;
 export type TripPackItem = typeof tripPackItems.$inferSelect;
 export type NewTripPackItem = typeof tripPackItems.$inferInsert;
 export type CatalogProduct = typeof catalogProducts.$inferSelect;
+export type RoadmapSuggestion = typeof roadmapSuggestions.$inferSelect;
+export type NewRoadmapSuggestion = typeof roadmapSuggestions.$inferInsert;

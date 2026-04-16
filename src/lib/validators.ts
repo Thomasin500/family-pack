@@ -150,3 +150,18 @@ export const updateProfileSchema = z.object({
 export const catalogSelectSchema = z.object({
   id: z.string().uuid("Catalog product ID is required"),
 });
+
+// ── Roadmap Suggestions ──
+
+export const createRoadmapSuggestionSchema = z.object({
+  phaseId: z.string().min(1).max(100).nullable().optional(),
+  title: z.string().min(1, "Title is required").max(200),
+  description: z.string().min(1, "Description is required").max(4000),
+});
+
+export const updateRoadmapSuggestionSchema = z.object({
+  title: z.string().min(1).max(200).optional(),
+  description: z.string().min(1).max(4000).optional(),
+  phaseId: z.string().min(1).max(100).nullable().optional(),
+  status: z.enum(["open", "reviewing", "accepted", "declined"]).optional(),
+});

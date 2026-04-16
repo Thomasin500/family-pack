@@ -99,35 +99,52 @@ export function PackColumn({ pack, tripId, checklistMode = false, allPacks }: Pa
     updatePackItem.mutate({ packId: pack.id, itemId: packItemId, isChecked: checked });
   }
 
-  const [collapsedUnit, setCollapsedUnit] = useState<"lb" | "oz" | "kg" | "g">("lb");
-
-  function cycleCollapsedUnit() {
-    setCollapsedUnit((prev) => {
-      const order: Array<"lb" | "oz" | "kg" | "g"> = ["lb", "oz", "kg", "g"];
-      return order[(order.indexOf(prev) + 1) % order.length];
-    });
-  }
-
-  function formatCollapsedWeight(grams: number): string {
-    switch (collapsedUnit) {
-      case "lb":
-        return (grams / 453.592).toFixed(1) + " lb";
-      case "oz":
-        return (grams / 28.3495).toFixed(1) + " oz";
-      case "kg":
-        return (grams / 1000).toFixed(1) + " kg";
-      case "g":
-        return grams + " g";
-    }
-  }
+  const statsFooter = (
+    <div className="grid grid-cols-2 gap-2 p-3">
+      <div className="rounded-lg bg-surface-low p-3">
+        <div className="text-[10px] font-bold uppercase text-outline">Base Weight</div>
+        <div className="text-lg font-extrabold tabular-nums">{displayWeight(baseWeight, unit)}</div>
+      </div>
+      <div className="rounded-lg bg-surface-low p-3">
+        <div className="text-[10px] font-bold uppercase text-outline">Total Carried</div>
+        <div className="text-lg font-extrabold tabular-nums">
+          {displayWeight(totalCarried, unit)}
+        </div>
+      </div>
+      <div className="rounded-lg bg-surface-low p-3">
+        <div className="text-[10px] font-bold uppercase text-outline">Skin-Out</div>
+        <div className="text-lg font-extrabold tabular-nums">{displayWeight(skinOut, unit)}</div>
+      </div>
+      <div className="rounded-lg bg-surface-low p-3">
+        <div className="text-[10px] font-bold uppercase text-outline">% Body Wt</div>
+        {user?.bodyWeightKg && user.bodyWeightKg > 0 ? (
+          (() => {
+            const percent = bodyWeightPercent(totalCarried, user.bodyWeightKg);
+            const warning = getCarryWarning(percent, user.role ?? "adult");
+            return (
+              <div className={`text-lg font-extrabold tabular-nums ${warning.color}`}>
+                {percent.toFixed(1)}%
+              </div>
+            );
+          })()
+        ) : (
+          <div className="text-lg font-extrabold tabular-nums text-outline">--</div>
+        )}
+      </div>
+    </div>
+  );
 
   return (
     <div
-      className={`flex flex-col rounded-xl bg-card border border-outline-variant/10 ${collapsed ? "!border-transparent" : ""}`}
+      className={`flex flex-col ${
+        collapsed ? "rounded-xl" : "rounded-xl bg-card border border-outline-variant/10"
+      }`}
     >
       {/* Person Header */}
       <div
-        className={`flex items-center gap-3 px-4 py-3 cursor-pointer select-none ${collapsed ? "rounded-xl bg-surface-low" : "border-b border-outline-variant/10"}`}
+        className={`flex items-center gap-3 px-4 py-3 cursor-pointer select-none ${
+          collapsed ? "rounded-t-xl bg-surface-low" : "border-b border-outline-variant/10"
+        }`}
         onClick={() => setCollapsed(!collapsed)}
       >
         <div className="text-outline">
@@ -140,17 +157,9 @@ export function PackColumn({ pack, tripId, checklistMode = false, allPacks }: Pa
           <h2 className="text-base font-bold truncate">{user?.name}&apos;s Pack</h2>
         </div>
         {collapsed ? (
-          <div className="flex items-center gap-3" onClick={(e) => e.stopPropagation()}>
-            <button
-              type="button"
-              className="font-mono text-sm font-bold tabular-nums text-on-surface-variant hover:text-primary transition-colors"
-              onClick={cycleCollapsedUnit}
-              title="Click to change unit"
-            >
-              {formatCollapsedWeight(totalCarried)}
-            </button>
-            <span className="text-xs text-outline">{packItems.length} items</span>
-          </div>
+          <span className="text-xs text-outline">
+            {packItems.length} {packItems.length === 1 ? "item" : "items"}
+          </span>
         ) : (
           <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
             <Button
@@ -179,6 +188,9 @@ export function PackColumn({ pack, tripId, checklistMode = false, allPacks }: Pa
           </div>
         )}
       </div>
+
+      {/* Collapsed: show just the stats bar (no categories, no grey card frame) */}
+      {collapsed && <div className="rounded-b-xl bg-surface-low">{statsFooter}</div>}
 
       {!collapsed && (
         <>
@@ -277,43 +289,8 @@ export function PackColumn({ pack, tripId, checklistMode = false, allPacks }: Pa
             )}
           </div>
 
-          {/* Weight Summary Footer */}
-          <div className="grid grid-cols-2 gap-2 p-3 border-t border-outline-variant/10">
-            <div className="rounded-lg bg-surface-low p-3">
-              <div className="text-[10px] font-bold uppercase text-outline">Base Weight</div>
-              <div className="text-lg font-extrabold tabular-nums">
-                {displayWeight(baseWeight, unit)}
-              </div>
-            </div>
-            <div className="rounded-lg bg-surface-low p-3">
-              <div className="text-[10px] font-bold uppercase text-outline">Total Carried</div>
-              <div className="text-lg font-extrabold tabular-nums">
-                {displayWeight(totalCarried, unit)}
-              </div>
-            </div>
-            <div className="rounded-lg bg-surface-low p-3">
-              <div className="text-[10px] font-bold uppercase text-outline">Skin-Out</div>
-              <div className="text-lg font-extrabold tabular-nums">
-                {displayWeight(skinOut, unit)}
-              </div>
-            </div>
-            <div className="rounded-lg bg-surface-low p-3">
-              <div className="text-[10px] font-bold uppercase text-outline">% Body Wt</div>
-              {user?.bodyWeightKg && user.bodyWeightKg > 0 ? (
-                (() => {
-                  const percent = bodyWeightPercent(totalCarried, user.bodyWeightKg);
-                  const warning = getCarryWarning(percent, user.role ?? "adult");
-                  return (
-                    <div className={`text-lg font-extrabold tabular-nums ${warning.color}`}>
-                      {percent.toFixed(1)}%
-                    </div>
-                  );
-                })()
-              ) : (
-                <div className="text-lg font-extrabold tabular-nums text-outline">--</div>
-              )}
-            </div>
-          </div>
+          {/* Weight Summary Footer — same block reused in collapsed state */}
+          <div className="border-t border-outline-variant/10">{statsFooter}</div>
         </>
       )}
 

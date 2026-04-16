@@ -8,6 +8,35 @@ export interface ChangelogEntry {
 // Newest first.
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    at: "2026-04-16T13:50:00-06:00",
+    title: "Collapsed packs + trip tile weights + editable suggestions",
+    items: [
+      "Collapsed pack columns on a trip still show the full stats panel (Base / Carried / Skin-Out / %BW) — the gear list + outer card frame are what actually collapse.",
+      "Trip list tiles now show Base / Carried / Skin-Out weight in a 3-column mini panel, plus an item count.",
+      "Roadmap suggestions can be edited inline by their author — pencil icon on hover. Status can be changed by any household member later once admin UI ships.",
+      "Added a dedicated 'Add general suggestion' button next to the General Suggestions section.",
+      "Changelog drawer: the whole footer strip (and the open drawer's title bar) now opens or closes on click. Roadmap button stays pinned to the far right and doesn't toggle.",
+    ],
+  },
+  {
+    at: "2026-04-16T13:35:00-06:00",
+    title: "Roadmap suggestions + header tweaks",
+    items: [
+      "Every household member can submit roadmap suggestions — global 'Suggest an edit' button and a per-phase one that pre-fills the phase.",
+      "Suggestions show up at the bottom of the roadmap page, grouped by phase, visible to everyone in the household.",
+      "Roadmap link in the changelog drawer/footer moved to the far right; the entire rest of the header now toggles the drawer open/closed.",
+      "Roadmap header cleaned up: subheader and progress text split into two lines.",
+    ],
+  },
+  {
+    at: "2026-04-16T13:23:00-06:00",
+    title: "Roadmap page",
+    items: [
+      "New /app/roadmap page showing every phase, status badge, and planned features — pulled from docs/roadmap.md into a typed, rendered view.",
+      "Nav gained a 'Roadmap' link.",
+    ],
+  },
+  {
     at: "2026-04-16T13:20:00-06:00",
     title: "Change item owner from the inline editor",
     items: [

@@ -14,9 +14,44 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { MapPin, Calendar, Users, Plus, Copy, Trash2, Search } from "lucide-react";
+import { MapPin, Calendar, Users, Plus, Copy, Trash2, Search, Backpack } from "lucide-react";
 import { toast } from "sonner";
 import { useConfirm } from "@/components/providers/confirm-provider";
+import { displayWeight } from "@/lib/weight";
+import { useWeightUnit } from "@/components/providers/weight-unit-provider";
+
+interface PackWeights {
+  userId: string;
+  name: string;
+  role: "adult" | "child" | "pet";
+  base: number;
+  carried: number;
+}
+
+function computePerPackWeights(trip: any): PackWeights[] {
+  const out: PackWeights[] = [];
+  for (const pack of trip.packs ?? []) {
+    let base = 0;
+    let carried = 0;
+    for (const pi of pack.packItems ?? []) {
+      const w = (pi.item?.weightGrams ?? 0) * (pi.quantity ?? 1);
+      const isWorn = pi.isWornOverride ?? pi.item?.isWorn ?? false;
+      const isConsumable = pi.isConsumableOverride ?? pi.item?.isConsumable ?? false;
+      if (!isWorn) {
+        carried += w;
+        if (!isConsumable) base += w;
+      }
+    }
+    out.push({
+      userId: pack.userId,
+      name: pack.user?.name ?? "—",
+      role: pack.user?.role ?? "adult",
+      base,
+      carried,
+    });
+  }
+  return out;
+}
 
 export function TripsPage() {
   const { data: trips, isLoading } = useTrips();
@@ -27,6 +62,7 @@ export function TripsPage() {
   const [sortBy, setSortBy] = useState<string>("newest");
   const router = useRouter();
   const confirm = useConfirm();
+  const { unit } = useWeightUnit();
 
   function handleDuplicate(e: React.MouseEvent, tripId: string) {
     e.stopPropagation();
@@ -151,77 +187,111 @@ export function TripsPage() {
               );
             }
 
-            return filtered.map((trip: any) => (
-              <div
-                key={trip.id}
-                className="cursor-pointer rounded-xl bg-card border border-outline-variant/10 p-6 transition-colors hover:bg-surface-high"
-                onClick={() => router.push(`/app/trips/${trip.id}`)}
-              >
-                <div className="flex items-start justify-between gap-2 mb-3">
-                  <h3 className="text-lg font-bold">{trip.name}</h3>
-                  <div className="flex items-center gap-2 shrink-0">
-                    {trip.completedAt && (
-                      <Badge variant="default" className="bg-primary/20 text-primary">
-                        Done
-                      </Badge>
-                    )}
-                    {trip.season && (
-                      <Badge variant="muted" className="capitalize">
-                        {trip.season}
-                      </Badge>
-                    )}
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  {trip.location && (
-                    <div className="flex items-center gap-1.5 text-sm text-outline">
-                      <MapPin className="size-3.5" />
-                      <span>{trip.location}</span>
-                    </div>
-                  )}
-                  {(trip.startDate || trip.endDate) && (
-                    <div className="flex items-center gap-1.5 text-sm text-outline">
-                      <Calendar className="size-3.5" />
-                      <span>
-                        {trip.startDate && formatDate(trip.startDate)}
-                        {trip.startDate && trip.endDate && " \u2013 "}
-                        {trip.endDate && formatDate(trip.endDate)}
-                      </span>
-                    </div>
-                  )}
-                  <div className="flex items-center justify-between pt-2">
-                    <div className="flex items-center gap-1.5 text-sm text-outline">
-                      <Users className="size-3.5" />
-                      <span>
-                        {trip.members?.length ?? 0}{" "}
-                        {(trip.members?.length ?? 0) === 1 ? "member" : "members"}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Button
-                        variant="ghost"
-                        size="icon-xs"
-                        onClick={(e) => handleDuplicate(e, trip.id)}
-                        disabled={duplicateTrip.isPending}
-                        title="Duplicate trip"
-                        className="text-outline hover:text-primary"
-                      >
-                        <Copy className="size-3.5" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon-xs"
-                        onClick={(e) => handleDelete(e, trip.id, trip.name)}
-                        title="Delete trip"
-                        className="text-outline hover:text-destructive"
-                      >
-                        <Trash2 className="size-3.5" />
-                      </Button>
+            return filtered.map((trip: any) => {
+              const perPack = computePerPackWeights(trip);
+              const itemCount = (trip.packs ?? []).reduce(
+                (sum: number, p: any) => sum + (p.packItems?.length ?? 0),
+                0
+              );
+              return (
+                <div
+                  key={trip.id}
+                  className="cursor-pointer rounded-xl bg-card border border-outline-variant/10 p-6 transition-colors hover:bg-surface-high"
+                  onClick={() => router.push(`/app/trips/${trip.id}`)}
+                >
+                  <div className="flex items-start justify-between gap-2 mb-3">
+                    <h3 className="text-lg font-bold">{trip.name}</h3>
+                    <div className="flex items-center gap-2 shrink-0">
+                      {trip.completedAt && (
+                        <Badge variant="default" className="bg-primary/20 text-primary">
+                          Done
+                        </Badge>
+                      )}
+                      {trip.season && (
+                        <Badge variant="muted" className="capitalize">
+                          {trip.season}
+                        </Badge>
+                      )}
                     </div>
                   </div>
+                  <div className="space-y-2">
+                    {trip.location && (
+                      <div className="flex items-center gap-1.5 text-sm text-outline">
+                        <MapPin className="size-3.5" />
+                        <span>{trip.location}</span>
+                      </div>
+                    )}
+                    {(trip.startDate || trip.endDate) && (
+                      <div className="flex items-center gap-1.5 text-sm text-outline">
+                        <Calendar className="size-3.5" />
+                        <span>
+                          {trip.startDate && formatDate(trip.startDate)}
+                          {trip.startDate && trip.endDate && " \u2013 "}
+                          {trip.endDate && formatDate(trip.endDate)}
+                        </span>
+                      </div>
+                    )}
+                    {perPack.length > 0 && (
+                      <ul className="pt-1 space-y-0.5">
+                        {perPack.map((p) => {
+                          const firstName = (p.name ?? "").split(/\s+/)[0] || p.name;
+                          return (
+                            <li key={p.userId} className="flex items-baseline gap-3 text-sm">
+                              <span className="font-bold shrink-0">
+                                {p.role === "pet" ? "🐾 " : ""}
+                                {firstName}
+                              </span>
+                              <span className="ml-auto font-mono tabular-nums text-xs text-outline">
+                                {displayWeight(p.base, unit)}{" "}
+                                <span className="text-outline/50">base</span>
+                                {" · "}
+                                <span className="text-on-surface-variant">
+                                  {displayWeight(p.carried, unit)}
+                                </span>{" "}
+                                <span className="text-outline/50">carry</span>
+                              </span>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    )}
+                    <div className="flex items-center justify-between pt-2">
+                      <div className="flex items-center gap-3 text-sm text-outline">
+                        <span className="flex items-center gap-1.5">
+                          <Users className="size-3.5" />
+                          {trip.members?.length ?? 0}
+                        </span>
+                        <span className="flex items-center gap-1.5">
+                          <Backpack className="size-3.5" />
+                          {itemCount} {itemCount === 1 ? "item" : "items"}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Button
+                          variant="ghost"
+                          size="icon-xs"
+                          onClick={(e) => handleDuplicate(e, trip.id)}
+                          disabled={duplicateTrip.isPending}
+                          title="Duplicate trip"
+                          className="text-outline hover:text-primary"
+                        >
+                          <Copy className="size-3.5" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon-xs"
+                          onClick={(e) => handleDelete(e, trip.id, trip.name)}
+                          title="Delete trip"
+                          className="text-outline hover:text-destructive"
+                        >
+                          <Trash2 className="size-3.5" />
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            ));
+              );
+            });
           })()}
         </div>
       )}

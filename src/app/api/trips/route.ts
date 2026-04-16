@@ -15,6 +15,13 @@ export async function GET() {
         members: {
           with: { user: true },
         },
+        packs: {
+          with: {
+            packItems: {
+              with: { item: true },
+            },
+          },
+        },
       },
       orderBy: (trips, { desc }) => [desc(trips.createdAt)],
     });
