@@ -64,7 +64,7 @@ export function ClosetPage() {
         label: partner.name ?? "Partner",
         ownerType: "personal",
         ownerId: partner.id,
-        readOnly: true,
+        readOnly: false,
       });
     }
 
@@ -211,7 +211,11 @@ export function ClosetPage() {
         onOpenChange={setDialogOpen}
         categories={cats}
         defaultOwnerType={activeTabDef?.ownerType === "shared" ? "shared" : "personal"}
-        defaultOwnerId={currentUser?.id ?? ""}
+        defaultOwnerId={
+          activeTabDef?.ownerType === "shared"
+            ? (householdData?.household?.id ?? "")
+            : (activeTabDef?.ownerId ?? currentUser?.id ?? "")
+        }
       />
     </div>
   );

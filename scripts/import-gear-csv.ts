@@ -2,7 +2,10 @@
  * Import gear items from a CSV into the production database.
  *
  * Usage:
- *   USE_NEON=true npx tsx scripts/import-gear-csv.ts data/gear-import.csv
+ *   USE_NEON=true npx tsx scripts/import-gear-csv.ts data/gear-import.csv [--dry-run]
+ *
+ * Flags:
+ *   --dry-run   Parse and validate everything but don't write to the database
  *
  * CSV format (tab-delimited):
  *   Category\tOwner\tName\tModel\tType\tWeight in oz\tWeight in lb
@@ -22,12 +25,11 @@ import knownBrandsData from "../data/catalog/known-brands.json";
 // ── CONFIG — paste your prod UUIDs here ──
 
 const CONFIG = {
-  householdId: "PASTE_HOUSEHOLD_ID",
+  householdId: "ee5d8bc1-2b2f-44ba-bfe4-c78270b3619b",
   ownerMap: {
-    Family: { ownerType: "shared" as const, ownerId: "PASTE_HOUSEHOLD_ID" },
-    Thomas: { ownerType: "personal" as const, ownerId: "PASTE_THOMAS_USER_ID" },
-    // Add partner's name as it appears in the CSV:
-    // "PartnerName": { ownerType: "personal" as const, ownerId: "PASTE_PARTNER_USER_ID" },
+    Family: { ownerType: "shared" as const, ownerId: "ee5d8bc1-2b2f-44ba-bfe4-c78270b3619b" },
+    Thomas: { ownerType: "personal" as const, ownerId: "299a6134-7bef-4a83-8573-3c7993614464" },
+    Jennifer: { ownerType: "personal" as const, ownerId: "ae4425a0-9bd8-4c8d-938c-1a4e75377897" },
   } as Record<string, { ownerType: "shared" | "personal"; ownerId: string }>,
   skipOwners: ["Birch"],
 };
@@ -87,10 +89,19 @@ const CATEGORY_COLORS: Record<string, string> = {
 // ── Main ──
 
 async function main() {
-  const csvPath = process.argv[2];
+  const args = process.argv.slice(2);
+  const dryRun = args.includes("--dry-run");
+  const csvPath = args.find((a) => !a.startsWith("--"));
+
   if (!csvPath) {
-    console.error("Usage: USE_NEON=true npx tsx scripts/import-gear-csv.ts <path-to-csv>");
+    console.error(
+      "Usage: USE_NEON=true npx tsx scripts/import-gear-csv.ts <path-to-csv> [--dry-run]"
+    );
     process.exit(1);
+  }
+
+  if (dryRun) {
+    console.log("🔍 DRY RUN — no database writes will be made\n");
   }
 
   // Validate config
@@ -126,6 +137,22 @@ async function main() {
     if (catByName.has(name)) return catByName.get(name)!;
 
     const color = CATEGORY_COLORS[name] || "#6b7280";
+
+    if (dryRun) {
+      const placeholder = {
+        id: `dry-run-${name}`,
+        name,
+        color,
+        sortOrder: nextSortOrder++,
+        icon: null,
+        parentCategoryId: null,
+        householdId: CONFIG.householdId,
+      };
+      catByName.set(name, placeholder);
+      console.log(`  Would create category: ${name} (${color})`);
+      return placeholder;
+    }
+
     const [created] = await db
       .insert(categories)
       .values({
@@ -182,26 +209,31 @@ async function main() {
     // Type flags
     const { isWorn, isConsumable } = parseType(type);
 
-    await db.insert(items).values({
-      name: itemName,
-      brand,
-      model,
-      weightGrams,
-      categoryId: category.id,
-      ownerType: ownerConfig.ownerType,
-      ownerId: ownerConfig.ownerId,
-      isWorn,
-      isConsumable,
-    });
+    if (!dryRun) {
+      await db.insert(items).values({
+        name: itemName,
+        brand,
+        model,
+        weightGrams,
+        categoryId: category.id,
+        ownerType: ownerConfig.ownerType,
+        ownerId: ownerConfig.ownerId,
+        isWorn,
+        isConsumable,
+      });
+    }
 
     imported++;
     const brandLabel = brand ? `${brand} ${model}` : modelRaw || "(no model)";
+    const prefix = dryRun ? "  [DRY]" : "  ";
     console.log(
-      `  [${ownerConfig.ownerType}] ${itemName} — ${brandLabel} — ${weightOz}oz (${weightGrams}g)`
+      `${prefix}[${ownerConfig.ownerType}] ${itemName} — ${brandLabel} — ${weightOz}oz (${weightGrams}g)`
     );
   }
 
-  console.log(`\nDone. Imported: ${imported}, Skipped: ${skipped}`);
+  console.log(
+    `\n${dryRun ? "DRY RUN complete" : "Done"}. ${dryRun ? "Would import" : "Imported"}: ${imported}, Skipped: ${skipped}`
+  );
   process.exit(0);
 }
 
