@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
 import { trips, tripMembers, tripPacks } from "@/db/schema";
 import { eq } from "drizzle-orm";
-import { getAuthenticatedUser, handleApiError, ApiError } from "@/lib/api-helpers";
+import { getAuthenticatedUser, handleApiError } from "@/lib/api-helpers";
+import { createTripSchema } from "@/lib/validators";
 
 export async function GET() {
   try {
@@ -28,21 +29,8 @@ export async function POST(req: NextRequest) {
   try {
     const user = await getAuthenticatedUser();
 
-    const {
-      name,
-      description,
-      startDate,
-      endDate,
-      location,
-      season,
-      terrain,
-      memberIds,
-    } = await req.json();
-
-    if (!name) throw new ApiError(400, "Name is required");
-    if (!memberIds || !Array.isArray(memberIds) || memberIds.length === 0) {
-      throw new ApiError(400, "At least one member is required");
-    }
+    const { name, description, startDate, endDate, location, season, terrain, memberIds } =
+      createTripSchema.parse(await req.json());
 
     const [trip] = await db
       .insert(trips)

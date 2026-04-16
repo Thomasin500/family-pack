@@ -3,6 +3,7 @@ import { db } from "@/db";
 import { items, users } from "@/db/schema";
 import { eq, and, or, inArray } from "drizzle-orm";
 import { getAuthenticatedUser, handleApiError, ApiError } from "@/lib/api-helpers";
+import { createItemSchema } from "@/lib/validators";
 
 export async function GET(req: NextRequest) {
   try {
@@ -52,7 +53,7 @@ export async function POST(req: NextRequest) {
   try {
     const user = await getAuthenticatedUser();
 
-    const body = await req.json();
+    const body = createItemSchema.parse(await req.json());
     const {
       name,
       brand,
@@ -66,10 +67,6 @@ export async function POST(req: NextRequest) {
       tags,
       notes,
     } = body;
-
-    if (!name) throw new ApiError(400, "Name is required");
-    if (!ownerType) throw new ApiError(400, "Owner type is required");
-    if (!ownerId) throw new ApiError(400, "Owner ID is required");
 
     // Validate the ownerId belongs to the household
     if (ownerType === "personal") {

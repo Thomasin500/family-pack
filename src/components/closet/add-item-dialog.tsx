@@ -55,9 +55,7 @@ export function AddItemDialog({
   const [weightOz, setWeightOz] = useState("");
   const [categoryId, setCategoryId] = useState("");
   const [itemType, setItemType] = useState<ItemType>("base");
-  const [ownerType, setOwnerType] = useState<"personal" | "shared">(
-    defaultOwnerType
-  );
+  const [ownerType, setOwnerType] = useState<"personal" | "shared">(defaultOwnerType);
 
   const resetForm = useCallback(() => {
     setName("");
@@ -83,7 +81,7 @@ export function AddItemDialog({
           weightGrams: ozToGrams(parsedWeight),
           categoryId: categoryId || undefined,
           ownerType,
-          ownerId: ownerType === "shared" ? undefined : defaultOwnerId,
+          ownerId: defaultOwnerId,
           isWorn: itemType === "worn",
           isConsumable: itemType === "consumable",
         },
@@ -111,18 +109,13 @@ export function AddItemDialog({
   );
 
   const handleCatalogSelect = useCallback(
-    (suggestion: {
-      brand: string;
-      model: string;
-      categorySuggestion: string;
-    }) => {
+    (suggestion: { brand: string; model: string; categorySuggestion: string | null }) => {
       setBrand(suggestion.brand);
       setModel(suggestion.model);
-      if (suggestion.categorySuggestion) {
+      const catSuggestion = suggestion.categorySuggestion;
+      if (catSuggestion) {
         const matched = categories.find(
-          (c) =>
-            c.name.toLowerCase() ===
-            suggestion.categorySuggestion.toLowerCase()
+          (c) => c.name.toLowerCase() === catSuggestion.toLowerCase()
         );
         if (matched) setCategoryId(matched.id);
       }
@@ -130,29 +123,21 @@ export function AddItemDialog({
     [categories]
   );
 
-  const sortedCategories = [...categories].sort(
-    (a, b) => a.sortOrder - b.sortOrder
-  );
+  const sortedCategories = [...categories].sort((a, b) => a.sortOrder - b.sortOrder);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Add Gear Item</DialogTitle>
-          <DialogDescription>
-            Search the catalog or enter details manually.
-          </DialogDescription>
+          <DialogDescription>Search the catalog or enter details manually.</DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="grid gap-4">
           {/* Name with catalog typeahead */}
           <div className="grid gap-2">
             <Label htmlFor="item-name">Name</Label>
-            <CatalogTypeahead
-              value={name}
-              onChange={setName}
-              onSelect={handleCatalogSelect}
-            />
+            <CatalogTypeahead value={name} onChange={setName} onSelect={handleCatalogSelect} />
           </div>
 
           {/* Brand + Model side by side */}
@@ -217,10 +202,7 @@ export function AddItemDialog({
           {/* Item type: base / worn / consumable */}
           <div className="grid gap-2">
             <Label>Type</Label>
-            <Select
-              value={itemType}
-              onValueChange={(v) => setItemType(v as ItemType)}
-            >
+            <Select value={itemType} onValueChange={(v) => setItemType(v as ItemType)}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
@@ -237,9 +219,7 @@ export function AddItemDialog({
             <Label>Owner</Label>
             <Select
               value={ownerType}
-              onValueChange={(v) =>
-                setOwnerType(v as "personal" | "shared")
-              }
+              onValueChange={(v) => setOwnerType(v as "personal" | "shared")}
             >
               <SelectTrigger>
                 <SelectValue />
@@ -252,17 +232,10 @@ export function AddItemDialog({
           </div>
 
           <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-            >
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Cancel
             </Button>
-            <Button
-              type="submit"
-              disabled={!name.trim() || !weightOz || createItem.isPending}
-            >
+            <Button type="submit" disabled={!name.trim() || !weightOz || createItem.isPending}>
               {createItem.isPending ? "Adding..." : "Add Item"}
             </Button>
           </DialogFooter>

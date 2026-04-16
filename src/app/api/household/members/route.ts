@@ -1,17 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
 import { users } from "@/db/schema";
-import { getAuthenticatedUser, handleApiError, ApiError } from "@/lib/api-helpers";
+import { getAuthenticatedUser, handleApiError } from "@/lib/api-helpers";
+import { addMemberSchema } from "@/lib/validators";
 
 export async function POST(req: NextRequest) {
   try {
     const user = await getAuthenticatedUser();
 
-    const { name, role, bodyWeightKg, breed } = await req.json();
-    if (!name) throw new ApiError(400, "Name is required");
-    if (!role || !["child", "pet"].includes(role)) {
-      throw new ApiError(400, "Role must be 'child' or 'pet'");
-    }
+    const { name, role, bodyWeightKg, breed } = addMemberSchema.parse(await req.json());
 
     const [member] = await db
       .insert(users)

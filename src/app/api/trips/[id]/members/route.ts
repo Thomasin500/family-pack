@@ -3,14 +3,13 @@ import { db } from "@/db";
 import { trips, tripMembers, tripPacks } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
 import { getAuthenticatedUser, handleApiError, ApiError } from "@/lib/api-helpers";
+import { addTripMemberSchema } from "@/lib/validators";
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const user = await getAuthenticatedUser();
     const { id } = await params;
-    const { userId } = await req.json();
-
-    if (!userId) throw new ApiError(400, "userId is required");
+    const { userId } = addTripMemberSchema.parse(await req.json());
 
     // Verify trip belongs to household
     const trip = await db.query.trips.findFirst({

@@ -29,28 +29,7 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { Trash2, ChevronDown, ChevronRight, GripVertical } from "lucide-react";
 import { toast } from "sonner";
-
-interface Item {
-  id: string;
-  name: string;
-  brand: string;
-  model: string;
-  weightGrams: number;
-  categoryId: string;
-  ownerType: string;
-  ownerId: string;
-  isConsumable: boolean;
-  isWorn: boolean;
-  tags: string[];
-  notes: string;
-}
-
-interface Category {
-  id: string;
-  name: string;
-  color: string;
-  sortOrder: number;
-}
+import type { Item, Category } from "@/types";
 
 interface ItemTableProps {
   items: Item[];
@@ -367,6 +346,9 @@ export function ItemTable({ items, categories, readOnly = false }: ItemTableProp
         name: "Uncategorized",
         color: "#888888",
         sortOrder: 9999,
+        icon: null,
+        parentCategoryId: null,
+        householdId: "",
       },
       items: uncategorized,
     });

@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
 import { categories } from "@/db/schema";
 import { eq, asc } from "drizzle-orm";
-import { getAuthenticatedUser, handleApiError, ApiError } from "@/lib/api-helpers";
+import { getAuthenticatedUser, handleApiError } from "@/lib/api-helpers";
+import { createCategorySchema } from "@/lib/validators";
 
 export async function GET() {
   try {
@@ -24,8 +25,7 @@ export async function POST(req: NextRequest) {
   try {
     const user = await getAuthenticatedUser();
 
-    const { name, color, sortOrder } = await req.json();
-    if (!name) throw new ApiError(400, "Name is required");
+    const { name, color, sortOrder } = createCategorySchema.parse(await req.json());
 
     const [category] = await db
       .insert(categories)

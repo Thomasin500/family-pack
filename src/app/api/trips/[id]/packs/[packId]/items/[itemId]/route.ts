@@ -3,6 +3,7 @@ import { db } from "@/db";
 import { tripPacks, tripPackItems, trips } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
 import { getAuthenticatedUser, handleApiError, ApiError } from "@/lib/api-helpers";
+import { updatePackItemSchema } from "@/lib/validators";
 
 export async function PATCH(
   req: NextRequest,
@@ -24,17 +25,12 @@ export async function PATCH(
     });
     if (!pack) throw new ApiError(404, "Pack not found");
 
-    const body = await req.json();
+    const body = updatePackItemSchema.parse(await req.json());
 
     const [updated] = await db
       .update(tripPackItems)
       .set(body)
-      .where(
-        and(
-          eq(tripPackItems.id, itemId),
-          eq(tripPackItems.tripPackId, packId)
-        )
-      )
+      .where(and(eq(tripPackItems.id, itemId), eq(tripPackItems.tripPackId, packId)))
       .returning();
 
     if (!updated) throw new ApiError(404, "Pack item not found");
@@ -67,12 +63,7 @@ export async function DELETE(
 
     const [deleted] = await db
       .delete(tripPackItems)
-      .where(
-        and(
-          eq(tripPackItems.id, itemId),
-          eq(tripPackItems.tripPackId, packId)
-        )
-      )
+      .where(and(eq(tripPackItems.id, itemId), eq(tripPackItems.tripPackId, packId)))
       .returning();
 
     if (!deleted) throw new ApiError(404, "Pack item not found");

@@ -73,7 +73,8 @@ function EditTripForm({
       location: location.trim() || null,
       startDate: startDate || null,
       endDate: endDate || null,
-      season: season && season !== "none" ? season : null,
+      season:
+        season && season !== "none" ? (season as "spring" | "summer" | "fall" | "winter") : null,
       terrain: terrain.trim() || null,
     });
 

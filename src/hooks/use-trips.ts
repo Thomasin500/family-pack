@@ -2,18 +2,19 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { fetchApi } from "@/lib/fetch";
+import type { Trip } from "@/types";
 
 export function useTrips() {
   return useQuery({
     queryKey: ["trips"],
-    queryFn: () => fetchApi<any[]>("/api/trips"),
+    queryFn: () => fetchApi<Trip[]>("/api/trips"),
   });
 }
 
 export function useTrip(id: string) {
   return useQuery({
     queryKey: ["trip", id],
-    queryFn: () => fetchApi<any>(`/api/trips/${id}`),
+    queryFn: () => fetchApi<Trip>(`/api/trips/${id}`),
     enabled: !!id,
   });
 }
@@ -21,8 +22,17 @@ export function useTrip(id: string) {
 export function useCreateTrip() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: Record<string, unknown>) =>
-      fetchApi("/api/trips", {
+    mutationFn: (data: {
+      name: string;
+      memberIds: string[];
+      description?: string;
+      startDate?: string;
+      endDate?: string;
+      location?: string;
+      season?: string;
+      terrain?: string;
+    }) =>
+      fetchApi<Trip>("/api/trips", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
@@ -36,8 +46,15 @@ export function useCreateTrip() {
 export function useUpdateTrip() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: { id: string } & Record<string, unknown>) =>
-      fetchApi(`/api/trips/${data.id}`, {
+    mutationFn: (
+      data: { id: string } & Partial<
+        Omit<
+          Trip,
+          "id" | "createdAt" | "updatedAt" | "householdId" | "createdByUserId" | "members" | "packs"
+        >
+      >
+    ) =>
+      fetchApi<Trip>(`/api/trips/${data.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
@@ -96,7 +113,7 @@ export function useDuplicateTrip() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (id: string) =>
-      fetchApi<any>(`/api/trips/${id}/duplicate`, {
+      fetchApi<Trip>(`/api/trips/${id}/duplicate`, {
         method: "POST",
       }),
     onSuccess: () => {

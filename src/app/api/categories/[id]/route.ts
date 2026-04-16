@@ -3,12 +3,13 @@ import { db } from "@/db";
 import { categories, items } from "@/db/schema";
 import { eq, and, count } from "drizzle-orm";
 import { getAuthenticatedUser, handleApiError, ApiError } from "@/lib/api-helpers";
+import { updateCategorySchema } from "@/lib/validators";
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const user = await getAuthenticatedUser();
     const { id } = await params;
-    const body = await req.json();
+    const body = updateCategorySchema.parse(await req.json());
 
     const [updated] = await db
       .update(categories)

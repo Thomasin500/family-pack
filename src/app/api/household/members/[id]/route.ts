@@ -3,12 +3,13 @@ import { db } from "@/db";
 import { users } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { getAuthenticatedUser, handleApiError, ApiError } from "@/lib/api-helpers";
+import { updateMemberSchema } from "@/lib/validators";
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
     const authedUser = await getAuthenticatedUser();
-    const body = await req.json();
+    const body = updateMemberSchema.parse(await req.json());
 
     // Find the member
     const member = await db.query.users.findFirst({
@@ -26,19 +27,11 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       throw new ApiError(403, "You can only edit your own profile or members you manage");
     }
 
-    const updates: Record<string, unknown> = {};
-    if (body.name !== undefined) updates.name = body.name;
-    if (body.bodyWeightKg !== undefined) updates.bodyWeightKg = body.bodyWeightKg;
-    if (body.breed !== undefined) updates.breed = body.breed;
-    if (body.heightCm !== undefined) updates.heightCm = body.heightCm;
-    if (body.birthDate !== undefined) updates.birthDate = body.birthDate;
-    if (body.sex !== undefined) updates.sex = body.sex;
-
-    if (Object.keys(updates).length === 0) {
+    if (Object.keys(body).length === 0) {
       throw new ApiError(400, "No valid fields to update");
     }
 
-    updates.updatedAt = new Date();
+    const updates: Record<string, unknown> = { ...body, updatedAt: new Date() };
 
     const [updated] = await db.update(users).set(updates).where(eq(users.id, id)).returning();
 

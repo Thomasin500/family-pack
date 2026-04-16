@@ -2,19 +2,20 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { fetchApi } from "@/lib/fetch";
+import type { Category } from "@/types";
 
 export function useCategories() {
   return useQuery({
     queryKey: ["categories"],
-    queryFn: () => fetchApi<any[]>("/api/categories"),
+    queryFn: () => fetchApi<Category[]>("/api/categories"),
   });
 }
 
 export function useCreateCategory() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: Record<string, unknown>) =>
-      fetchApi("/api/categories", {
+    mutationFn: (data: { name: string; color?: string; sortOrder?: number }) =>
+      fetchApi<Category>("/api/categories", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
@@ -28,8 +29,14 @@ export function useCreateCategory() {
 export function useUpdateCategory() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: { id: string } & Record<string, unknown>) =>
-      fetchApi(`/api/categories/${data.id}`, {
+    mutationFn: (data: {
+      id: string;
+      name?: string;
+      color?: string;
+      sortOrder?: number;
+      icon?: string | null;
+    }) =>
+      fetchApi<Category>(`/api/categories/${data.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),

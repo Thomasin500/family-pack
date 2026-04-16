@@ -4,6 +4,7 @@ import { useTrip } from "@/hooks/use-trips";
 import { useCategories } from "@/hooks/use-categories";
 import { useItems } from "@/hooks/use-items";
 import { PackColumn } from "./pack-column";
+import { ErrorBoundary } from "@/components/ui/error-boundary";
 import dynamic from "next/dynamic";
 
 const SharedGearPool = dynamic(() => import("./shared-gear-pool").then((m) => m.SharedGearPool), {
@@ -199,14 +200,15 @@ export function TripWorkspace({ tripId }: TripWorkspaceProps) {
       <div className="flex-1 px-6 py-8 max-w-7xl mx-auto">
         <div className={`grid gap-8 ${gridClass}`}>
           {packs.map((pack: any) => (
-            <PackColumn
-              key={pack.id}
-              pack={pack}
-              categories={categories ?? []}
-              tripId={tripId}
-              checklistMode={checklistMode}
-              allPacks={packs}
-            />
+            <ErrorBoundary key={pack.id} fallbackLabel="Pack failed to load">
+              <PackColumn
+                pack={pack}
+                categories={categories ?? []}
+                tripId={tripId}
+                checklistMode={checklistMode}
+                allPacks={packs}
+              />
+            </ErrorBoundary>
           ))}
         </div>
 

@@ -4,6 +4,7 @@ import { tripPacks, tripPackItems, trips } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
 import { getAuthenticatedUser, handleApiError, ApiError } from "@/lib/api-helpers";
 import { maybePromoteToCatalog } from "@/lib/catalog-promotion";
+import { addPackItemSchema } from "@/lib/validators";
 
 export async function POST(
   req: NextRequest,
@@ -26,9 +27,7 @@ export async function POST(
     if (!pack) throw new ApiError(404, "Pack not found");
 
     const { itemId, quantity, ownedByUserId, isWornOverride, isConsumableOverride } =
-      await req.json();
-
-    if (!itemId) throw new ApiError(400, "Item ID is required");
+      addPackItemSchema.parse(await req.json());
 
     const [packItem] = await db
       .insert(tripPackItems)

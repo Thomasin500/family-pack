@@ -4,6 +4,7 @@ import { db } from "@/db";
 import { households, users } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { handleApiError, ApiError } from "@/lib/api-helpers";
+import { joinHouseholdSchema } from "@/lib/validators";
 
 export async function POST(req: NextRequest) {
   try {
@@ -19,18 +20,14 @@ export async function POST(req: NextRequest) {
       throw new ApiError(400, "User already belongs to a household");
     }
 
-    const { inviteCode } = await req.json();
-    if (!inviteCode) throw new ApiError(400, "Invite code is required");
+    const { inviteCode } = joinHouseholdSchema.parse(await req.json());
 
     const household = await db.query.households.findFirst({
       where: eq(households.inviteCode, inviteCode),
     });
     if (!household) throw new ApiError(404, "Invalid invite code");
 
-    await db
-      .update(users)
-      .set({ householdId: household.id })
-      .where(eq(users.id, user.id));
+    await db.update(users).set({ householdId: household.id }).where(eq(users.id, user.id));
 
     return NextResponse.json({ household });
   } catch (error) {

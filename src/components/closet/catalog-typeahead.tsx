@@ -7,7 +7,7 @@ import { useCatalogSearch } from "@/hooks/use-catalog-search";
 interface CatalogSuggestion {
   brand: string;
   model: string;
-  categorySuggestion: string;
+  categorySuggestion: string | null;
 }
 
 interface CatalogTypeaheadProps {

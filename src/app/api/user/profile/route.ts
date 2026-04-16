@@ -4,6 +4,7 @@ import { users } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import { handleApiError, ApiError } from "@/lib/api-helpers";
+import { updateProfileSchema } from "@/lib/validators";
 
 export async function PATCH(req: NextRequest) {
   try {
@@ -15,14 +16,13 @@ export async function PATCH(req: NextRequest) {
     });
     if (!user) throw new ApiError(401, "User not found");
 
-    const { bodyWeightKg, heightCm, name } = await req.json();
+    const body = updateProfileSchema.parse(await req.json());
 
-    const updates: Record<string, unknown> = { updatedAt: new Date() };
-    if (bodyWeightKg !== undefined) updates.bodyWeightKg = bodyWeightKg;
-    if (heightCm !== undefined) updates.heightCm = heightCm;
-    if (name !== undefined) updates.name = name;
-
-    const [updated] = await db.update(users).set(updates).where(eq(users.id, user.id)).returning();
+    const [updated] = await db
+      .update(users)
+      .set({ ...body, updatedAt: new Date() })
+      .where(eq(users.id, user.id))
+      .returning();
 
     return NextResponse.json(updated);
   } catch (error) {

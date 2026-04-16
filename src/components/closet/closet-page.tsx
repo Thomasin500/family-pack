@@ -11,6 +11,7 @@ import { WeightSummary } from "@/components/closet/weight-summary";
 import dynamic from "next/dynamic";
 import { Input } from "@/components/ui/input";
 import { Plus, Search, Settings2 } from "lucide-react";
+import { ErrorBoundary } from "@/components/ui/error-boundary";
 import { CategoryManager } from "@/components/closet/category-manager";
 
 const AddItemDialog = dynamic(
@@ -175,9 +176,11 @@ export function ClosetPage() {
             : ownerItems;
           return (
             <TabsContent key={t.id} value={t.id}>
-              <div className="space-y-8">
-                <ItemTable items={tabItems} categories={cats} readOnly={t.readOnly} />
-              </div>
+              <ErrorBoundary fallbackLabel="Gear list failed to load">
+                <div className="space-y-8">
+                  <ItemTable items={tabItems} categories={cats} readOnly={t.readOnly} />
+                </div>
+              </ErrorBoundary>
             </TabsContent>
           );
         })}

@@ -6,6 +6,7 @@ import { eq } from "drizzle-orm";
 import { handleApiError, ApiError } from "@/lib/api-helpers";
 import { nanoid } from "nanoid";
 import { DEFAULT_CATEGORIES } from "@/lib/constants";
+import { createHouseholdSchema } from "@/lib/validators";
 
 export async function GET() {
   try {
@@ -25,10 +26,7 @@ export async function GET() {
       where: eq(households.id, user.householdId),
     });
 
-    const members = await db
-      .select()
-      .from(users)
-      .where(eq(users.householdId, user.householdId));
+    const members = await db.select().from(users).where(eq(users.householdId, user.householdId));
 
     return NextResponse.json({ household, members });
   } catch (error) {
@@ -50,20 +48,13 @@ export async function POST(req: NextRequest) {
       throw new ApiError(400, "User already belongs to a household");
     }
 
-    const { name } = await req.json();
-    if (!name) throw new ApiError(400, "Name is required");
+    const { name } = createHouseholdSchema.parse(await req.json());
 
     const inviteCode = nanoid(8);
 
-    const [household] = await db
-      .insert(households)
-      .values({ name, inviteCode })
-      .returning();
+    const [household] = await db.insert(households).values({ name, inviteCode }).returning();
 
-    await db
-      .update(users)
-      .set({ householdId: household.id })
-      .where(eq(users.id, user.id));
+    await db.update(users).set({ householdId: household.id }).where(eq(users.id, user.id));
 
     const defaultCats = DEFAULT_CATEGORIES.map((cat) => ({
       name: cat.name,

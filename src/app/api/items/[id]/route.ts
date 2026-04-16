@@ -3,6 +3,7 @@ import { db } from "@/db";
 import { items, users, tripPackItems } from "@/db/schema";
 import { eq, and, or, inArray, count } from "drizzle-orm";
 import { getAuthenticatedUser, handleApiError, ApiError } from "@/lib/api-helpers";
+import { updateItemSchema } from "@/lib/validators";
 
 function householdItemFilter(householdId: string, memberIds: string[]) {
   return or(
@@ -15,7 +16,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   try {
     const user = await getAuthenticatedUser();
     const { id } = await params;
-    const body = await req.json();
+    const body = updateItemSchema.parse(await req.json());
     const householdId = user.householdId!;
 
     const members = await db

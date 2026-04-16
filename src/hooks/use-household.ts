@@ -2,11 +2,12 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { fetchApi } from "@/lib/fetch";
+import type { HouseholdData } from "@/types";
 
 export function useHousehold() {
   return useQuery({
     queryKey: ["household"],
-    queryFn: () => fetchApi<{ household: any; members: any[] }>("/api/household"),
+    queryFn: () => fetchApi<HouseholdData>("/api/household"),
   });
 }
 
@@ -58,7 +59,15 @@ export function useAddMember() {
 export function useUpdateMember() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: { id: string } & Record<string, unknown>) =>
+    mutationFn: (data: {
+      id: string;
+      name?: string;
+      bodyWeightKg?: number | null;
+      breed?: string | null;
+      heightCm?: number | null;
+      birthDate?: string | null;
+      sex?: string | null;
+    }) =>
       fetchApi(`/api/household/members/${data.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
