@@ -7,7 +7,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { signOutAction } from "@/app/app/actions";
 import { cn } from "@/lib/utils";
-import { LogOut, Sun, Moon } from "lucide-react";
+import { LogOut, Sun, Moon, Settings } from "lucide-react";
 import { useWeightUnit } from "@/components/providers/weight-unit-provider";
 
 interface NavBarProps {
@@ -104,6 +104,18 @@ export function NavBar({ user }: NavBarProps) {
           >
             {dark ? <Sun className="size-4" /> : <Moon className="size-4" />}
           </Button>
+
+          {/* Household settings */}
+          <Link href="/app/settings/household">
+            <Button
+              variant="ghost"
+              size="icon"
+              title="Household settings"
+              className="size-8 text-outline hover:text-foreground"
+            >
+              <Settings className="size-4" />
+            </Button>
+          </Link>
 
           <Link href="/app/trips">
             <Button

@@ -15,20 +15,8 @@ import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import {
-  Loader2,
-  Copy,
-  Check,
-  PawPrint,
-  Backpack,
-  Map,
-  Plus,
-  X,
-  Pencil,
-  LogOut,
-} from "lucide-react";
+import { Loader2, Copy, Check, PawPrint, Backpack, Map, Plus, X, Pencil } from "lucide-react";
 import { useClickOutside } from "@/hooks/use-click-outside";
-import { fetchApi } from "@/lib/fetch";
 
 export function Dashboard() {
   const { data, isLoading } = useHousehold();
@@ -63,25 +51,6 @@ export function Dashboard() {
       navigator.clipboard.writeText(household.inviteCode);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
-    }
-  }
-
-  async function handleLeaveHousehold() {
-    const ok = await confirm({
-      title: `Leave "${household.name}"?`,
-      description:
-        "Your personal items and the pets/kids you manage come with you. Shared household gear and trips stay with the household. You can join or create another household right after.",
-      confirmLabel: "Leave Household",
-      destructive: true,
-    });
-    if (!ok) return;
-    try {
-      await fetchApi("/api/household/leave", { method: "POST" });
-      // Force a full reload so the app re-reads the now-empty household state
-      // and routes through HouseholdSetup.
-      window.location.href = "/app";
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to leave household");
     }
   }
 
@@ -132,14 +101,6 @@ export function Dashboard() {
                 <Map className="size-8 mb-3 text-primary group-hover:scale-110 transition-transform" />
                 <span className="font-bold text-sm">Plan Trip</span>
               </button>
-            </Link>
-          </div>
-          <div className="flex items-center justify-end">
-            <Link
-              href="/app/settings/household"
-              className="inline-flex items-center gap-1.5 text-xs text-outline hover:text-foreground"
-            >
-              Household settings →
             </Link>
           </div>
 
@@ -291,28 +252,6 @@ export function Dashboard() {
               Share this code with family members to sync gear closets.
             </p>
           </section>
-
-          {/* Leave household */}
-          {currentUser && (
-            <section className="rounded-xl bg-card p-6 border border-outline-variant/10">
-              <h3 className="text-xs font-bold uppercase tracking-widest text-outline mb-2">
-                Danger Zone
-              </h3>
-              <p className="text-xs text-outline mb-4">
-                Leave {household.name}. Your personal gear and pets/kids you manage come with you —
-                join or create another household to bring them along.
-              </p>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleLeaveHousehold}
-                className="text-destructive border-destructive/30 hover:bg-destructive/10"
-              >
-                <LogOut className="size-4" data-icon="inline-start" />
-                Leave Household
-              </Button>
-            </section>
-          )}
         </div>
       </div>
     </div>

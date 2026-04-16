@@ -12,8 +12,10 @@ import { Label } from "@/components/ui/label";
 import { DEFAULT_SETTINGS, resolveSettings } from "@/lib/household-settings";
 import { gramsToLb, lbToGrams, displayWeight } from "@/lib/weight";
 import { useWeightUnit } from "@/components/providers/weight-unit-provider";
-import { ArrowLeft, Loader2, RotateCcw, Save, Settings2, Tag } from "lucide-react";
+import { ArrowLeft, Loader2, LogOut, RotateCcw, Save, Settings2, Tag } from "lucide-react";
 import { toast } from "sonner";
+import { useConfirm } from "@/components/providers/confirm-provider";
+import { fetchApi } from "@/lib/fetch";
 
 type PackClassForm = {
   ultralight: string;
@@ -35,6 +37,7 @@ export function HouseholdSettingsPage() {
   const { data: items } = useItems();
   const updateHousehold = useUpdateHousehold();
   const { unit } = useWeightUnit();
+  const confirm = useConfirm();
 
   const resolved = useMemo(() => resolveSettings(data?.household?.settings), [data]);
 
@@ -122,6 +125,24 @@ export function HouseholdSettingsPage() {
         onError: (e) => toast.error(e instanceof Error ? e.message : "Failed to save"),
       }
     );
+  }
+
+  async function handleLeaveHousehold() {
+    if (!data?.household) return;
+    const ok = await confirm({
+      title: `Leave "${data.household.name}"?`,
+      description:
+        "Your personal items and the pets/kids you manage come with you. Shared household gear and trips stay with the household. You can join or create another household right after.",
+      confirmLabel: "Leave Household",
+      destructive: true,
+    });
+    if (!ok) return;
+    try {
+      await fetchApi("/api/household/leave", { method: "POST" });
+      window.location.href = "/app";
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Failed to leave household");
+    }
   }
 
   function handleReset() {
@@ -315,6 +336,26 @@ export function HouseholdSettingsPage() {
           {displayWeight(lbToGrams(parseFloat(packClass.ultralight) || 0), unit)}
         </span>
       </p>
+
+      <section className="rounded-xl bg-card p-6 border border-destructive/20 space-y-3">
+        <div>
+          <h2 className="text-lg font-bold text-destructive">Danger zone</h2>
+          <p className="text-sm text-outline mt-1">
+            Leave {data.household.name}. Your personal gear and any pets/kids you manage come with
+            you — shared household gear and trips stay behind. You can join or create another
+            household right after.
+          </p>
+        </div>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleLeaveHousehold}
+          className="text-destructive border-destructive/30 hover:bg-destructive/10"
+        >
+          <LogOut className="size-4" data-icon="inline-start" />
+          Leave Household
+        </Button>
+      </section>
     </div>
   );
 }
