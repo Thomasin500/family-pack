@@ -36,6 +36,27 @@ export function ClosetPage() {
   const currentUser = members.find((m: any) => m.id === currentUserId) ?? members[0];
   const partner = members.find((m: any) => m.id !== currentUser?.id && m.role === "adult");
 
+  // Build the list of possible owners for the inline edit "owner" dropdown.
+  const owners = useMemo(() => {
+    const householdId = householdData?.household?.id;
+    if (!householdId) return [];
+    const personal = members.map((m: any) => ({
+      value: m.id,
+      label: m.name ?? "Unknown",
+      ownerType: "personal" as const,
+      ownerId: m.id,
+    }));
+    return [
+      ...personal,
+      {
+        value: "__shared__",
+        label: "Shared (household)",
+        ownerType: "shared" as const,
+        ownerId: householdId,
+      },
+    ];
+  }, [members, householdData?.household?.id]);
+
   const defaultTab = currentUser?.id ?? "shared";
   const tab = activeTab || defaultTab;
 
@@ -178,7 +199,12 @@ export function ClosetPage() {
             <TabsContent key={t.id} value={t.id}>
               <ErrorBoundary fallbackLabel="Gear list failed to load">
                 <div className="space-y-8">
-                  <ItemTable items={tabItems} categories={cats} readOnly={t.readOnly} />
+                  <ItemTable
+                    items={tabItems}
+                    categories={cats}
+                    owners={owners}
+                    readOnly={t.readOnly}
+                  />
                 </div>
               </ErrorBoundary>
             </TabsContent>

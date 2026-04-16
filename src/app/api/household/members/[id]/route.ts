@@ -4,6 +4,7 @@ import { users } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { getAuthenticatedUser, handleApiError, ApiError } from "@/lib/api-helpers";
 import { updateMemberSchema } from "@/lib/validators";
+import { invalidateUserSessions } from "@/lib/session-utils";
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -65,6 +66,10 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
     if (member.managedByUserId !== authedUser.id) {
       throw new ApiError(403, "You can only delete members you manage");
     }
+
+    // Kill any active sessions before the row goes away (cascade would do it too,
+    // but being explicit makes intent obvious when adult removal is added later).
+    await invalidateUserSessions(id);
 
     // Delete the member (cascading will handle trip_members, trip_packs, etc.)
     await db.delete(users).where(eq(users.id, id));

@@ -8,6 +8,33 @@ export interface ChangelogEntry {
 // Newest first.
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    at: "2026-04-16T13:20:00-06:00",
+    title: "Change item owner from the inline editor",
+    items: [
+      "The Gear Closet inline editor now has an Owner dropdown listing every household member plus 'Shared (household)'.",
+      "Reassign an item from, say, you to your partner (or swap personal ⇄ shared) — after Save, it hops to the right tab.",
+    ],
+  },
+  {
+    at: "2026-04-16T13:15:00-06:00",
+    title: "Leave household (take your gear with you)",
+    items: [
+      "New 'Leave Household' button on the dashboard. Your personal items and any pets / kids you manage move with you — shared gear and trips stay with the household.",
+      "After leaving, you land on the household setup screen still signed in. Joining or creating another household re-imports your gear automatically.",
+      "Added a session-invalidation helper for admin-driven member removal (wired into the existing member DELETE path for future adult-removal flows).",
+    ],
+  },
+  {
+    at: "2026-04-16T12:55:00-06:00",
+    title: "Security + schema hygiene pass",
+    items: [
+      "Catalog typeahead 'select' now requires auth so only signed-in users can bump catalog popularity.",
+      "/api/health stopped leaking total user count and no longer scans the users table.",
+      "Security headers added site-wide: X-Frame-Options DENY, X-Content-Type-Options nosniff, Referrer-Policy strict-origin, Permissions-Policy, and 2-year HSTS with preload.",
+      "Foreign keys now have explicit ON DELETE SET NULL so deleting a user / household / category / catalog product no longer leaves dangling references.",
+    ],
+  },
+  {
     at: "2026-04-16T12:22:00-06:00",
     title: "Sort UX polish + calmer drawer",
     items: [

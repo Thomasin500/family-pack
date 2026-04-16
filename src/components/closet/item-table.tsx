@@ -33,9 +33,17 @@ import { CategorySortMenu, sortItems, type SortMode } from "@/components/ui/sort
 import { useConfirm } from "@/components/providers/confirm-provider";
 import type { Item, Category } from "@/types";
 
+export interface OwnerOption {
+  value: string; // user.id, or "__shared__"
+  label: string;
+  ownerType: "personal" | "shared";
+  ownerId: string;
+}
+
 interface ItemTableProps {
   items: Item[];
   categories: Category[];
+  owners?: OwnerOption[];
   readOnly?: boolean;
 }
 
@@ -119,13 +127,19 @@ function InlineNotes({ value, onSave }: { value: string; onSave: (notes: string)
   );
 }
 
+function ownerKey(item: Pick<Item, "ownerType" | "ownerId">): string {
+  return item.ownerType === "shared" ? "__shared__" : item.ownerId;
+}
+
 function InlineEditItem({
   item,
   categories,
+  owners,
   onSave,
 }: {
   item: Item;
   categories: Category[];
+  owners: OwnerOption[];
   onSave: (fields: Partial<Item>) => void;
 }) {
   const [editing, setEditing] = useState(false);
@@ -134,6 +148,7 @@ function InlineEditItem({
   const [modelVal, setModelVal] = useState("");
   const [categoryVal, setCategoryVal] = useState("");
   const [notesVal, setNotesVal] = useState("");
+  const [ownerVal, setOwnerVal] = useState("");
   const [dirtyError, setDirtyError] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -152,6 +167,13 @@ function InlineEditItem({
     if (categoryVal !== (item.categoryId ?? "")) updates.categoryId = categoryVal || null;
     const trimmedNotes = notesVal.trim();
     if (trimmedNotes !== (item.notes ?? "")) updates.notes = trimmedNotes || null;
+    if (ownerVal && ownerVal !== ownerKey(item)) {
+      const chosen = owners.find((o) => o.value === ownerVal);
+      if (chosen) {
+        updates.ownerType = chosen.ownerType;
+        updates.ownerId = chosen.ownerId;
+      }
+    }
     return updates;
   }
 
@@ -161,6 +183,7 @@ function InlineEditItem({
     setModelVal(item.model ?? "");
     setCategoryVal(item.categoryId ?? "");
     setNotesVal(item.notes ?? "");
+    setOwnerVal(ownerKey(item));
     setDirtyError(false);
     setEditing(true);
   }
@@ -265,6 +288,23 @@ function InlineEditItem({
             </option>
           ))}
         </select>
+        {owners.length > 1 && (
+          <select
+            className="h-6 text-xs rounded border border-input bg-background px-2 flex-1"
+            value={ownerVal}
+            onChange={(e) => {
+              setOwnerVal(e.target.value);
+              setDirtyError(false);
+            }}
+            title="Owner"
+          >
+            {owners.map((o) => (
+              <option key={o.value} value={o.value}>
+                {o.label}
+              </option>
+            ))}
+          </select>
+        )}
       </div>
       <Input
         className="h-6 text-xs"
@@ -401,7 +441,7 @@ function InlineEditWeight({
   );
 }
 
-export function ItemTable({ items, categories, readOnly = false }: ItemTableProps) {
+export function ItemTable({ items, categories, owners = [], readOnly = false }: ItemTableProps) {
   const updateItem = useUpdateItem();
   const deleteItem = useDeleteItem();
   const updateCategory = useUpdateCategory();
@@ -522,6 +562,7 @@ export function ItemTable({ items, categories, readOnly = false }: ItemTableProp
                 unit={unit}
                 itemHistory={itemHistory}
                 allCategories={categories}
+                owners={owners}
                 collapsed={isCollapsed}
                 sortMode={sortMode}
                 onChangeSort={(mode) => setSort(category.id, mode)}
@@ -566,6 +607,7 @@ function SortableCategorySection(props: {
   unit: DisplayUnit;
   itemHistory?: Record<string, number>;
   allCategories: Category[];
+  owners: OwnerOption[];
   collapsed: boolean;
   sortMode: SortMode;
   onChangeSort: (mode: SortMode) => void;
@@ -601,6 +643,7 @@ function CategorySection({
   unit,
   itemHistory,
   allCategories,
+  owners,
   collapsed,
   sortMode,
   onChangeSort,
@@ -618,6 +661,7 @@ function CategorySection({
   unit: DisplayUnit;
   itemHistory?: Record<string, number>;
   allCategories: Category[];
+  owners: OwnerOption[];
   collapsed: boolean;
   sortMode: SortMode;
   onChangeSort: (mode: SortMode) => void;
@@ -707,6 +751,7 @@ function CategorySection({
                     <InlineEditItem
                       item={item}
                       categories={allCategories}
+                      owners={owners}
                       onSave={(fields) => onUpdateItem(item.id, fields)}
                     />
                   )}

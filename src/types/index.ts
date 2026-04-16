@@ -73,7 +73,7 @@ export interface Trip {
   isActive: boolean;
   completedAt: string | null;
   householdId: string;
-  createdByUserId: string;
+  createdByUserId: string | null;
   createdAt: string;
   updatedAt: string;
   // Joined relations

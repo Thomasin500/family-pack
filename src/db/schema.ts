@@ -52,7 +52,7 @@ export const users = pgTable("user", {
   role: roleEnum("role").default("adult"),
   breed: text("breed"),
   managedByUserId: uuid("managed_by_user_id"),
-  householdId: uuid("household_id").references(() => households.id),
+  householdId: uuid("household_id").references(() => households.id, { onDelete: "set null" }),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
@@ -142,8 +142,10 @@ export const items = pgTable("item", {
   brand: text("brand"),
   model: text("model"),
   weightGrams: integer("weight_grams").notNull().default(0),
-  categoryId: uuid("category_id").references(() => categories.id),
+  categoryId: uuid("category_id").references(() => categories.id, { onDelete: "set null" }),
   ownerType: ownerTypeEnum("owner_type").notNull(),
+  // Polymorphic: owner_id points to users.id when owner_type="personal",
+  // households.id when owner_type="shared". Intentionally no FK — resolve at app layer.
   ownerId: uuid("owner_id").notNull(),
   isConsumable: boolean("is_consumable").default(false),
   isWorn: boolean("is_worn").default(false),
@@ -151,7 +153,9 @@ export const items = pgTable("item", {
   tags: text("tags").array(),
   notes: text("notes"),
   imageUrl: text("image_url"),
-  catalogProductId: uuid("catalog_product_id").references(() => catalogProducts.id),
+  catalogProductId: uuid("catalog_product_id").references(() => catalogProducts.id, {
+    onDelete: "set null",
+  }),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
@@ -212,9 +216,7 @@ export const trips = pgTable("trip", {
   householdId: uuid("household_id")
     .references(() => households.id)
     .notNull(),
-  createdByUserId: uuid("created_by_user_id")
-    .references(() => users.id)
-    .notNull(),
+  createdByUserId: uuid("created_by_user_id").references(() => users.id, { onDelete: "set null" }),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
@@ -287,7 +289,9 @@ export const tripPackItems = pgTable("trip_pack_item", {
   itemId: uuid("item_id")
     .references(() => items.id)
     .notNull(),
-  ownedByUserId: uuid("owned_by_user_id").references(() => users.id),
+  ownedByUserId: uuid("owned_by_user_id").references(() => users.id, {
+    onDelete: "set null",
+  }),
   quantity: integer("quantity").default(1).notNull(),
   sortOrder: integer("sort_order").default(0).notNull(),
   isWornOverride: boolean("is_worn_override"),
