@@ -180,6 +180,7 @@ function SuggestionItem({
   const [editing, setEditing] = useState(false);
   const [title, setTitle] = useState(suggestion.title);
   const [description, setDescription] = useState(suggestion.description);
+  const [phaseId, setPhaseId] = useState<string>(suggestion.phaseId ?? "");
   const update = useUpdateRoadmapSuggestion();
 
   function handleSave(e: React.FormEvent) {
@@ -187,12 +188,19 @@ function SuggestionItem({
     const t = title.trim();
     const d = description.trim();
     if (!t || !d) return;
-    if (t === suggestion.title && d === suggestion.description) {
+    const currentPhase = suggestion.phaseId ?? "";
+    const phaseChanged = phaseId !== currentPhase;
+    if (t === suggestion.title && d === suggestion.description && !phaseChanged) {
       setEditing(false);
       return;
     }
     update.mutate(
-      { id: suggestion.id, title: t, description: d },
+      {
+        id: suggestion.id,
+        title: t,
+        description: d,
+        ...(phaseChanged ? { phaseId: phaseId || null } : {}),
+      },
       {
         onSuccess: () => {
           toast.success("Suggestion updated");
@@ -223,6 +231,23 @@ function SuggestionItem({
             placeholder="Details"
             className="w-full min-h-[100px] rounded-md border border-input bg-background px-3 py-2 text-sm resize-y"
           />
+          <div className="grid gap-1">
+            <Label className="text-[10px] font-bold uppercase tracking-widest text-outline">
+              Phase
+            </Label>
+            <select
+              value={phaseId}
+              onChange={(e) => setPhaseId(e.target.value)}
+              className="h-8 rounded-md border border-input bg-background px-2 text-sm"
+            >
+              <option value="">General / not specific to a phase</option>
+              {ROADMAP.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.name}
+                </option>
+              ))}
+            </select>
+          </div>
           <div className="flex items-center justify-end gap-2">
             <Button
               type="button"
@@ -231,6 +256,7 @@ function SuggestionItem({
               onClick={() => {
                 setTitle(suggestion.title);
                 setDescription(suggestion.description);
+                setPhaseId(suggestion.phaseId ?? "");
                 setEditing(false);
               }}
             >
