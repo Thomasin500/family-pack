@@ -4,7 +4,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { displayWeight, gramsToInput, inputToGrams, unitSuffix, inputStep } from "@/lib/weight";
+import { displayWeight, gramsToInput, inputToGrams, unitSuffix } from "@/lib/weight";
 import type { DisplayUnit } from "@/lib/weight";
 import { useUpdateItem, useDeleteItem } from "@/hooks/use-items";
 import { useUpdateCategory } from "@/hooks/use-categories";
@@ -27,7 +27,16 @@ import {
   useSortable,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Trash2, ChevronDown, ChevronRight, GripVertical } from "lucide-react";
+import {
+  Trash2,
+  ChevronDown,
+  ChevronRight,
+  GripVertical,
+  ArrowDownAZ,
+  ArrowDownWideNarrow,
+  ArrowUpWideNarrow,
+  ArrowUpDown,
+} from "lucide-react";
 import { toast } from "sonner";
 import type { Item, Category } from "@/types";
 
@@ -153,12 +162,12 @@ function InlineEditItem({
     const trimmedName = nameVal.trim();
     if (trimmedName && trimmedName !== item.name) updates.name = trimmedName;
     const trimmedBrand = brandVal.trim();
-    if (trimmedBrand !== (item.brand ?? "")) updates.brand = trimmedBrand || "";
+    if (trimmedBrand !== (item.brand ?? "")) updates.brand = trimmedBrand || null;
     const trimmedModel = modelVal.trim();
-    if (trimmedModel !== (item.model ?? "")) updates.model = trimmedModel || "";
-    if (categoryVal !== (item.categoryId ?? "")) updates.categoryId = categoryVal || "";
+    if (trimmedModel !== (item.model ?? "")) updates.model = trimmedModel || null;
+    if (categoryVal !== (item.categoryId ?? "")) updates.categoryId = categoryVal || null;
     const trimmedNotes = notesVal.trim();
-    if (trimmedNotes !== (item.notes ?? "")) updates.notes = trimmedNotes || "";
+    if (trimmedNotes !== (item.notes ?? "")) updates.notes = trimmedNotes || null;
     if (Object.keys(updates).length > 0) {
       onSave(updates);
     }
@@ -313,7 +322,7 @@ function InlineEditWeight({
         ref={inputRef}
         className="h-7 w-16 text-sm tabular-nums"
         type="number"
-        step={inputStep(unit)}
+        step="any"
         min="0"
         value={editValue}
         onChange={(e) => setEditValue(e.target.value)}
@@ -328,6 +337,28 @@ function InlineEditWeight({
   );
 }
 
+type SortMode = "insertion" | "name" | "weight-asc" | "weight-desc";
+
+function nextSortMode(mode: SortMode): SortMode {
+  if (mode === "insertion") return "name";
+  if (mode === "name") return "weight-asc";
+  if (mode === "weight-asc") return "weight-desc";
+  return "insertion";
+}
+
+function sortItems(items: Item[], mode: SortMode): Item[] {
+  if (mode === "insertion") return items;
+  const copy = [...items];
+  if (mode === "name") {
+    copy.sort((a, b) => a.name.localeCompare(b.name));
+  } else if (mode === "weight-asc") {
+    copy.sort((a, b) => a.weightGrams - b.weightGrams);
+  } else {
+    copy.sort((a, b) => b.weightGrams - a.weightGrams);
+  }
+  return copy;
+}
+
 export function ItemTable({ items, categories, readOnly = false }: ItemTableProps) {
   const updateItem = useUpdateItem();
   const deleteItem = useDeleteItem();
@@ -335,6 +366,11 @@ export function ItemTable({ items, categories, readOnly = false }: ItemTableProp
   const { unit } = useWeightUnit();
   const { data: itemHistory } = useItemHistory();
   const [collapsedIds, setCollapsedIds] = useState<Set<string>>(new Set());
+  const [sortModes, setSortModes] = useState<Record<string, SortMode>>({});
+
+  function cycleSort(catId: string) {
+    setSortModes((prev) => ({ ...prev, [catId]: nextSortMode(prev[catId] ?? "insertion") }));
+  }
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
@@ -431,17 +467,21 @@ export function ItemTable({ items, categories, readOnly = false }: ItemTableProp
           {grouped.map(({ category, items: catItems }) => {
             const subtotal = catItems.reduce((s, i) => s + (i.weightGrams ?? 0), 0);
             const isCollapsed = collapsedIds.has(category.id);
+            const sortMode = sortModes[category.id] ?? "insertion";
+            const sortedItems = sortItems(catItems, sortMode);
             return (
               <SortableCategorySection
                 key={category.id}
                 category={category}
-                items={catItems}
+                items={sortedItems}
                 subtotal={subtotal}
                 readOnly={readOnly}
                 unit={unit}
                 itemHistory={itemHistory}
                 allCategories={categories}
                 collapsed={isCollapsed}
+                sortMode={sortMode}
+                onCycleSort={() => cycleSort(category.id)}
                 onToggleCollapse={() => toggleCollapse(category.id)}
                 onUpdateItem={(id, fields) => updateItem.mutate({ id, ...fields })}
                 onUpdateWeight={(id, weightGrams) => updateItem.mutate({ id, weightGrams })}
@@ -484,6 +524,8 @@ function SortableCategorySection(props: {
   itemHistory?: Record<string, number>;
   allCategories: Category[];
   collapsed: boolean;
+  sortMode: SortMode;
+  onCycleSort: () => void;
   onToggleCollapse: () => void;
   onUpdateItem: (id: string, fields: Partial<Item>) => void;
   onUpdateWeight: (id: string, weightGrams: number) => void;
@@ -517,6 +559,8 @@ function CategorySection({
   itemHistory,
   allCategories,
   collapsed,
+  sortMode,
+  onCycleSort,
   onToggleCollapse,
   onUpdateItem,
   onUpdateWeight,
@@ -532,6 +576,8 @@ function CategorySection({
   itemHistory?: Record<string, number>;
   allCategories: Category[];
   collapsed: boolean;
+  sortMode: SortMode;
+  onCycleSort: () => void;
   onToggleCollapse: () => void;
   onUpdateItem: (id: string, fields: Partial<Item>) => void;
   onUpdateWeight: (id: string, weightGrams: number) => void;
@@ -539,6 +585,20 @@ function CategorySection({
   onDelete: (id: string, force?: boolean) => void;
   dragHandleProps?: Record<string, any>;
 }) {
+  const SortIcon =
+    sortMode === "name"
+      ? ArrowDownAZ
+      : sortMode === "weight-asc"
+        ? ArrowUpWideNarrow
+        : sortMode === "weight-desc"
+          ? ArrowDownWideNarrow
+          : ArrowUpDown;
+  const sortLabel = {
+    insertion: "Default order — click to sort",
+    name: "Sorted by name — click for weight ↑",
+    "weight-asc": "Sorted by weight ↑ — click for weight ↓",
+    "weight-desc": "Sorted by weight ↓ — click to reset",
+  }[sortMode];
   return (
     <section className="relative overflow-hidden rounded-xl bg-card p-6">
       {/* Category color bar */}
@@ -576,10 +636,30 @@ function CategorySection({
             {category.name}
           </h2>
         </div>
-        <span className="font-mono text-xs text-outline">
-          {items.length} {items.length === 1 ? "ITEM" : "ITEMS"} &bull;{" "}
-          {displayWeight(subtotal, unit).toUpperCase()}
-        </span>
+        <div className="flex items-center gap-2">
+          {!readOnly && !collapsed && (
+            <button
+              type="button"
+              className={`rounded p-1 transition-colors hover:bg-surface-high ${
+                sortMode === "insertion" ? "text-outline" : "text-primary"
+              }`}
+              onClick={(e) => {
+                e.stopPropagation();
+                onCycleSort();
+              }}
+              title={sortLabel}
+              aria-label={sortLabel}
+            >
+              <SortIcon className="size-3.5" />
+            </button>
+          )}
+          <span
+            className={`font-mono tabular-nums text-outline ${collapsed ? "text-base font-bold" : "text-xs"}`}
+          >
+            {items.length} {items.length === 1 ? "ITEM" : "ITEMS"} &bull;{" "}
+            {displayWeight(subtotal, unit).toUpperCase()}
+          </span>
+        </div>
       </div>
 
       {/* Item rows */}

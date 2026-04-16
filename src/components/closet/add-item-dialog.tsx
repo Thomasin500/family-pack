@@ -21,7 +21,8 @@ import {
 } from "@/components/ui/select";
 import { CatalogTypeahead } from "@/components/closet/catalog-typeahead";
 import { useCreateItem } from "@/hooks/use-items";
-import { ozToGrams } from "@/lib/weight";
+import { inputToGrams, unitSuffix } from "@/lib/weight";
+import { useWeightUnit } from "@/components/providers/weight-unit-provider";
 
 interface Category {
   id: string;
@@ -35,7 +36,8 @@ interface AddItemDialogProps {
   onOpenChange: (open: boolean) => void;
   categories: Category[];
   defaultOwnerType?: "personal" | "shared";
-  defaultOwnerId?: string;
+  personalOwnerId: string;
+  householdId: string;
 }
 
 type ItemType = "base" | "worn" | "consumable";
@@ -45,14 +47,17 @@ export function AddItemDialog({
   onOpenChange,
   categories,
   defaultOwnerType = "personal",
-  defaultOwnerId = "",
+  personalOwnerId,
+  householdId,
 }: AddItemDialogProps) {
   const createItem = useCreateItem();
+  const { unit } = useWeightUnit();
+  const weightLabelUnit = unit === "lb" ? "oz" : unit;
 
   const [name, setName] = useState("");
   const [brand, setBrand] = useState("");
   const [model, setModel] = useState("");
-  const [weightOz, setWeightOz] = useState("");
+  const [weightInput, setWeightInput] = useState("");
   const [categoryId, setCategoryId] = useState("");
   const [itemType, setItemType] = useState<ItemType>("base");
   const [ownerType, setOwnerType] = useState<"personal" | "shared">(defaultOwnerType);
@@ -61,7 +66,7 @@ export function AddItemDialog({
     setName("");
     setBrand("");
     setModel("");
-    setWeightOz("");
+    setWeightInput("");
     setCategoryId("");
     setItemType("base");
     setOwnerType(defaultOwnerType);
@@ -70,7 +75,7 @@ export function AddItemDialog({
   const handleSubmit = useCallback(
     (e: React.FormEvent) => {
       e.preventDefault();
-      const parsedWeight = parseFloat(weightOz);
+      const parsedWeight = parseFloat(weightInput);
       if (!name.trim() || isNaN(parsedWeight)) return;
 
       createItem.mutate(
@@ -78,10 +83,10 @@ export function AddItemDialog({
           name: name.trim(),
           brand: brand.trim(),
           model: model.trim(),
-          weightGrams: ozToGrams(parsedWeight),
+          weightGrams: inputToGrams(parsedWeight, unit),
           categoryId: categoryId || undefined,
           ownerType,
-          ownerId: defaultOwnerId,
+          ownerId: ownerType === "shared" ? householdId : personalOwnerId,
           isWorn: itemType === "worn",
           isConsumable: itemType === "consumable",
         },
@@ -97,11 +102,13 @@ export function AddItemDialog({
       name,
       brand,
       model,
-      weightOz,
+      weightInput,
+      unit,
       categoryId,
       itemType,
       ownerType,
-      defaultOwnerId,
+      personalOwnerId,
+      householdId,
       createItem,
       resetForm,
       onOpenChange,
@@ -164,15 +171,15 @@ export function AddItemDialog({
 
           {/* Weight */}
           <div className="grid gap-2">
-            <Label htmlFor="item-weight">Weight (oz)</Label>
+            <Label htmlFor="item-weight">Weight ({weightLabelUnit})</Label>
             <Input
               id="item-weight"
               type="number"
-              step="0.1"
+              step="any"
               min="0"
-              value={weightOz}
-              onChange={(e) => setWeightOz(e.target.value)}
-              placeholder="0.0"
+              value={weightInput}
+              onChange={(e) => setWeightInput(e.target.value)}
+              placeholder={`0 ${unitSuffix(unit)}`}
             />
           </div>
 
@@ -235,7 +242,7 @@ export function AddItemDialog({
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Cancel
             </Button>
-            <Button type="submit" disabled={!name.trim() || !weightOz || createItem.isPending}>
+            <Button type="submit" disabled={!name.trim() || !weightInput || createItem.isPending}>
               {createItem.isPending ? "Adding..." : "Add Item"}
             </Button>
           </DialogFooter>

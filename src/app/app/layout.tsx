@@ -3,12 +3,9 @@ import { redirect } from "next/navigation";
 import QueryProvider from "@/components/providers/query-provider";
 import { WeightUnitProvider } from "@/components/providers/weight-unit-provider";
 import { NavBar } from "@/components/app/nav-bar";
+import { ChangelogFooter } from "@/components/app/changelog-footer";
 
-export default async function AppLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();
   if (!session?.user) redirect("/login");
 
@@ -21,9 +18,10 @@ export default async function AppLayout({
   return (
     <QueryProvider>
       <WeightUnitProvider>
-        <div className="min-h-screen bg-background">
+        <div className="min-h-screen bg-background flex flex-col">
           <NavBar user={user} />
-          <main>{children}</main>
+          <main className="flex-1">{children}</main>
+          <ChangelogFooter />
         </div>
       </WeightUnitProvider>
     </QueryProvider>

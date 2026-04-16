@@ -40,7 +40,8 @@ export function Dashboard() {
 
   if (!data?.household) return null;
 
-  const { household, members } = data;
+  const { household, members, currentUserId } = data;
+  const currentUser = members.find((m: any) => m.id === currentUserId);
 
   function handleCopyInviteCode() {
     if (household.inviteCode) {
@@ -76,7 +77,7 @@ export function Dashboard() {
       {/* Header */}
       <header className="mb-10">
         <h1 className="text-4xl font-extrabold tracking-tight mb-2">
-          Welcome back, {members[0]?.name ?? "there"}.
+          Welcome back, {currentUser?.name ?? "there"}.
         </h1>
         <p className="text-outline text-lg">Your next trip is coming up.</p>
       </header>

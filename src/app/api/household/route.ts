@@ -28,7 +28,7 @@ export async function GET() {
 
     const members = await db.select().from(users).where(eq(users.householdId, user.householdId));
 
-    return NextResponse.json({ household, members });
+    return NextResponse.json({ household, members, currentUserId: user.id });
   } catch (error) {
     return handleApiError(error);
   }

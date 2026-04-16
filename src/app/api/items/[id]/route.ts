@@ -25,6 +25,28 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       .where(eq(users.householdId, householdId));
     const memberIds = members.map((m) => m.id);
 
+    // If owner fields are being changed, enforce the same consistency rules as POST
+    if (body.ownerType || body.ownerId) {
+      const [current] = await db
+        .select({ ownerType: items.ownerType, ownerId: items.ownerId })
+        .from(items)
+        .where(and(eq(items.id, id), householdItemFilter(householdId, memberIds)));
+      if (!current) throw new ApiError(404, "Item not found");
+
+      const nextOwnerType = body.ownerType ?? current.ownerType;
+      const nextOwnerId = body.ownerId ?? current.ownerId;
+
+      if (nextOwnerType === "shared") {
+        if (nextOwnerId !== householdId) {
+          throw new ApiError(400, "Shared items must use household ID as ownerId");
+        }
+      } else if (nextOwnerType === "personal") {
+        if (!memberIds.includes(nextOwnerId)) {
+          throw new ApiError(400, "Owner not found in household");
+        }
+      }
+    }
+
     const [updated] = await db
       .update(items)
       .set({ ...body, updatedAt: new Date() })

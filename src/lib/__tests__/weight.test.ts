@@ -143,7 +143,7 @@ describe("gramsToInput", () => {
   });
 
   it("oz: returns oz string", () => {
-    expect(gramsToInput(28, "oz")).toBe("1.0");
+    expect(gramsToInput(28, "oz")).toBe("0.99");
   });
 
   it("kg: returns kg string", () => {

@@ -130,4 +130,5 @@ export interface CatalogProduct {
 export interface HouseholdData {
   household: Household;
   members: User[];
+  currentUserId: string;
 }

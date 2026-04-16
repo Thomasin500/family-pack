@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
 import { items, users } from "@/db/schema";
-import { eq, and, or, inArray } from "drizzle-orm";
+import { eq, and, or, inArray, asc } from "drizzle-orm";
 import { getAuthenticatedUser, handleApiError, ApiError } from "@/lib/api-helpers";
 import { createItemSchema } from "@/lib/validators";
 
@@ -41,6 +41,7 @@ export async function GET(req: NextRequest) {
     const result = await db.query.items.findMany({
       where: whereClause,
       with: { category: true },
+      orderBy: [asc(items.createdAt), asc(items.id)],
     });
 
     return NextResponse.json(result);

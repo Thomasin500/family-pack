@@ -86,9 +86,9 @@ export function gramsToInput(grams: number, unit: DisplayUnit | "imperial" | "me
     case "kg":
       return (grams / 1000).toFixed(2);
     case "oz":
-      return gramsToOz(grams).toFixed(1);
+      return gramsToOz(grams).toFixed(2);
     case "lb":
-      return gramsToOz(grams).toFixed(1); // edit in oz
+      return gramsToOz(grams).toFixed(2); // edit in oz
     default:
       return grams.toString();
   }

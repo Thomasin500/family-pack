@@ -7,7 +7,6 @@ import { useHousehold } from "@/hooks/use-household";
 import { useItems } from "@/hooks/use-items";
 import { useCategories } from "@/hooks/use-categories";
 import { ItemTable } from "@/components/closet/item-table";
-import { WeightSummary } from "@/components/closet/weight-summary";
 import dynamic from "next/dynamic";
 import { Input } from "@/components/ui/input";
 import { Plus, Search, Settings2 } from "lucide-react";
@@ -33,8 +32,9 @@ export function ClosetPage() {
   const items = allItems ?? [];
   const cats = categories ?? [];
 
-  const currentUser = members[0];
-  const partner = members[1];
+  const currentUserId = householdData?.currentUserId;
+  const currentUser = members.find((m: any) => m.id === currentUserId) ?? members[0];
+  const partner = members.find((m: any) => m.id !== currentUser?.id && m.role === "adult");
 
   const defaultTab = currentUser?.id ?? "shared";
   const tab = activeTab || defaultTab;
@@ -105,7 +105,7 @@ export function ClosetPage() {
   }
 
   return (
-    <div className="mx-auto max-w-7xl px-6 py-8 pb-48">
+    <div className="mx-auto max-w-7xl px-6 py-8">
       <div className="mb-8 flex items-center justify-between">
         <h1 className="text-4xl font-extrabold tracking-tight">Gear Closet</h1>
         <Button
@@ -186,19 +186,6 @@ export function ClosetPage() {
         })}
       </Tabs>
 
-      {/* Sticky weight summary footer */}
-      {activeTabDef && (
-        <WeightSummary
-          items={
-            activeTabDef.ownerType === "shared"
-              ? items.filter((i: any) => i.ownerType === "shared")
-              : items.filter(
-                  (i: any) => i.ownerType === "personal" && i.ownerId === activeTabDef.ownerId
-                )
-          }
-        />
-      )}
-
       <CategoryManager
         open={categoryManagerOpen}
         onOpenChange={setCategoryManagerOpen}
@@ -211,11 +198,12 @@ export function ClosetPage() {
         onOpenChange={setDialogOpen}
         categories={cats}
         defaultOwnerType={activeTabDef?.ownerType === "shared" ? "shared" : "personal"}
-        defaultOwnerId={
+        personalOwnerId={
           activeTabDef?.ownerType === "shared"
-            ? (householdData?.household?.id ?? "")
+            ? (currentUser?.id ?? "")
             : (activeTabDef?.ownerId ?? currentUser?.id ?? "")
         }
+        householdId={householdData?.household?.id ?? ""}
       />
     </div>
   );
