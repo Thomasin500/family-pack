@@ -7,9 +7,10 @@ import { PackColumn } from "./pack-column";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
 import dynamic from "next/dynamic";
 
-const SharedGearPool = dynamic(() => import("./shared-gear-pool").then((m) => m.SharedGearPool), {
-  ssr: false,
-});
+const UnassignedSharedBar = dynamic(
+  () => import("./unassigned-shared-bar").then((m) => m.UnassignedSharedBar),
+  { ssr: false }
+);
 import { useUpdateTrip } from "@/hooks/use-trips";
 import { MapPin, Calendar, Pencil, CheckCircle2, RotateCcw, Users } from "lucide-react";
 import { useState, useCallback } from "react";
@@ -197,7 +198,12 @@ export function TripWorkspace({ tripId }: TripWorkspaceProps) {
       )}
 
       {/* Pack Columns */}
-      <div className="flex-1 px-6 py-8 max-w-7xl mx-auto">
+      <div className="flex-1 px-6 py-8 max-w-7xl mx-auto w-full">
+        {sharedItems.length > 0 && (
+          <div className="mb-6">
+            <UnassignedSharedBar items={sharedItems} packs={packs} tripId={tripId} />
+          </div>
+        )}
         <div className={`grid gap-8 ${gridClass}`}>
           {packs.map((pack: any) => (
             <ErrorBoundary key={pack.id} fallbackLabel="Pack failed to load">
@@ -210,11 +216,6 @@ export function TripWorkspace({ tripId }: TripWorkspaceProps) {
               />
             </ErrorBoundary>
           ))}
-        </div>
-
-        {/* Shared Gear Pool */}
-        <div className="mt-8">
-          <SharedGearPool items={sharedItems} packs={packs} tripId={tripId} />
         </div>
       </div>
 

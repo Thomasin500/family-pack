@@ -9,6 +9,7 @@ import type { DisplayUnit } from "@/lib/weight";
 import { useUpdateItem, useDeleteItem } from "@/hooks/use-items";
 import { useUpdateCategory } from "@/hooks/use-categories";
 import { useItemHistory } from "@/hooks/use-item-history";
+import { useClickOutside } from "@/hooks/use-click-outside";
 import { getVeterancyLevel, getVeterancyColor } from "@/lib/gear-veterancy";
 import { useWeightUnit } from "@/components/providers/weight-unit-provider";
 import {
@@ -141,23 +142,14 @@ function InlineEditItem({
   const [modelVal, setModelVal] = useState("");
   const [categoryVal, setCategoryVal] = useState("");
   const [notesVal, setNotesVal] = useState("");
+  const [dirtyError, setDirtyError] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (editing) inputRef.current?.focus();
   }, [editing]);
 
-  function startEditing() {
-    setNameVal(item.name);
-    setBrandVal(item.brand ?? "");
-    setModelVal(item.model ?? "");
-    setCategoryVal(item.categoryId ?? "");
-    setNotesVal(item.notes ?? "");
-    setEditing(true);
-  }
-
-  function commit() {
-    setEditing(false);
+  function computeUpdates(): Partial<Item> {
     const updates: Partial<Item> = {};
     const trimmedName = nameVal.trim();
     if (trimmedName && trimmedName !== item.name) updates.name = trimmedName;
@@ -168,10 +160,39 @@ function InlineEditItem({
     if (categoryVal !== (item.categoryId ?? "")) updates.categoryId = categoryVal || null;
     const trimmedNotes = notesVal.trim();
     if (trimmedNotes !== (item.notes ?? "")) updates.notes = trimmedNotes || null;
+    return updates;
+  }
+
+  function startEditing() {
+    setNameVal(item.name);
+    setBrandVal(item.brand ?? "");
+    setModelVal(item.model ?? "");
+    setCategoryVal(item.categoryId ?? "");
+    setNotesVal(item.notes ?? "");
+    setDirtyError(false);
+    setEditing(true);
+  }
+
+  function commit() {
+    const updates = computeUpdates();
+    setEditing(false);
+    setDirtyError(false);
     if (Object.keys(updates).length > 0) {
       onSave(updates);
     }
   }
+
+  function handleOutside() {
+    if (!editing) return;
+    const dirty = Object.keys(computeUpdates()).length > 0;
+    if (dirty) {
+      setDirtyError(true);
+    } else {
+      setEditing(false);
+    }
+  }
+
+  const rowRef = useClickOutside<HTMLDivElement>(handleOutside, editing);
 
   if (!editing) {
     return (
@@ -190,13 +211,19 @@ function InlineEditItem({
   }
 
   return (
-    <div className="space-y-1.5">
+    <div
+      ref={rowRef}
+      className={`space-y-1.5 ${dirtyError ? "rounded-md ring-2 ring-destructive/60 p-1 -m-1" : ""}`}
+    >
       <Input
         ref={inputRef}
         className="h-7 text-sm font-bold"
         placeholder="Name"
         value={nameVal}
-        onChange={(e) => setNameVal(e.target.value)}
+        onChange={(e) => {
+          setNameVal(e.target.value);
+          setDirtyError(false);
+        }}
         onKeyDown={(e) => {
           if (e.key === "Enter") commit();
           if (e.key === "Escape") setEditing(false);
@@ -207,7 +234,10 @@ function InlineEditItem({
           className="h-6 text-xs flex-1"
           placeholder="Brand"
           value={brandVal}
-          onChange={(e) => setBrandVal(e.target.value)}
+          onChange={(e) => {
+            setBrandVal(e.target.value);
+            setDirtyError(false);
+          }}
           onKeyDown={(e) => {
             if (e.key === "Enter") commit();
             if (e.key === "Escape") setEditing(false);
@@ -217,7 +247,10 @@ function InlineEditItem({
           className="h-6 text-xs flex-1"
           placeholder="Model"
           value={modelVal}
-          onChange={(e) => setModelVal(e.target.value)}
+          onChange={(e) => {
+            setModelVal(e.target.value);
+            setDirtyError(false);
+          }}
           onKeyDown={(e) => {
             if (e.key === "Enter") commit();
             if (e.key === "Escape") setEditing(false);
@@ -228,7 +261,10 @@ function InlineEditItem({
         <select
           className="h-6 text-xs rounded border border-input bg-background px-2 flex-1"
           value={categoryVal}
-          onChange={(e) => setCategoryVal(e.target.value)}
+          onChange={(e) => {
+            setCategoryVal(e.target.value);
+            setDirtyError(false);
+          }}
         >
           <option value="">Uncategorized</option>
           {categories.map((c) => (
@@ -242,27 +278,39 @@ function InlineEditItem({
         className="h-6 text-xs"
         placeholder="Notes..."
         value={notesVal}
-        onChange={(e) => setNotesVal(e.target.value)}
+        onChange={(e) => {
+          setNotesVal(e.target.value);
+          setDirtyError(false);
+        }}
         onKeyDown={(e) => {
           if (e.key === "Enter") commit();
           if (e.key === "Escape") setEditing(false);
         }}
       />
-      <div className="flex gap-1.5 justify-end">
-        <button
-          type="button"
-          className="text-[10px] text-outline hover:text-foreground"
-          onClick={() => setEditing(false)}
-        >
-          Cancel
-        </button>
-        <button
-          type="button"
-          className="text-[10px] font-bold text-primary hover:text-primary/80"
-          onClick={commit}
-        >
-          Save
-        </button>
+      <div className="flex items-center gap-2 justify-between">
+        {dirtyError ? (
+          <span className="text-[10px] font-bold text-destructive">
+            Unsaved changes — Save or Cancel
+          </span>
+        ) : (
+          <span />
+        )}
+        <div className="flex gap-1.5">
+          <button
+            type="button"
+            className="text-[10px] text-outline hover:text-foreground"
+            onClick={() => setEditing(false)}
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            className="text-[10px] font-bold text-primary hover:text-primary/80"
+            onClick={commit}
+          >
+            Save
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -279,6 +327,7 @@ function InlineEditWeight({
 }) {
   const [editing, setEditing] = useState(false);
   const [editValue, setEditValue] = useState("");
+  const [dirtyError, setDirtyError] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -290,19 +339,34 @@ function InlineEditWeight({
 
   function startEditing() {
     setEditValue(gramsToInput(item.weightGrams, unit));
+    setDirtyError(false);
     setEditing(true);
   }
 
-  const commit = useCallback(() => {
-    setEditing(false);
+  function isDirty(): boolean {
     const parsed = parseFloat(editValue);
-    if (!isNaN(parsed) && parsed >= 0) {
+    if (Number.isNaN(parsed) || parsed < 0) return false;
+    return inputToGrams(parsed, unit) !== item.weightGrams;
+  }
+
+  const commit = useCallback(() => {
+    const parsed = parseFloat(editValue);
+    setEditing(false);
+    setDirtyError(false);
+    if (!Number.isNaN(parsed) && parsed >= 0) {
       const newGrams = inputToGrams(parsed, unit);
-      if (newGrams !== item.weightGrams) {
-        onSave(newGrams);
-      }
+      if (newGrams !== item.weightGrams) onSave(newGrams);
     }
   }, [editValue, item.weightGrams, onSave, unit]);
+
+  const ref = useClickOutside<HTMLDivElement>(() => {
+    if (!editing) return;
+    if (isDirty()) {
+      setDirtyError(true);
+    } else {
+      setEditing(false);
+    }
+  }, editing);
 
   if (!editing) {
     return (
@@ -317,7 +381,10 @@ function InlineEditWeight({
   }
 
   return (
-    <div className="flex items-center gap-1">
+    <div
+      ref={ref}
+      className={`flex items-center gap-1 ${dirtyError ? "rounded-md ring-2 ring-destructive/60 px-1" : ""}`}
+    >
       <Input
         ref={inputRef}
         className="h-7 w-16 text-sm tabular-nums"
@@ -325,14 +392,19 @@ function InlineEditWeight({
         step="any"
         min="0"
         value={editValue}
-        onChange={(e) => setEditValue(e.target.value)}
-        onBlur={commit}
+        onChange={(e) => {
+          setEditValue(e.target.value);
+          setDirtyError(false);
+        }}
         onKeyDown={(e) => {
           if (e.key === "Enter") commit();
           if (e.key === "Escape") setEditing(false);
         }}
       />
       <span className="text-xs text-outline">{unitSuffix(unit)}</span>
+      {dirtyError && (
+        <span className="text-[10px] font-bold text-destructive ml-1">Save or cancel</span>
+      )}
     </div>
   );
 }

@@ -16,6 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Loader2, Copy, Check, PawPrint, Backpack, Map, Plus, X, Pencil } from "lucide-react";
+import { useClickOutside } from "@/hooks/use-click-outside";
 
 export function Dashboard() {
   const { data, isLoading } = useHousehold();
@@ -92,7 +93,7 @@ export function Dashboard() {
             <Link href="/app/closet">
               <button className="flex w-full flex-col items-center justify-center rounded-xl bg-card p-6 transition-colors hover:bg-surface-high group">
                 <Backpack className="size-8 mb-3 text-primary group-hover:scale-110 transition-transform" />
-                <span className="font-bold text-sm">View Closet</span>
+                <span className="font-bold text-sm">View Gear Closet</span>
               </button>
             </Link>
             <Link href="/app/trips">
@@ -272,13 +273,54 @@ function MemberRow({
 }) {
   const [editingWeight, setEditingWeight] = useState(false);
   const [weightValue, setWeightValue] = useState("");
+  const [weightDirtyError, setWeightDirtyError] = useState(false);
   const [editingPet, setEditingPet] = useState(false);
   const [petNameVal, setPetNameVal] = useState("");
   const [petBreedVal, setPetBreedVal] = useState("");
   const [petWeightVal, setPetWeightVal] = useState("");
+  const [petDirtyError, setPetDirtyError] = useState(false);
 
   const isMetricBody = unit === "g" || unit === "kg" || unit === "metric";
   const bodyUnitLabel = isMetricBody ? "kg" : "lb";
+
+  function weightToKg(raw: string): number | null {
+    const parsed = parseFloat(raw);
+    if (Number.isNaN(parsed) || parsed <= 0) return null;
+    return isMetricBody ? Math.round(parsed) : Math.round(parsed / 2.20462);
+  }
+
+  function isWeightDirty(): boolean {
+    const kg = weightToKg(weightValue);
+    return kg !== null && kg !== member.bodyWeightKg;
+  }
+
+  function isPetDirty(): boolean {
+    const trimmedName = petNameVal.trim();
+    if (trimmedName && trimmedName !== member.name) return true;
+    const trimmedBreed = petBreedVal.trim();
+    if (trimmedBreed !== (member.breed ?? "")) return true;
+    const kg = weightToKg(petWeightVal);
+    if (kg !== null && kg !== member.bodyWeightKg) return true;
+    return false;
+  }
+
+  const weightRef = useClickOutside<HTMLDivElement>(() => {
+    if (!editingWeight) return;
+    if (isWeightDirty()) {
+      setWeightDirtyError(true);
+    } else {
+      setEditingWeight(false);
+    }
+  }, editingWeight);
+
+  const petRef = useClickOutside<HTMLDivElement>(() => {
+    if (!editingPet) return;
+    if (isPetDirty()) {
+      setPetDirtyError(true);
+    } else {
+      setEditingPet(false);
+    }
+  }, editingPet);
 
   function startEditingWeight() {
     if (isMetricBody) {
@@ -287,17 +329,15 @@ function MemberRow({
       const lbs = member.bodyWeightKg ? (member.bodyWeightKg * 2.20462).toFixed(0) : "";
       setWeightValue(lbs);
     }
+    setWeightDirtyError(false);
     setEditingWeight(true);
   }
 
   function commitWeight() {
+    const kg = weightToKg(weightValue);
     setEditingWeight(false);
-    const parsed = parseFloat(weightValue);
-    if (isNaN(parsed) || parsed <= 0) return;
-    const kg = isMetricBody ? Math.round(parsed) : Math.round(parsed / 2.20462);
-    if (kg !== member.bodyWeightKg) {
-      onUpdateWeight(kg);
-    }
+    setWeightDirtyError(false);
+    if (kg !== null && kg !== member.bodyWeightKg) onUpdateWeight(kg);
   }
 
   function startEditingPet() {
@@ -308,6 +348,7 @@ function MemberRow({
     } else {
       setPetWeightVal(member.bodyWeightKg ? (member.bodyWeightKg * 2.20462).toFixed(0) : "");
     }
+    setPetDirtyError(false);
     setEditingPet(true);
   }
 
@@ -318,15 +359,11 @@ function MemberRow({
     if (trimmedName && trimmedName !== member.name) updates.name = trimmedName;
     const trimmedBreed = petBreedVal.trim();
     if (trimmedBreed !== (member.breed ?? "")) updates.breed = trimmedBreed || null;
-    const parsed = parseFloat(petWeightVal);
-    if (!isNaN(parsed) && parsed > 0) {
-      const kg = isMetricBody ? Math.round(parsed) : Math.round(parsed / 2.20462);
-      if (kg !== member.bodyWeightKg) updates.bodyWeightKg = kg;
-    }
-    if (Object.keys(updates).length > 0) {
-      onUpdateMember(updates);
-    }
+    const kg = weightToKg(petWeightVal);
+    if (kg !== null && kg !== member.bodyWeightKg) updates.bodyWeightKg = kg;
+    if (Object.keys(updates).length > 0) onUpdateMember(updates);
     setEditingPet(false);
+    setPetDirtyError(false);
   }
 
   const displayWeightStr = member.bodyWeightKg
@@ -341,21 +378,30 @@ function MemberRow({
 
   if (editingPet) {
     return (
-      <div className="rounded-lg bg-surface-low p-3">
+      <div
+        ref={petRef}
+        className={`rounded-lg bg-surface-low p-3 ${petDirtyError ? "ring-2 ring-destructive/60" : ""}`}
+      >
         <form onSubmit={savePet} className="space-y-2">
           <div className="grid grid-cols-3 gap-2">
             <Input
               className="h-7 text-sm"
               placeholder="Name"
               value={petNameVal}
-              onChange={(e) => setPetNameVal(e.target.value)}
+              onChange={(e) => {
+                setPetNameVal(e.target.value);
+                setPetDirtyError(false);
+              }}
               autoFocus
             />
             <Input
               className="h-7 text-sm"
               placeholder="Breed"
               value={petBreedVal}
-              onChange={(e) => setPetBreedVal(e.target.value)}
+              onChange={(e) => {
+                setPetBreedVal(e.target.value);
+                setPetDirtyError(false);
+              }}
             />
             <div className="flex items-center gap-1">
               <Input
@@ -365,30 +411,42 @@ function MemberRow({
                 step="0.1"
                 placeholder="Weight"
                 value={petWeightVal}
-                onChange={(e) => setPetWeightVal(e.target.value)}
+                onChange={(e) => {
+                  setPetWeightVal(e.target.value);
+                  setPetDirtyError(false);
+                }}
               />
               <span className="text-xs text-outline">{bodyUnitLabel}</span>
             </div>
           </div>
-          <div className="flex items-center gap-2 justify-end">
-            <Button type="button" variant="ghost" size="sm" onClick={() => setEditingPet(false)}>
-              Cancel
-            </Button>
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              className="text-destructive hover:text-destructive"
-              onClick={() => {
-                setEditingPet(false);
-                onDeleteMember();
-              }}
-            >
-              Remove
-            </Button>
-            <Button type="submit" size="sm">
-              Save
-            </Button>
+          <div className="flex items-center gap-2 justify-between">
+            {petDirtyError ? (
+              <span className="text-[10px] font-bold text-destructive">
+                Unsaved changes — Save or Cancel
+              </span>
+            ) : (
+              <span />
+            )}
+            <div className="flex items-center gap-2">
+              <Button type="button" variant="ghost" size="sm" onClick={() => setEditingPet(false)}>
+                Cancel
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="text-destructive hover:text-destructive"
+                onClick={() => {
+                  setEditingPet(false);
+                  onDeleteMember();
+                }}
+              >
+                Remove
+              </Button>
+              <Button type="submit" size="sm">
+                Save
+              </Button>
+            </div>
           </div>
         </form>
       </div>
@@ -412,14 +470,19 @@ function MemberRow({
 
       <div className="flex items-center gap-2 text-sm tabular-nums">
         {(canEditWeight || isManaged) && editingWeight ? (
-          <div className="flex items-center gap-1">
+          <div
+            ref={weightRef}
+            className={`flex items-center gap-1 ${weightDirtyError ? "rounded-md ring-2 ring-destructive/60 px-1" : ""}`}
+          >
             <Input
               className="h-7 w-16 text-sm tabular-nums"
               type="number"
               min="0"
               value={weightValue}
-              onChange={(e) => setWeightValue(e.target.value)}
-              onBlur={commitWeight}
+              onChange={(e) => {
+                setWeightValue(e.target.value);
+                setWeightDirtyError(false);
+              }}
               onKeyDown={(e) => {
                 if (e.key === "Enter") commitWeight();
                 if (e.key === "Escape") setEditingWeight(false);

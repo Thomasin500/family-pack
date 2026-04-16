@@ -8,6 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Plus, Pencil, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
 import { useConfirm } from "@/components/providers/confirm-provider";
+import { useClickOutside } from "@/hooks/use-click-outside";
 
 const PRESET_COLORS = [
   "#ef4444",
@@ -47,6 +48,20 @@ export function CategoryManager({ open, onOpenChange, categories, items }: Categ
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editName, setEditName] = useState("");
   const [editColor, setEditColor] = useState("");
+  const [dirtyError, setDirtyError] = useState(false);
+
+  const editingCat = categories.find((c) => c.id === editingId);
+  const isEditDirty =
+    !!editingCat && (editName.trim() !== editingCat.name || editColor !== editingCat.color);
+
+  const editRef = useClickOutside<HTMLDivElement>(() => {
+    if (!editingId) return;
+    if (isEditDirty) {
+      setDirtyError(true);
+    } else {
+      setEditingId(null);
+    }
+  }, !!editingId);
 
   const sorted = [...categories].sort((a, b) => a.sortOrder - b.sortOrder);
 
@@ -72,6 +87,7 @@ export function CategoryManager({ open, onOpenChange, categories, items }: Categ
     setEditingId(cat.id);
     setEditName(cat.name);
     setEditColor(cat.color);
+    setDirtyError(false);
   }
 
   function saveEdit() {
@@ -81,6 +97,7 @@ export function CategoryManager({ open, onOpenChange, categories, items }: Categ
       {
         onSuccess: () => {
           setEditingId(null);
+          setDirtyError(false);
           toast.success("Updated");
         },
       }
@@ -137,34 +154,49 @@ export function CategoryManager({ open, onOpenChange, categories, items }: Categ
 
             if (isEditing) {
               return (
-                <div key={cat.id} className="flex items-center gap-2 rounded-lg bg-surface-low p-2">
-                  <div className="flex gap-1">
-                    {PRESET_COLORS.map((c) => (
-                      <button
-                        key={c}
-                        type="button"
-                        className={`size-4 rounded-full border-2 ${editColor === c ? "border-foreground" : "border-transparent"}`}
-                        style={{ backgroundColor: c }}
-                        onClick={() => setEditColor(c)}
-                      />
-                    ))}
+                <div key={cat.id} ref={editRef} className="space-y-1">
+                  <div
+                    className={`flex items-center gap-2 rounded-lg bg-surface-low p-2 ${dirtyError ? "ring-2 ring-destructive/60" : ""}`}
+                  >
+                    <div className="flex gap-1">
+                      {PRESET_COLORS.map((c) => (
+                        <button
+                          key={c}
+                          type="button"
+                          className={`size-4 rounded-full border-2 ${editColor === c ? "border-foreground" : "border-transparent"}`}
+                          style={{ backgroundColor: c }}
+                          onClick={() => {
+                            setEditColor(c);
+                            setDirtyError(false);
+                          }}
+                        />
+                      ))}
+                    </div>
+                    <Input
+                      className="h-7 text-sm flex-1"
+                      value={editName}
+                      onChange={(e) => {
+                        setEditName(e.target.value);
+                        setDirtyError(false);
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") saveEdit();
+                        if (e.key === "Escape") setEditingId(null);
+                      }}
+                      autoFocus
+                    />
+                    <Button size="sm" onClick={saveEdit} disabled={!editName.trim()}>
+                      Save
+                    </Button>
+                    <Button variant="ghost" size="icon-xs" onClick={() => setEditingId(null)}>
+                      <X className="size-3" />
+                    </Button>
                   </div>
-                  <Input
-                    className="h-7 text-sm flex-1"
-                    value={editName}
-                    onChange={(e) => setEditName(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") saveEdit();
-                      if (e.key === "Escape") setEditingId(null);
-                    }}
-                    autoFocus
-                  />
-                  <Button size="sm" onClick={saveEdit} disabled={!editName.trim()}>
-                    Save
-                  </Button>
-                  <Button variant="ghost" size="icon-xs" onClick={() => setEditingId(null)}>
-                    <X className="size-3" />
-                  </Button>
+                  {dirtyError && (
+                    <p className="text-[10px] font-bold text-destructive pl-2">
+                      Unsaved changes — Save or press Esc to cancel
+                    </p>
+                  )}
                 </div>
               );
             }

@@ -20,7 +20,7 @@ interface NavBarProps {
 
 const navLinks = [
   { href: "/app", label: "Dashboard" },
-  { href: "/app/closet", label: "Closet" },
+  { href: "/app/closet", label: "Gear Closet" },
   { href: "/app/trips", label: "Trips" },
 ];
 
