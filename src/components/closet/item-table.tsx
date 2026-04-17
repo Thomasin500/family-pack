@@ -28,7 +28,14 @@ import {
   useSortable,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Trash2, ChevronDown, ChevronRight, GripVertical, ChevronsUpDown } from "lucide-react";
+import {
+  Trash2,
+  ChevronDown,
+  ChevronRight,
+  GripVertical,
+  ChevronsUpDown,
+  Layers,
+} from "lucide-react";
 import { CategorySortMenu, sortItems, type SortMode } from "@/components/ui/sort-menu";
 import { useConfirm } from "@/components/providers/confirm-provider";
 import type { Item, Category } from "@/types";
@@ -790,6 +797,25 @@ function CategorySection({
                     >
                       {type.label}
                     </Badge>
+                  )}
+                  {!readOnly && (
+                    <button
+                      type="button"
+                      onClick={() => onUpdateItem(item.id, { allowMultiple: !item.allowMultiple })}
+                      className={`inline-flex items-center rounded-full border px-1.5 py-0.5 transition-all cursor-pointer active:scale-95 ${
+                        item.allowMultiple
+                          ? "border-primary bg-primary/10 text-primary"
+                          : "border-outline-variant/30 text-outline/60 hover:text-foreground hover:border-outline-variant"
+                      }`}
+                      title={
+                        item.allowMultiple
+                          ? "Stackable — stays in the trip pool after adding to a pack"
+                          : "Mark stackable (stays in pool after packing — e.g. water bottles)"
+                      }
+                      aria-label={item.allowMultiple ? "Stackable on" : "Stackable off"}
+                    >
+                      <Layers className="size-3" />
+                    </button>
                   )}
                   {level !== "New" && (
                     <Badge variant="outline">

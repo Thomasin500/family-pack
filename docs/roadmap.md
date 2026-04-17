@@ -3,7 +3,7 @@
 > Condensed roadmap covering all spec features, organized into build phases.
 > Cross-reference with `docs/spec.md` for full feature details and `docs/context.md` for project context.
 
-**Last updated:** April 16, 2026
+**Last updated:** April 17, 2026
 
 ---
 
@@ -90,7 +90,7 @@ _Built April 16, 2026. A long iteration pass driven by beta-testing feedback._
 
 ## Phase 4.7: Quick Wins & Polish — MOSTLY DONE
 
-_Small, batchable fixes driven by beta-testing feedback. Almost everything shipped in a single April-16 pass; three items (unit split, light/dark contrast, pet-creation revamp) are still open._
+_Small, batchable fixes driven by beta-testing feedback. Almost everything shipped in a single April-16 pass; two items (light/dark contrast, pet-creation revamp) are still open._
 
 | Feature                               | What                                                                                                                                                                                                                                                               | Effort | Status      |
 | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------ | ----------- |
@@ -107,7 +107,6 @@ _Small, batchable fixes driven by beta-testing feedback. Almost everything shipp
 | Nav "New Trip" opens modal            | Nav button now links to `/app/trips?new=true`; trips page reads the param to auto-open the dialog and strips the param on close.                                                                                                                                   | XS     | **Done**    |
 | Inline category editor                | `CategoryEditor` extracted from `CategoryManager` so the household settings page edits categories inline instead of opening a popup. Closet still uses the Dialog wrapper.                                                                                         | XS     | **Done**    |
 | Changelog grouping                    | Drawer groups entries by date (no time) and caps the visible list at 10 items with a "Show N older changes" toggle.                                                                                                                                                | XS     | **Done**    |
-| Split unit prefs                      | Two-axis preference: `itemsUnit` (per-item display) + `totalsUnit` (per-pack + summary display). Totals default to lb, items default to oz. Toggle cycles `itemsUnit`; totals unit set in household/user settings.                                                 | S-M    | Not started |
 | Lighten dark / darken light           | Pull the dark bg/surface tokens up a step, pull the light tokens down a step. Coordinate with the design-exports palette.                                                                                                                                          | S      | Not started |
 | Revamp pet creation                   | Replace inline dashboard pet form with a proper guided dialog (name, breed/size, body weight, carry %, managed-by adult). Mirror the polish of the trip/member dialogs.                                                                                            | S      | Not started |
 | Trip pack totals position (Q)         | Design question: top of card, bottom, or both? Prototype and pick. See `docs/bugs.md`.                                                                                                                                                                             | S      | Not started |
@@ -188,16 +187,21 @@ Shared household gear not on any person's body — tent, stove, cook kit, water 
 
 ---
 
-## Phase 7: Drag-and-Drop + Cut List
+## Phase 7: Gear Pool + Drag-and-Drop + Cut List
 
-_The remaining trip workspace power features._
+_Upgrading the trip workspace into a drag-and-drop loadout builder. Broken into 6 milestones M1-M6, each independently shippable._
 
-| Feature                     | What                                                                                                                       | Effort | Status            |
-| --------------------------- | -------------------------------------------------------------------------------------------------------------------------- | ------ | ----------------- |
-| Drag-and-drop between packs | dnd-kit cross-container drag. Shared pool ↔ pack columns. Reorder within columns.                                          | M      | dnd-kit installed |
-| Cut list                    | Mark trip items as "considering cutting." Dimmed display, running savings tally, "new base weight if cuts applied" preview | S-M    | Not started       |
-| "Not on This Trip"          | Collapsible section at bottom of trip workspace showing closet items excluded from trip, quick-add back                    | S      | Not started       |
-| Closet item drag-and-drop   | Reorder items within categories, drag items between categories                                                             | S      | dnd-kit installed |
+| Feature                   | What                                                                                                                                                                                                                                                                             | Effort | Status            |
+| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | ----------------- |
+| M1 · Gear Pool shell      | Replaces the thin unassigned-shared bar with a full panel: search, owner/category filter, worn/consumable pills, sort menu, grouped-by-category chip layout. Click-to-assign preserved. Collapsed/expanded states. Shared-unassigned items pinned to top of each category group. | M      | **Done**          |
+| M2 · `allowMultiple` flag | New boolean column on items (stackable items stay in the pool after being added to a pack). Closet exposes a Layers toggle. Pool filter + chip indicator updated.                                                                                                                | S      | **Done**          |
+| M3 · Pool → pack drag     | One DndContext in the trip workspace. Pool chips draggable, pack columns droppable. New `/items/bump` upsert endpoint (create or increment quantity).                                                                                                                            | S-M    | **Done**          |
+| M4 · Intra-pack reorder   | Items sortable within a category via drag handle. PATCH sortOrder. Manual sort mode added to sort menu.                                                                                                                                                                          | XS     | **Done**          |
+| M5 · Cross-pack + unpack  | New `/move-item` endpoint (atomic transfer, preserves `ownedByUserId` so "carrying for" badge appears automatically). Pool is also a drop target — drop pack item onto pool to unassign.                                                                                         | M      | **Done**          |
+| M6 · Drag polish          | Drop-zone highlights, auto-expand pool on drag start, mobile drag handles, `/` shortcut, show-already-packed toggle, error toasts on failed mutations, security-harden item-ownership on all pack-item endpoints, aria-pressed on filter pills, disable drag in checklist mode.  | XS     | **Done**          |
+| Cut list                  | Mark trip items as "considering cutting." Dimmed display, running savings tally, "new base weight if cuts applied" preview.                                                                                                                                                      | S-M    | Not started       |
+| "Not on This Trip"        | Subsumed by the Gear Pool's "show already packed" toggle (M6).                                                                                                                                                                                                                   | —      | Planned in M6     |
+| Closet item drag-and-drop | Reorder items within categories, drag items between categories.                                                                                                                                                                                                                  | S      | dnd-kit installed |
 
 ---
 
@@ -260,19 +264,20 @@ _The features that make the app feel smart._
 
 _Tier 4. Only when the core is rock solid._
 
-| Feature                 | What                                                                                                                                                                | Effort | Status      |
-| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | ----------- |
-| Public trip gallery     | Browse by trail/conditions/base weight                                                                                                                              | L      | Not started |
-| Fork/remix public lists | Copy community lists into your closet                                                                                                                               | M      | Not started |
-| Offline PWA             | Service worker, offline checklist, installable                                                                                                                      | L      | Not started |
-| Trip planning           | Calorie calc (Pandolf equation), water planning, macros                                                                                                             | M      | Not started |
-| Food in the closet      | Resolve design Q in `docs/bugs.md` — decide whether food lives in closet, trip-only, or a separate pantry. Build the model.                                         | M      | Not started |
-| Water weight tracking   | Trip-specific water volume entries (separate from closet containers). Filled-container total rolls into carried weight.                                             | S-M    | Not started |
-| Food weight guessamator | Quick estimator: duration + calories/day + packaging → estimated food weight. Adds a single "Estimated food" line item to trip without needing a full meal library. | S      | Not started |
-| Gear intelligence       | Lighter alternatives, weight optimization tips, community weights                                                                                                   | M-L    | Not started |
-| Image upload            | Gear photos via Vercel Blob                                                                                                                                         | S-M    | Not started |
-| Gear condition tracking | Lifespan, wear tracking                                                                                                                                             | S      | Not started |
-| Cost tracking           | Gear investment per category, over time                                                                                                                             | S      | Not started |
+| Feature                 | What                                                                                                                                                                                                               | Effort | Status      |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------ | ----------- |
+| Public trip gallery     | Browse by trail/conditions/base weight                                                                                                                                                                             | L      | Not started |
+| Fork/remix public lists | Copy community lists into your closet                                                                                                                                                                              | M      | Not started |
+| Offline PWA             | Service worker, offline checklist, installable                                                                                                                                                                     | L      | Not started |
+| Trip planning           | Calorie calc (Pandolf equation), water planning, macros                                                                                                                                                            | M      | Not started |
+| Food in the closet      | Resolve design Q in `docs/bugs.md` — decide whether food lives in closet, trip-only, or a separate pantry. Build the model.                                                                                        | M      | Not started |
+| Water weight tracking   | Trip-specific water volume entries (separate from closet containers). Filled-container total rolls into carried weight.                                                                                            | S-M    | Not started |
+| Food weight guessamator | Quick estimator: duration + calories/day + packaging → estimated food weight. Adds a single "Estimated food" line item to trip without needing a full meal library.                                                | S      | Not started |
+| Gear intelligence       | Lighter alternatives, weight optimization tips, community weights                                                                                                                                                  | M-L    | Not started |
+| Image upload            | Gear photos via Vercel Blob                                                                                                                                                                                        | S-M    | Not started |
+| Gear condition tracking | Lifespan, wear tracking                                                                                                                                                                                            | S      | Not started |
+| Cost tracking           | Gear investment per category, over time                                                                                                                                                                            | S      | Not started |
+| Split unit prefs        | Two-axis preference: `itemsUnit` (per-item display) + `totalsUnit` (per-pack + summary display). Totals default to lb, items default to oz. Toggle cycles `itemsUnit`; totals unit set in household/user settings. | S-M    | Not started |
 
 ---
 
@@ -306,20 +311,22 @@ _Features pushed out of the near-term plan. Still in spec, revisit when the need
 
 ## Summary
 
-| Phase   | Theme                      | Features | Cumulative                                 |
-| ------- | -------------------------- | -------- | ------------------------------------------ |
-| **1-4** | Foundation through core    | ~30      | ~30/140 (21%) — **DONE**                   |
-| **4.5** | Quick wins + fixes         | ~20      | ~50 (36%) — **DONE**                       |
-| **8**   | Tech debt (core)           | 5        | ~55 (39%) — **DONE**                       |
-| **4.6** | Beta-ready polish          | ~18      | ~73 (52%) — **DONE**                       |
-| **4.7** | Quick wins & polish        | ~13      | ~86 (61%) — **MOSTLY DONE** (3 items open) |
-| **5**   | Trip stats & visualization | 6        | ~92 (66%)                                  |
-| **6**   | Party view & loadout       | 5        | ~97 (69%)                                  |
-| **7**   | Drag-and-drop + cut list   | 4        | ~101 (72%)                                 |
-| **8b**  | Polish (mobile, sharing)   | 3        | ~104 (74%)                                 |
-| **9**   | Intelligence & readiness   | 4        | ~108 (77%)                                 |
-| **10**  | Import/export + advanced   | 5        | ~113 (81%)                                 |
-| **11**  | Community & scale          | 8        | ~121 (86%)                                 |
+| Phase   | Theme                                              | Features | Cumulative                                  |
+| ------- | -------------------------------------------------- | -------- | ------------------------------------------- |
+| **1-4** | Foundation through core                            | ~30      | ~30/140 (21%) — **DONE**                    |
+| **4.5** | Quick wins + fixes                                 | ~20      | ~50 (36%) — **DONE**                        |
+| **8**   | Tech debt (core)                                   | 5        | ~55 (39%) — **DONE**                        |
+| **4.6** | Beta-ready polish                                  | ~18      | ~73 (52%) — **DONE**                        |
+| **4.7** | Quick wins & polish                                | ~13      | ~86 (61%) — **MOSTLY DONE** (2 items open)  |
+| **7**   | Gear Pool + Drag-and-drop (M1–M6) + security audit | ~12      | ~98 (70%) — **MOSTLY DONE** (Cut list TODO) |
+| **5**   | Trip stats & visualization                         | 6        | ~104 (74%)                                  |
+| **6**   | Party view & loadout                               | 5        | ~109 (78%)                                  |
+| **8b**  | Polish (mobile, sharing)                           | 3        | ~112 (80%)                                  |
+| **9**   | Intelligence & readiness                           | 4        | ~116 (83%)                                  |
+| **10**  | Import/export + advanced                           | 5        | ~121 (86%)                                  |
+| **11**  | Community & scale                                  | 8        | ~129 (92%)                                  |
+
+Phase 7 (Gear Pool + drag-and-drop) shipped April 16-17 — six milestones M1-M6 plus eight cross-household security holes closed plus uniform mutation error toasts across every hook in the app. Cut list + "not on this trip" still open for a later pass.
 
 Phase 4.6 (beta-ready polish) shipped April 16 — household settings, roadmap page + suggestions, unified trip flow, collapsible categories, click-outside editors, confirm dialogs, trip workspace scroll, security headers + schema hygiene, and more.
 

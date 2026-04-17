@@ -2,6 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { fetchApi } from "@/lib/fetch";
+import { mutationError } from "@/lib/mutation-errors";
 import type { HouseholdData } from "@/types";
 
 export function useHousehold() {
@@ -23,6 +24,7 @@ export function useCreateHousehold() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["household"] });
     },
+    onError: mutationError("create household"),
   });
 }
 
@@ -38,6 +40,7 @@ export function useUpdateHousehold() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["household"] });
     },
+    onError: mutationError("save household settings"),
   });
 }
 
@@ -53,6 +56,7 @@ export function useJoinHousehold() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["household"] });
     },
+    onError: mutationError("join household"),
   });
 }
 
@@ -68,6 +72,7 @@ export function useAddMember() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["household"] });
     },
+    onError: mutationError("add member"),
   });
 }
 
@@ -91,6 +96,7 @@ export function useUpdateMember() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["household"] });
     },
+    onError: mutationError("update member"),
   });
 }
 
@@ -104,5 +110,6 @@ export function useDeleteMember() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["household"] });
     },
+    onError: mutationError("remove member"),
   });
 }

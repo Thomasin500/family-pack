@@ -2,7 +2,7 @@
 
 > Active bugs and UX issues. Fix as time allows, prioritize by user impact.
 
-**Last updated:** April 16, 2026
+**Last updated:** April 17, 2026
 
 ---
 
@@ -39,6 +39,12 @@
 
 ## Recently fixed (kept for memory)
 
+- **Gear Pool** replaces the thin unassigned-shared bar at the top of every trip. Search by name/brand/model, filter by owner/category/worn/consumable, sort by type/name/weight. Click-to-assign preserved alongside full drag-and-drop.
+- **Stackable items** — new `allowMultiple` flag on gear items (toggle via the Layers icon in the closet). Stackable items stay in the Gear Pool after being added to a pack and can be assigned to multiple packs (water bottles, fuel, food per day).
+- **Drag-and-drop trip building** — pool → pack, pack → pack (preserving ownership for "carrying for" badges), pack → pool to unassign, intra-pack reorder via grip handle. `/` focuses the pool search. Deep-link via `#pack-<packId>`.
+- **Mutation error toasts** — every save across the app now surfaces a red toast on failure. Covers items, trips, trip members, categories, household, and all pack-item operations. Structured 409 responses (item-in-use, category-has-items) still route through their dedicated dialogs without double-toasting.
+- **Cross-household security audit** — eight cross-household reference holes closed across write endpoints. Every endpoint that takes a foreign ID (memberIds, userId, itemId, categoryId, moveTo) re-verifies the entity belongs to the caller's household.
+- **Nav unit toggle** now looks obviously clickable — bordered pill with a rotating Repeat icon on hover and a clearer tooltip showing the cycle.
 - Welcome message now uses the signed-in user's name (not `members[0]`).
 - Auto-sort within closet categories no longer jerks items out of view; each category has an explicit sort menu.
 - Inline editing now respects click-outside with a dirty-state error banner (closet rows, weights, categories, dashboard weight/pet, shared-assign chip).

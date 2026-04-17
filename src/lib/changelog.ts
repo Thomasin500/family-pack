@@ -8,6 +8,53 @@ export interface ChangelogEntry {
 // Newest first.
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    at: "2026-04-17T00:15:00-06:00",
+    title: "Quick wins — deep links, error toasts, tighter API scoping",
+    items: [
+      "Deep-link to a specific pack on a trip with `#pack-<id>` in the URL — on page load, the pack scrolls into view. Works from share links and from the 'in [name]' chips in the Gear Pool.",
+      "Save failures across the app now surface a red toast instead of silently failing. Wired into every mutation hook (items, trips, trip members, categories, household, and all five pack-item operations).",
+      "Security: full cross-household audit of every write endpoint. Closed five cross-household reference holes — category `moveTo`, item `categoryId` on create/update, trip `memberIds` on create, and trip member `userId` on add. All now re-verify the referenced entity belongs to the caller's household.",
+      "A shared `mutationError` helper means any new mutation hook gets a proper error toast by adding one line.",
+    ],
+  },
+  {
+    at: "2026-04-16T23:55:00-06:00",
+    title: "Gear Pool polish + security hardening",
+    items: [
+      "Press `/` anywhere on a trip to focus the Gear Pool search — auto-expands the pool if it's collapsed.",
+      "New 'Packed' pill in the pool toggles a view of items already in a pack. Dimmed and strikethrough, with a 'in [name]' badge. Click one to scroll straight to the pack carrying it.",
+      "Mobile drag handles are now always visible (they faded on hover only, which didn't work on touch screens).",
+      "Drag mutations now surface an error toast if anything fails server-side — no more silent drag failures.",
+      "Security: all three pack-item endpoints (add, bump, move) now re-verify that the item belongs to your household before creating or moving pack items. Prevents cross-household item references via guessed UUIDs.",
+      "Accessibility: filter pills in the pool now report aria-pressed so screen readers announce their on/off state.",
+    ],
+  },
+  {
+    at: "2026-04-16T23:30:00-06:00",
+    title: "Drag-and-drop trip building",
+    items: [
+      "Drag items from the Gear Pool straight onto any pack — one gesture replaces the old click-to-assign flow (but click still works the same way).",
+      "Drag items between packs to reassign carriers. Owned-by stays intact, so moving Thomas's personal item into Partner's pack shows a 'Shared / Thomas' badge automatically.",
+      "Drag an item from a pack back onto the Gear Pool to unassign it. For stackable items (water bottles, fuel canisters), the pool drop decrements the quantity and only fully removes when it hits zero.",
+      "Drag items up or down inside a pack to reorder them. A grip handle shows up on the left of each row on hover. Mobile: long-press to start the drag instead of the grip.",
+      "New 'Manual order' sort mode (drag icon) in each pack category — items display in the order you dragged them. Other sort modes still work the same.",
+      "Pool auto-expands when you start dragging a pack item, so the 'drop here to unassign' target is always visible.",
+      "Visual affordances: dragging an item dims the source chip, hovered pack columns glow primary, and a DragOverlay shows a floating clone under the cursor.",
+      "Checklist mode disables drag — the screen is about verifying your pack, not editing it.",
+      "New endpoints: POST /api/trips/[id]/packs/[packId]/items/bump (upsert: create or increment quantity) and POST /api/trips/[id]/move-item (atomic transfer preserving ownedByUserId).",
+    ],
+  },
+  {
+    at: "2026-04-16T22:00:00-06:00",
+    title: "Gear Pool + stackable items",
+    items: [
+      "New Gear Pool panel at the top of every trip replaces the thin 'unassigned shared' bar. Search by name/brand/model, filter by owner or category, filter to Worn or Consumable only, and sort by type / name / weight. Items are grouped by category with unassigned shared gear pinned to the top of each group in primary-colored chips.",
+      "Pool auto-expands when there's unassigned shared gear; otherwise collapses to a single-line summary you can click to open.",
+      "Unit toggle in the nav now looks like a button: bordered pill with a rotating repeat icon on hover and a clearer tooltip showing the current unit and the cycle order.",
+      "New 'stackable' flag (aka allowMultiple) on gear items — click the small Layers icon on an item in the closet to toggle. Stackable items stay in the Gear Pool after being added to a pack so you can assign them to multiple packs (water bottles, fuel canisters, food-per-day items).",
+    ],
+  },
+  {
     at: "2026-04-16T17:45:00-06:00",
     title: "Tier sliders, theme persistence, and trip form polish",
     items: [

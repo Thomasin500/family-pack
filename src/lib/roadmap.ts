@@ -78,7 +78,7 @@ export const ROADMAP: RoadmapPhase[] = [
       { title: "Changelog drawer + /app/roadmap page" },
       { title: "Roadmap suggestions (per-phase + general)" },
       { title: "Household settings page (pack-class tiers, carry %, categories, leave household)" },
-      { title: "Unified trip add flow with UnassignedSharedBar" },
+      { title: "Unified trip add flow with unassigned-shared bar" },
       { title: "Trip tile per-person Base + Carry weights" },
       { title: "Trip workspace scaling (1 / grid / snap-scroll)" },
     ],

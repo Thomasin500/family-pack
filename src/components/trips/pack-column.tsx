@@ -13,8 +13,19 @@ import { useUpdatePackItem } from "@/hooks/use-trip-pack-items";
 import type { HouseholdSettings } from "@/db/schema";
 import { Checkbox } from "@/components/ui/checkbox";
 import { LoadoutModal } from "./loadout-modal";
-import { X, Backpack, ChevronDown, ChevronRight, Plus, ChevronsUpDown } from "lucide-react";
+import {
+  X,
+  Backpack,
+  ChevronDown,
+  ChevronRight,
+  Plus,
+  ChevronsUpDown,
+  GripVertical,
+} from "lucide-react";
 import { CategorySortMenu, sortItems, type SortMode } from "@/components/ui/sort-menu";
+import { useDraggable, useDroppable } from "@dnd-kit/core";
+import { SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import dynamic from "next/dynamic";
 
 const AddToPackDialog = dynamic(
@@ -165,11 +176,7 @@ export function PackColumn({ pack, tripId, checklistMode = false, allPacks }: Pa
   );
 
   return (
-    <div
-      className={`flex flex-col ${
-        collapsed ? "rounded-xl" : "rounded-xl bg-card border border-outline-variant/10"
-      }`}
-    >
+    <PackColumnDropZone packId={pack.id} collapsed={collapsed}>
       {/* Person Header */}
       <div
         className={`flex items-center gap-3 px-4 py-3 cursor-pointer select-none ${
@@ -309,7 +316,7 @@ export function PackColumn({ pack, tripId, checklistMode = false, allPacks }: Pa
                 checklistMode={checklistMode}
                 onToggleChecked={handleToggleChecked}
                 unit={unit}
-                sortMode={sortModes[category.id] ?? "insertion"}
+                sortMode={sortModes[category.id] ?? "manual"}
                 onChangeSort={(mode) => setSortModes((prev) => ({ ...prev, [category.id]: mode }))}
                 collapsed={collapsedCats.has(category.id)}
                 onToggleCollapsed={() => toggleCategoryCollapsed(category.id)}
@@ -324,7 +331,7 @@ export function PackColumn({ pack, tripId, checklistMode = false, allPacks }: Pa
                 checklistMode={checklistMode}
                 onToggleChecked={handleToggleChecked}
                 unit={unit}
-                sortMode={sortModes["__uncategorized"] ?? "insertion"}
+                sortMode={sortModes["__uncategorized"] ?? "manual"}
                 onChangeSort={(mode) =>
                   setSortModes((prev) => ({ ...prev, __uncategorized: mode }))
                 }
@@ -349,6 +356,37 @@ export function PackColumn({ pack, tripId, checklistMode = false, allPacks }: Pa
         onChangePackId={() => {}}
         key={pack.id}
       />
+    </PackColumnDropZone>
+  );
+}
+
+/**
+ * Outer wrapper for a pack that also functions as a dnd-kit drop target.
+ * Dragging a pool chip or another pack's item onto this zone highlights it;
+ * the workspace-level onDragEnd handles the actual mutation.
+ */
+function PackColumnDropZone({
+  packId,
+  collapsed,
+  children,
+}: {
+  packId: string;
+  collapsed: boolean;
+  children: React.ReactNode;
+}) {
+  const { setNodeRef, isOver } = useDroppable({
+    id: `pack:${packId}`,
+    data: { type: "pack", packId },
+  });
+  return (
+    <div
+      ref={setNodeRef}
+      data-pack-id={packId}
+      className={`flex flex-col transition-colors ${
+        collapsed ? "rounded-xl" : "rounded-xl bg-card border"
+      } ${isOver ? "border-primary ring-2 ring-primary/30" : "border-outline-variant/10"}`}
+    >
+      {children}
     </div>
   );
 }
@@ -383,6 +421,7 @@ function CategoryGroup({
     weightGrams: (pi.item?.weightGrams ?? 0) * (pi.quantity ?? 1),
     isWorn: pi.isWornOverride ?? pi.item?.isWorn ?? false,
     isConsumable: pi.isConsumableOverride ?? pi.item?.isConsumable ?? false,
+    sortOrder: pi.sortOrder ?? 0,
   }));
   const sorted = sortItems(sortable, sortMode).map((s) => s.pi);
   const subtotal = items.reduce(
@@ -423,57 +462,122 @@ function CategoryGroup({
         </div>
       </div>
       {!collapsed && (
-        <div className="space-y-1">
-          {sorted.map((pi: any) => {
-            const item = pi.item;
-            if (!item) return null;
-            const isWorn = pi.isWornOverride ?? item.isWorn ?? false;
-            const isConsumable = pi.isConsumableOverride ?? item.isConsumable ?? false;
-            const isShared = item.ownerType === "shared";
-            const weight = (item.weightGrams ?? 0) * (pi.quantity ?? 1);
-
-            return (
-              <div
+        <SortableContext
+          items={sorted.map((pi: any) => pi.id)}
+          strategy={verticalListSortingStrategy}
+        >
+          <div className="space-y-1">
+            {sorted.map((pi: any) => (
+              <SortablePackItemRow
                 key={pi.id}
-                className={`flex items-center gap-2 group rounded-lg p-1.5 hover:bg-surface-bright transition-colors ${
-                  checklistMode && pi.isChecked ? "opacity-40" : ""
-                }`}
-              >
-                {checklistMode && (
-                  <Checkbox
-                    checked={pi.isChecked ?? false}
-                    onCheckedChange={(checked) => onToggleChecked(pi.id, checked === true)}
-                    className="shrink-0"
-                  />
-                )}
-                <span
-                  className={`text-sm font-medium flex-1 min-w-0 break-words ${
-                    checklistMode && pi.isChecked ? "line-through" : ""
-                  }`}
-                  title={item.name}
-                >
-                  {item.name}
-                </span>
-                <div className="flex items-center gap-1.5 shrink-0">
-                  {isShared && <Badge variant="secondary">Shared</Badge>}
-                  {isWorn && <Badge variant="default">Worn</Badge>}
-                  {isConsumable && <Badge variant="outline">C</Badge>}
-                </div>
-                <span className="text-sm font-mono tabular-nums text-on-surface-variant w-20 text-right shrink-0">
-                  {displayWeight(weight, unit)}
-                </span>
-                <Button
-                  variant="ghost"
-                  size="icon-xs"
-                  className="opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
-                  onClick={() => onRemove(pi.id, item.name)}
-                >
-                  <X className="size-3" />
-                </Button>
-              </div>
-            );
-          })}
-        </div>
+                pi={pi}
+                unit={unit}
+                checklistMode={checklistMode}
+                onToggleChecked={onToggleChecked}
+                onRemove={onRemove}
+              />
+            ))}
+          </div>
+        </SortableContext>
+      )}
+    </div>
+  );
+}
+
+/**
+ * A pack item row that is both sortable (for intra-pack reorder) and
+ * draggable across packs / to the pool. Drag handle on the left is
+ * the only grip so touch scroll still works on mobile.
+ */
+export function SortablePackItemRow({
+  pi,
+  unit,
+  checklistMode,
+  onToggleChecked,
+  onRemove,
+  asOverlay = false,
+}: {
+  pi: any;
+  unit: DisplayUnit;
+  checklistMode: boolean;
+  onToggleChecked: (packItemId: string, checked: boolean) => void;
+  onRemove: (packItemId: string, itemName: string) => void;
+  /** Non-interactive clone used inside DragOverlay. */
+  asOverlay?: boolean;
+}) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: pi.id,
+    data: { type: "pack-item", tripPackItemId: pi.id, fromPackId: pi.tripPackId, pi },
+    disabled: asOverlay || checklistMode,
+  });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging && !asOverlay ? 0.4 : 1,
+  };
+
+  const item = pi.item;
+  if (!item) return null;
+  const isWorn = pi.isWornOverride ?? item.isWorn ?? false;
+  const isConsumable = pi.isConsumableOverride ?? item.isConsumable ?? false;
+  const isShared = item.ownerType === "shared";
+  const weight = (item.weightGrams ?? 0) * (pi.quantity ?? 1);
+  const qty = pi.quantity ?? 1;
+
+  return (
+    <div
+      ref={asOverlay ? undefined : setNodeRef}
+      style={asOverlay ? undefined : style}
+      className={`flex items-center gap-2 group rounded-lg p-1.5 hover:bg-surface-bright transition-colors ${
+        checklistMode && pi.isChecked ? "opacity-40" : ""
+      } ${asOverlay ? "bg-card shadow-lg border border-primary/40" : ""}`}
+    >
+      {!checklistMode && !asOverlay && (
+        <button
+          type="button"
+          className="shrink-0 text-outline/40 hover:text-primary cursor-grab active:cursor-grabbing opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity touch-none"
+          {...listeners}
+          {...attributes}
+          aria-label="Drag to reorder or move between packs"
+          title="Drag to reorder or move between packs"
+        >
+          <GripVertical className="size-4" />
+        </button>
+      )}
+      {checklistMode && (
+        <Checkbox
+          checked={pi.isChecked ?? false}
+          onCheckedChange={(checked) => onToggleChecked(pi.id, checked === true)}
+          className="shrink-0"
+        />
+      )}
+      <span
+        className={`text-sm font-medium flex-1 min-w-0 break-words ${
+          checklistMode && pi.isChecked ? "line-through" : ""
+        }`}
+        title={item.name}
+      >
+        {item.name}
+        {qty > 1 && <span className="ml-1 text-outline font-mono">×{qty}</span>}
+      </span>
+      <div className="flex items-center gap-1.5 shrink-0">
+        {isShared && <Badge variant="secondary">Shared</Badge>}
+        {isWorn && <Badge variant="default">Worn</Badge>}
+        {isConsumable && <Badge variant="outline">C</Badge>}
+      </div>
+      <span className="text-sm font-mono tabular-nums text-on-surface-variant w-20 text-right shrink-0">
+        {displayWeight(weight, unit)}
+      </span>
+      {!asOverlay && (
+        <Button
+          variant="ghost"
+          size="icon-xs"
+          className="opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
+          onClick={() => onRemove(pi.id, item.name)}
+        >
+          <X className="size-3" />
+        </Button>
       )}
     </div>
   );

@@ -33,6 +33,22 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
     const force = url.searchParams.get("force") === "true";
     const moveTo = url.searchParams.get("moveTo");
 
+    // Verify the source category belongs to this household before doing anything.
+    const source = await db.query.categories.findFirst({
+      where: and(eq(categories.id, id), eq(categories.householdId, user.householdId!)),
+    });
+    if (!source) throw new ApiError(404, "Category not found");
+
+    // If a moveTo target is supplied, verify it also belongs to this household.
+    // Prevents attackers from reassigning their items to another family's
+    // category ID (cross-household reference leak).
+    if (moveTo) {
+      const target = await db.query.categories.findFirst({
+        where: and(eq(categories.id, moveTo), eq(categories.householdId, user.householdId!)),
+      });
+      if (!target) throw new ApiError(400, "Target category not found");
+    }
+
     // Check if the category has items
     const [itemCount] = await db
       .select({ count: count() })

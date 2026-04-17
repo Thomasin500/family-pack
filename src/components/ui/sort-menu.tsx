@@ -8,11 +8,12 @@ import {
   ArrowUpDown,
   ArrowUpWideNarrow,
   Check,
+  GripVertical,
   Shirt,
 } from "lucide-react";
 import { useClickOutside } from "@/hooks/use-click-outside";
 
-export type SortMode = "type" | "name" | "name-desc" | "weight-asc" | "weight-desc";
+export type SortMode = "type" | "name" | "name-desc" | "weight-asc" | "weight-desc" | "manual";
 
 const OPTIONS: { value: SortMode; label: string; Icon: typeof Shirt }[] = [
   { value: "type", label: "Worn / Carried / Consumable", Icon: Shirt },
@@ -20,6 +21,7 @@ const OPTIONS: { value: SortMode; label: string; Icon: typeof Shirt }[] = [
   { value: "name-desc", label: "Name Z → A", Icon: ArrowUpAZ },
   { value: "weight-asc", label: "Weight, light → heavy", Icon: ArrowUpWideNarrow },
   { value: "weight-desc", label: "Weight, heavy → light", Icon: ArrowDownWideNarrow },
+  { value: "manual", label: "Manual order (drag to arrange)", Icon: GripVertical },
 ];
 
 export function CategorySortMenu({
@@ -101,9 +103,20 @@ export function sortItems<
     weightGrams?: number;
     isWorn?: boolean | null;
     isConsumable?: boolean | null;
+    sortOrder?: number;
   },
 >(items: T[], mode: SortMode): T[] {
   const copy = [...items];
+  if (mode === "manual") {
+    // Sort by explicit sortOrder; stable fallback to name.
+    copy.sort((a, b) => {
+      const ra = a.sortOrder ?? 0;
+      const rb = b.sortOrder ?? 0;
+      if (ra !== rb) return ra - rb;
+      return a.name.localeCompare(b.name);
+    });
+    return copy;
+  }
   if (mode === "type") {
     copy.sort((a, b) => {
       const r = typeRank(a) - typeRank(b);
@@ -115,6 +128,6 @@ export function sortItems<
   if (mode === "name") copy.sort((a, b) => a.name.localeCompare(b.name));
   else if (mode === "name-desc") copy.sort((a, b) => b.name.localeCompare(a.name));
   else if (mode === "weight-asc") copy.sort((a, b) => (a.weightGrams ?? 0) - (b.weightGrams ?? 0));
-  else copy.sort((a, b) => (b.weightGrams ?? 0) - (a.weightGrams ?? 0));
+  else if (mode === "weight-desc") copy.sort((a, b) => (b.weightGrams ?? 0) - (a.weightGrams ?? 0));
   return copy;
 }

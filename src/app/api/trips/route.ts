@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
-import { trips, tripMembers, tripPacks } from "@/db/schema";
-import { eq } from "drizzle-orm";
-import { getAuthenticatedUser, handleApiError } from "@/lib/api-helpers";
+import { trips, tripMembers, tripPacks, users } from "@/db/schema";
+import { eq, and, inArray } from "drizzle-orm";
+import { getAuthenticatedUser, handleApiError, ApiError } from "@/lib/api-helpers";
 import { createTripSchema } from "@/lib/validators";
 
 export async function GET() {
@@ -39,6 +39,15 @@ export async function POST(req: NextRequest) {
 
     const { name, description, startDate, endDate, location, season, terrain, memberIds } =
       createTripSchema.parse(await req.json());
+
+    // Verify every memberId belongs to the caller's household.
+    const householdMembers = await db
+      .select({ id: users.id })
+      .from(users)
+      .where(and(eq(users.householdId, user.householdId!), inArray(users.id, memberIds)));
+    if (householdMembers.length !== memberIds.length) {
+      throw new ApiError(400, "One or more members are not in your household");
+    }
 
     const [trip] = await db
       .insert(trips)

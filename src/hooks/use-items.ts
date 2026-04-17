@@ -2,6 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { fetchApi } from "@/lib/fetch";
+import { mutationError } from "@/lib/mutation-errors";
 import type { Item } from "@/types";
 
 export function useItems(ownerId?: string) {
@@ -37,6 +38,7 @@ export function useCreateItem() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["items"] });
     },
+    onError: mutationError("create item"),
   });
 }
 
@@ -59,8 +61,9 @@ export function useUpdateItem() {
       );
       return { previous };
     },
-    onError: (_err, _vars, context) => {
+    onError: (err: Error, _vars, context) => {
       queryClient.setQueryData(["items"], context?.previous);
+      mutationError("update item")(err);
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["items"] });
@@ -77,6 +80,13 @@ export function useDeleteItem() {
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["items"] });
+    },
+    // Item deletion has a structured 409 "in use" response that callers handle
+    // explicitly (offering 'Delete Anyway'). Don't show a toast for that path.
+    onError: (err: Error) => {
+      const maybeUsage = err as unknown as { tripCount?: number };
+      if (maybeUsage.tripCount) return;
+      mutationError("delete item")(err);
     },
   });
 }

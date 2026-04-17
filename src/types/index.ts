@@ -59,6 +59,7 @@ export interface Item {
   ownerId: string;
   isConsumable: boolean;
   isWorn: boolean;
+  allowMultiple: boolean;
   soloAltId: string | null;
   tags: string[] | null;
   notes: string | null;

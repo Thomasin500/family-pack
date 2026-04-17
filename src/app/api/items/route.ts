@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
-import { items, users } from "@/db/schema";
+import { items, users, categories } from "@/db/schema";
 import { eq, and, or, inArray, asc } from "drizzle-orm";
 import { getAuthenticatedUser, handleApiError, ApiError } from "@/lib/api-helpers";
 import { createItemSchema } from "@/lib/validators";
@@ -79,6 +79,14 @@ export async function POST(req: NextRequest) {
       if (ownerId !== user.householdId) {
         throw new ApiError(400, "Shared items must use household ID as ownerId");
       }
+    }
+
+    // Validate the categoryId belongs to the household (if supplied).
+    if (categoryId) {
+      const cat = await db.query.categories.findFirst({
+        where: and(eq(categories.id, categoryId), eq(categories.householdId, user.householdId!)),
+      });
+      if (!cat) throw new ApiError(400, "Category not found in household");
     }
 
     const [item] = await db

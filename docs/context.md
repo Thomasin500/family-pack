@@ -2,7 +2,7 @@
 
 > Use this document to brief a new Claude session on the full context of the Family Pack project. Paste this at the start of a conversation to pick up where we left off.
 
-**Last updated:** April 16, 2026
+**Last updated:** April 17, 2026
 
 ---
 
@@ -197,20 +197,22 @@ Summary stats from spreadsheet:
 
 ## Implementation Phases
 
-| Phase                             | Status  | What                                                                                                                         |
-| --------------------------------- | ------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| **1: Foundation**                 | DONE    | Next.js scaffold, Drizzle schema, Docker Postgres, Neon production, Vercel deploy, Google OAuth, CI pipeline                 |
-| **2: Gear Closet**                | DONE    | Closet page with tabs, item table with inline editing, add item dialog with catalog typeahead, weight summary                |
-| **3: Trip Workspace**             | DONE    | Trip list, new trip dialog, trip workspace with pack columns, shared gear pool, add-to-pack, weight summaries                |
-| **4: Core Completion**            | DONE    | Unit toggle, checklist mode, gear history + veterancy labels, loadout view skeleton, Vitest test suite                       |
-| **4.5: Quick Wins & Fixes**       | DONE    | 20+ fixes: inline editing, category mgmt, trip edit/delete/complete/search, member mgmt, 4-way weight toggle, dnd categories |
-| **5: Trip Stats & Visualization** | Next    | Trip stats panel, shared weight balance, pack class labels, smart trip tags, category charts, metadata expansion             |
-| **6: Party View & Loadout**       | Planned | Silhouette cards per member, item slots per zone, camp area for shared gear, dog variant, group view                         |
-| **7: Drag-and-Drop + Cut List**   | Planned | Cross-column drag (dnd-kit installed), cut list, "not on this trip" view                                                     |
-| **8: Tech Debt + Polish**         | Planned | Zod validation, type hooks, error boundaries, mobile responsive, sharing pages                                               |
-| **9: Intelligence & Readiness**   | Planned | Readiness system, activity tags, balance intelligence, gear history insights                                                 |
-| **10: Import/Export & Advanced**  | Planned | LighterPack import, CSV/PDF export, reusable kits, comparison view                                                           |
-| **11: Community & Scale**         | Planned | Public gallery, offline PWA, trip planning (calorie calc), gear intelligence                                                 |
+| Phase                             | Status      | What                                                                                                                                      |
+| --------------------------------- | ----------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| **1: Foundation**                 | DONE        | Next.js scaffold, Drizzle schema, Docker Postgres, Neon production, Vercel deploy, Google OAuth, CI pipeline                              |
+| **2: Gear Closet**                | DONE        | Closet page with tabs, item table with inline editing, add item dialog with catalog typeahead, weight summary                             |
+| **3: Trip Workspace**             | DONE        | Trip list, new trip dialog, trip workspace with pack columns, shared gear pool, add-to-pack, weight summaries                             |
+| **4: Core Completion**            | DONE        | Unit toggle, checklist mode, gear history + veterancy labels, loadout view skeleton, Vitest test suite                                    |
+| **4.5: Quick Wins & Fixes**       | DONE        | 20+ fixes: inline editing, category mgmt, trip edit/delete/complete/search, member mgmt, 4-way weight toggle, dnd categories              |
+| **4.6: Beta-ready Polish**        | DONE        | Confirm dialogs, click-outside editors, changelog drawer, roadmap page + suggestions, household settings, unified trip flow               |
+| **4.7: Quick Wins & Polish**      | PARTIAL     | Tier sliders, theme persistence, pack-class color parity, season removed, many smalls. 2 items open (contrast, pet creation)              |
+| **5: Trip Stats & Visualization** | Planned     | Trip stats panel, shared weight balance, smart trip tags, category charts, metadata expansion (pack-class labels partial)                 |
+| **6: Party View & Loadout**       | Planned     | Silhouette cards per member, item slots per zone, camp area for shared gear, dog variant, group view                                      |
+| **7: Gear Pool + DnD + Cut List** | MOSTLY DONE | **M1-M6 done**: Gear Pool panel, `allowMultiple` flag, full drag-and-drop (pool↔pack, pack↔pack, intra-pack reorder). Cut list still TODO |
+| **8: Tech Debt + Polish**         | PARTIAL     | Zod, typed hooks, error boundaries, favicon, DB backups DONE. Mobile responsive + sharing pages still TODO                                |
+| **9: Intelligence & Readiness**   | Planned     | Readiness system, activity tags, balance intelligence, gear history insights                                                              |
+| **10: Import/Export & Advanced**  | Planned     | LighterPack import, CSV/PDF export, reusable kits, comparison view                                                                        |
+| **11: Community & Scale**         | Planned     | Public gallery, offline PWA, trip planning (calorie calc), gear intelligence                                                              |
 
 Full roadmap with all features: `docs/roadmap.md`
 
@@ -312,27 +314,60 @@ A long iteration pass on UX + self-service features so the app is ready to hand 
 - **4-tier carry warnings** — Comfortable / OK / Warn / Overloaded for both humans and pets, driven by household settings.
 - **Cursor-pointer on all Button variants** — no more ambiguous pointer on hover.
 
+### Built in Phase 7: Gear Pool + Drag-and-Drop (April 16-17, 2026)
+
+Six milestones (M1-M6) shipped as one tight iteration. Everything typechecks clean, 99/99 tests passing, `npx next build` zero warnings.
+
+- **M1: Gear Pool panel** (`src/components/trips/gear-pool.tsx`) — replaces the thin `UnassignedSharedBar`. Search, owner/category filters, worn/consumable pills, sort menu, grouped-by-category chips, auto-expand on unassigned shared gear, collapsible otherwise. Shared-unassigned items float to top of their category group with a colored outline.
+- **M2: `allowMultiple` flag** — new boolean column on `items` (+ type + validators). Stackable items (water bottles, fuel, food-per-day) stay in the pool after being added to a pack, with a `×N` indicator showing how many are assigned. Closet has a Layers icon toggle in the badges row. Invariant: one `tripPackItem` per `(tripPackId, itemId)` going forward; stackable stored as `quantity`, not duplicate rows.
+- **M3: Pool → pack drag** — single `DndContext` at trip-workspace root. Pool chips `useDraggable`, pack columns `useDroppable`. New endpoint `POST /api/trips/[id]/packs/[packId]/items/bump` does upsert semantics (create or +1 quantity). Click-to-assign flow also routes through bump now.
+- **M4: Intra-pack reorder** — each category wrapped in `SortableContext`, pack items are `useSortable` with a grip handle. New "manual" sort mode in `SortMode` enum (`sort-menu.tsx`); also fixed a pre-existing bug where pack-column passed an invalid "insertion" sort sentinel that fell through to weight-desc.
+- **M5: Cross-pack + unpack-to-pool** — new `POST /api/trips/[id]/move-item` endpoint (atomic transfer, preserves `ownedByUserId` so "carrying for X" badges appear automatically). For stackable items: decrement source / bump target. Pool is also a drop target — drop a pack item onto the pool to unassign (non-stackable) or decrement (stackable). `DragOverlay` renders a floating clone under the cursor.
+- **M6: Polish** — `/` keyboard shortcut focuses the pool search; new "Packed" filter pill reveals already-packed items (dimmed, with "in [name]" badge — click scrolls to that pack via `data-pack-id`); mobile drag handles always visible on touch (`md:opacity-0 md:group-hover:opacity-100`); error toasts on every pack-item mutation; drag disabled in checklist mode; `aria-pressed` on all filter pills.
+- **Deep-link support** — URL hash `#pack-<packId>` auto-scrolls that pack into view on load. Composable with the "in [name]" chips.
+- **Extended error toasts** — new `src/lib/mutation-errors.ts` helper wired into every mutation hook (`use-items`, `use-trips`, `use-categories`, `use-household`, `use-trip-pack-items`). Delete hooks suppress toasts for structured 409 `in-use` responses (callers handle those with a dedicated dialog).
+- **Cross-household security audit** — eight cross-household reference holes closed across write endpoints. All write endpoints that take a foreign ID now re-verify that ID belongs to the caller's household:
+  - `POST /items` (ownerId + categoryId)
+  - `PATCH /items/[id]` (categoryId)
+  - `DELETE /categories/[id]?moveTo=<id>` (moveTo target)
+  - `POST /trips` (memberIds)
+  - `POST /trips/[id]/members` (userId)
+  - `POST /trips/[id]/packs/[packId]/items` (itemId)
+  - `POST /trips/[id]/packs/[packId]/items/bump` (itemId)
+  - `POST /trips/[id]/move-item` already scoped via existing row lookup
+
 ### Next Up (Phase 5: Trip Stats & Visualization)
 
+Pulled forward in the roadmap. This is where the app stops feeling like a spreadsheet.
+
 - Trip stats collapsible panel (per-person weight breakdown, category bar charts, shared gear balance)
-- Pack class labels rendered in the trip workspace (thresholds already configurable via household settings)
-- Smart auto-derived trip tags (Cold Weather, Dog Friendly, Ultralight, etc.)
-- Trip metadata expansion (distance, duration, elevation fields)
+- Shared weight balance indicator (who carries what % of shared gear)
+- Personal vs shared % per pack (inline stacked bar)
+- Pack class labels on pack column headers (thresholds configurable via household settings)
+- Smart auto-derived trip tags (Cold Weather, Dog Friendly, Ultralight, Fishing, etc.)
+- Trip metadata expansion (distance, duration, elevation fields — schema addition)
 - Category weight charts (recharts)
 
-### Schema status (as of April 16)
+Also on the near-term todo list (Phase 4.7 carryovers):
 
-- All schema changes pushed to local Docker + Neon prod.
-- Recent additions: `roadmap_suggestion` table; `household.settings` jsonb column; FK `ON DELETE SET NULL` on users.householdId, items.categoryId, items.catalogProductId, trips.createdByUserId, tripPackItems.ownedByUserId.
+- Split unit prefs (`itemsUnit` vs `totalsUnit`) — moved to Phase 11
+- Lighten dark / darken light theme tokens
+- Revamp pet creation into a guided dialog
+
+### Schema status (as of April 17)
+
+- All schema changes pushed to **local Docker + Neon prod**.
+- Latest addition: **`items.allow_multiple boolean not null default false`** (Phase 7 M2).
+- Earlier additions: `roadmap_suggestion` table; `household.settings` jsonb column; FK `ON DELETE SET NULL` on users.householdId, items.categoryId, items.catalogProductId, trips.createdByUserId, tripPackItems.ownedByUserId.
 - `drizzle-kit push` to Neon: **use the direct (non-pooled) URL**. Runtime still uses the pooled URL. After a push, if Vercel functions hit stale `relation does not exist` errors, flush the Neon cache — the serverless edge caches table metadata.
 
 ### Known Issues / Tech Debt
 
-- ~70 `any` type warnings remaining in component files (ESLint set to warn; non-blocking)
-- No drag-and-drop between packs yet (Phase 7 planned; dnd-kit installed)
-- No web app manifest yet (PWA icons are ready for it)
-- Mobile trip workspace (tabbed person switcher) still to-do (Phase 8b)
-- Full bug list with UX issues at `docs/bugs.md`
+- ~70 `any` type warnings remaining in component files (ESLint set to warn; non-blocking). Many in `pack-column.tsx` from the Phase 7 drag work — could be typed properly when we next touch it.
+- No web app manifest yet (PWA icons are ready for it).
+- Mobile trip workspace (tabbed person switcher) still to-do (Phase 8b).
+- `useItems` cache staleness: when an item is deleted in the closet, the trip workspace's pool can briefly show it until invalidation. Cosmetic, not a bug.
+- Full bug list with UX issues at `docs/bugs.md`.
 
 ---
 
@@ -358,23 +393,26 @@ A long iteration pass on UX + self-service features so the app is ready to hand 
 | `src/db/index.ts`                      | Dual driver connection (pg local, Neon prod) with .env.local fallback                                                                                                                        |
 | `src/lib/auth.ts`                      | Auth.js config (Google OAuth + Drizzle adapter)                                                                                                                                              |
 | `src/lib/api-helpers.ts`               | getAuthenticatedUser(), handleApiError() (catches ApiError + ZodError), ApiError class                                                                                                       |
-| `src/lib/validators.ts`                | Zod schemas for all API request bodies (14 schemas: createItem, updateTrip, addPackItem, etc.)                                                                                               |
-| `src/types/index.ts`                   | Shared TypeScript interfaces for all entities (Item, Trip, Category, User, TripPack, TripPackItem, etc.)                                                                                     |
+| `src/lib/validators.ts`                | Zod schemas for all API request bodies (now 16 schemas — added `bumpPackItemSchema`, `movePackItemSchema` in Phase 7)                                                                        |
+| `src/types/index.ts`                   | Shared TypeScript interfaces for all entities (Item includes `allowMultiple`, TripPack, TripPackItem, etc.)                                                                                  |
 | `src/lib/weight.ts`                    | Weight conversion utilities (4-way unit support: oz/lb/g/kg, displayWeight, inputToGrams, gramsToInput)                                                                                      |
 | `src/lib/fetch.ts`                     | fetchApi helper + ApiResponseError class (preserves structured error bodies)                                                                                                                 |
 | `src/lib/gear-veterancy.ts`            | Veterancy level calculation + color mapping                                                                                                                                                  |
 | `src/lib/pack-zones.ts`                | Pack zone definitions + category-to-zone mapping for loadout view                                                                                                                            |
+| `src/lib/pool.ts`                      | **NEW (Phase 7)** — `computePackedQuantities(packs)` + `filterPoolItems(items, packed)` pure helpers driving the Gear Pool filter rule                                                       |
+| `src/lib/mutation-errors.ts`           | **NEW (Phase 7 polish)** — shared `mutationError(label)` helper produces an `onError` callback that surfaces sonner toasts for any TanStack mutation                                         |
 | `src/lib/constants.ts`                 | Default categories, carry limit constants                                                                                                                                                    |
-| `src/app/api/`                         | 21 API route files — all POST/PATCH validated with Zod schemas                                                                                                                               |
-| `src/hooks/`                           | 8 TanStack Query hook files — all typed with proper return types from `src/types/`                                                                                                           |
+| `src/app/api/`                         | 23 API route files. Phase 7 added `/trips/[id]/packs/[packId]/items/bump` and `/trips/[id]/move-item`. Every write route that takes a foreign ID re-verifies household scope.                |
+| `src/hooks/`                           | 10 TanStack Query hook files. Every mutation hook wires `mutationError(...)` for uniform toast UX. Phase 7 added `useBumpPackItem`, `useMovePackItem`.                                       |
 | `src/components/providers/`            | QueryProvider, WeightUnitProvider (4-way cycle: oz/lb/g/kg, localStorage-backed)                                                                                                             |
 | `src/components/ui/error-boundary.tsx` | React ErrorBoundary class component with retry button                                                                                                                                        |
-| `src/components/app/`                  | Nav bar (with unit toggle + logo), dashboard (with pet edit + body weight), household setup                                                                                                  |
-| `src/components/closet/`               | Closet page, item table (inline editing, dnd-kit reorder, collapsible categories), add item dialog, catalog typeahead, weight summary, category manager                                      |
-| `src/components/trips/`                | Trips page (search/sort/delete), trip workspace (checklist/complete/edit/members), pack column (collapsible, add-to-pack), shared gear pool, edit trip dialog, members dialog, loadout modal |
+| `src/components/ui/sort-menu.tsx`      | `CategorySortMenu` + `sortItems()`. Phase 7 added `manual` sort mode (sort by `sortOrder`, ties resolved by name). Used by both closet and pack columns.                                     |
+| `src/components/app/`                  | Nav bar (bordered clickable unit toggle + logo), dashboard, household setup                                                                                                                  |
+| `src/components/closet/`               | Closet page, item table (inline editing, dnd-kit reorder, collapsible categories, `allowMultiple` Layers toggle), add item dialog, catalog typeahead, category manager                       |
+| `src/components/trips/`                | Trips page, **`trip-workspace.tsx`** (DndContext root + drag dispatcher + deep-link hash scroll), **`gear-pool.tsx`** (the new Phase 7 panel), `pack-column.tsx` (droppable + sortable rows) |
 | `src/lib/carry-warnings.ts`            | Body weight % warning thresholds (human vs pet)                                                                                                                                              |
-| `src/lib/catalog-promotion.ts`         | Community catalog growth — auto-promotes stable items when packed                                                                                                                            |
-| `src/lib/__tests__/`                   | 7 Vitest test files — 82 tests (weight, veterancy, zones, carry-warnings, fetch, api-helpers, utils)                                                                                         |
+| `src/lib/catalog-promotion.ts`         | Community catalog growth — auto-promotes stable items when packed (called from both `/items` POST and `/items/bump`)                                                                         |
+| `src/lib/__tests__/`                   | 9 Vitest test files — **99 tests** (weight, veterancy, zones, carry-warnings, fetch, api-helpers, utils, pool filter + computePackedQuantities, sort-menu modes including manual)            |
 | `data/catalog/`                        | Catalog pipeline: known-brands.json, source extracts, merged-catalog.json (9,065 items), merge-report.txt                                                                                    |
 | `scripts/catalog/`                     | Catalog extraction + merge pipeline (extract-gwdb, extract-lighterpack, extract-featherweight, merge-catalog, brand-matcher)                                                                 |
 | `scripts/seed-catalog.ts`              | Seeds 98 hand-curated catalog products                                                                                                                                                       |

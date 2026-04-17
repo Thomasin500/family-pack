@@ -2,6 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { fetchApi } from "@/lib/fetch";
+import { mutationError } from "@/lib/mutation-errors";
 import type { Trip } from "@/types";
 
 export function useTrips() {
@@ -40,6 +41,7 @@ export function useCreateTrip() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["trips"] });
     },
+    onError: mutationError("create trip"),
   });
 }
 
@@ -63,6 +65,7 @@ export function useUpdateTrip() {
       queryClient.invalidateQueries({ queryKey: ["trips"] });
       queryClient.invalidateQueries({ queryKey: ["trip", variables.id] });
     },
+    onError: mutationError("update trip"),
   });
 }
 
@@ -76,6 +79,7 @@ export function useDeleteTrip() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["trips"] });
     },
+    onError: mutationError("delete trip"),
   });
 }
 
@@ -92,6 +96,7 @@ export function useAddTripMember() {
       queryClient.invalidateQueries({ queryKey: ["trip", variables.tripId] });
       queryClient.invalidateQueries({ queryKey: ["trips"] });
     },
+    onError: mutationError("add trip member"),
   });
 }
 
@@ -106,6 +111,7 @@ export function useRemoveTripMember() {
       queryClient.invalidateQueries({ queryKey: ["trip", variables.tripId] });
       queryClient.invalidateQueries({ queryKey: ["trips"] });
     },
+    onError: mutationError("remove trip member"),
   });
 }
 
@@ -119,5 +125,6 @@ export function useDuplicateTrip() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["trips"] });
     },
+    onError: mutationError("duplicate trip"),
   });
 }

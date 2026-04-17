@@ -2,6 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { fetchApi } from "@/lib/fetch";
+import { mutationError } from "@/lib/mutation-errors";
 import type { Category } from "@/types";
 
 export function useCategories() {
@@ -23,6 +24,7 @@ export function useCreateCategory() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["categories"] });
     },
+    onError: mutationError("create category"),
   });
 }
 
@@ -44,6 +46,7 @@ export function useUpdateCategory() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["categories"] });
     },
+    onError: mutationError("update category"),
   });
 }
 
@@ -62,6 +65,13 @@ export function useDeleteCategory() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["categories"] });
       queryClient.invalidateQueries({ queryKey: ["items"] });
+    },
+    // Categories with items return a structured 409; callers offer the
+    // 'move and delete' dialog, so suppress toast for that signal.
+    onError: (err: Error) => {
+      const maybeUsage = err as unknown as { itemCount?: number };
+      if (maybeUsage.itemCount) return;
+      mutationError("delete category")(err);
     },
   });
 }

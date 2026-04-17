@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
-import { items, users, tripPackItems } from "@/db/schema";
+import { items, users, tripPackItems, categories } from "@/db/schema";
 import { eq, and, or, inArray, count } from "drizzle-orm";
 import { getAuthenticatedUser, handleApiError, ApiError } from "@/lib/api-helpers";
 import { updateItemSchema } from "@/lib/validators";
@@ -45,6 +45,14 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
           throw new ApiError(400, "Owner not found in household");
         }
       }
+    }
+
+    // Validate categoryId is in this household if provided (null is allowed).
+    if (body.categoryId) {
+      const cat = await db.query.categories.findFirst({
+        where: and(eq(categories.id, body.categoryId), eq(categories.householdId, householdId)),
+      });
+      if (!cat) throw new ApiError(400, "Category not found in household");
     }
 
     const [updated] = await db

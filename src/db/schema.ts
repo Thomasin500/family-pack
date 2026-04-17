@@ -173,6 +173,10 @@ export const items = pgTable("item", {
   ownerId: uuid("owner_id").notNull(),
   isConsumable: boolean("is_consumable").default(false),
   isWorn: boolean("is_worn").default(false),
+  // Stackable items (water bottles, fuel, food-per-day) stay in the trip Gear Pool
+  // after being added to a pack, so they can be assigned to multiple packs.
+  // Default false = one-and-only, disappears from pool once packed.
+  allowMultiple: boolean("allow_multiple").default(false).notNull(),
   soloAltId: uuid("solo_alt_id"),
   tags: text("tags").array(),
   notes: text("notes"),

@@ -7,7 +7,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { signOutAction } from "@/app/app/actions";
 import { cn } from "@/lib/utils";
-import { LogOut, Sun, Moon, Settings } from "lucide-react";
+import { LogOut, Sun, Moon, Settings, Repeat } from "lucide-react";
 import { useWeightUnit } from "@/components/providers/weight-unit-provider";
 
 const themeListeners = new Set<() => void>();
@@ -100,10 +100,15 @@ export function NavBar({ user }: NavBarProps) {
           {/* Weight unit cycle toggle */}
           <button
             onClick={toggle}
-            className="rounded-full bg-surface-high px-3 py-1 text-xs font-bold uppercase tracking-wider text-outline hover:text-foreground hover:bg-surface-highest transition-all"
-            title="Click to cycle: oz → lb → g → kg"
+            className="group cursor-pointer inline-flex items-center gap-1.5 rounded-full border border-outline-variant/40 bg-surface-high px-3 py-1 text-xs font-bold uppercase tracking-wider text-foreground shadow-sm hover:border-primary/60 hover:bg-surface-highest hover:shadow active:scale-95 transition-all"
+            title={`Weight unit: ${unit.toUpperCase()} — click to switch (oz → lb → g → kg)`}
+            aria-label={`Weight unit ${unit}, click to change`}
           >
-            {unit}
+            <span>{unit}</span>
+            <Repeat
+              className="size-3 text-outline group-hover:text-primary group-hover:rotate-180 transition-transform duration-300"
+              aria-hidden
+            />
           </button>
 
           {/* Dark / Light toggle */}

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
-import { trips, tripMembers, tripPacks } from "@/db/schema";
+import { trips, tripMembers, tripPacks, users } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
 import { getAuthenticatedUser, handleApiError, ApiError } from "@/lib/api-helpers";
 import { addTripMemberSchema } from "@/lib/validators";
@@ -16,6 +16,12 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       where: and(eq(trips.id, id), eq(trips.householdId, user.householdId!)),
     });
     if (!trip) throw new ApiError(404, "Trip not found");
+
+    // Verify the userId is a member of this household (not another family).
+    const targetUser = await db.query.users.findFirst({
+      where: and(eq(users.id, userId), eq(users.householdId, user.householdId!)),
+    });
+    if (!targetUser) throw new ApiError(400, "User not in your household");
 
     // Add member
     const [member] = await db.insert(tripMembers).values({ tripId: id, userId }).returning();

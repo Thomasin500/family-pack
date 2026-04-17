@@ -90,6 +90,7 @@ export const createItemSchema = z.object({
   ownerId: z.string().uuid(),
   isConsumable: z.boolean().default(false),
   isWorn: z.boolean().default(false),
+  allowMultiple: z.boolean().default(false),
   tags: z.array(z.string()).optional(),
   notes: z.string().max(2000).optional(),
   catalogProductId: z.string().uuid().nullable().optional(),
@@ -105,6 +106,7 @@ export const updateItemSchema = z.object({
   ownerId: z.string().uuid().optional(),
   isConsumable: z.boolean().optional(),
   isWorn: z.boolean().optional(),
+  allowMultiple: z.boolean().optional(),
   tags: z.array(z.string()).nullable().optional(),
   notes: z.string().max(2000).nullable().optional(),
   imageUrl: z.string().url().nullable().optional(),
@@ -163,6 +165,16 @@ export const updatePackItemSchema = z.object({
   isConsumableOverride: z.boolean().nullable().optional(),
   isBorrowed: z.boolean().optional(),
   isChecked: z.boolean().optional(),
+  sortOrder: z.number().int().min(0).optional(),
+});
+
+export const bumpPackItemSchema = z.object({
+  itemId: z.string().uuid("itemId is required"),
+});
+
+export const movePackItemSchema = z.object({
+  tripPackItemId: z.string().uuid(),
+  toPackId: z.string().uuid(),
   sortOrder: z.number().int().min(0).optional(),
 });
 
