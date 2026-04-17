@@ -182,6 +182,10 @@ function SuggestionItem({
   const [description, setDescription] = useState(suggestion.description);
   const [phaseId, setPhaseId] = useState<string>(suggestion.phaseId ?? "");
   const update = useUpdateRoadmapSuggestion();
+  const isNoted =
+    suggestion.status === "noted" ||
+    suggestion.status === "accepted" ||
+    suggestion.status === "declined";
 
   function handleSave(e: React.FormEvent) {
     e.preventDefault();
@@ -214,7 +218,11 @@ function SuggestionItem({
   }
 
   return (
-    <li className="group rounded-lg bg-surface-low p-3 border border-outline-variant/10">
+    <li
+      className={`group rounded-lg bg-surface-low p-3 border border-outline-variant/10 transition-opacity ${
+        isNoted && !editing ? "opacity-60" : ""
+      }`}
+    >
       {editing ? (
         <form onSubmit={handleSave} className="space-y-2">
           <Input
@@ -270,8 +278,21 @@ function SuggestionItem({
       ) : (
         <div className="flex items-start justify-between gap-3">
           <div className="flex-1 min-w-0">
-            <p className="font-bold text-sm">{suggestion.title}</p>
-            <p className="text-sm text-on-surface-variant whitespace-pre-wrap mt-1">
+            <div className="flex items-center gap-2 flex-wrap">
+              <p className={`font-bold text-sm ${isNoted ? "line-through text-outline" : ""}`}>
+                {suggestion.title}
+              </p>
+              {isNoted && (
+                <span className="inline-flex items-center rounded-full bg-primary/15 text-primary px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest">
+                  Noted
+                </span>
+              )}
+            </div>
+            <p
+              className={`text-sm whitespace-pre-wrap mt-1 ${
+                isNoted ? "text-outline" : "text-on-surface-variant"
+              }`}
+            >
               {suggestion.description}
             </p>
             <p className="text-[10px] text-outline mt-2 font-mono">

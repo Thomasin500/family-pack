@@ -205,5 +205,5 @@ export const updateRoadmapSuggestionSchema = z.object({
   title: z.string().min(1).max(200).optional(),
   description: z.string().min(1).max(4000).optional(),
   phaseId: z.string().min(1).max(100).nullable().optional(),
-  status: z.enum(["open", "reviewing", "accepted", "declined"]).optional(),
+  status: z.enum(["open", "reviewing", "noted", "accepted", "declined"]).optional(),
 });

@@ -35,7 +35,7 @@ export function useUpdateRoadmapSuggestion() {
       title?: string;
       description?: string;
       phaseId?: string | null;
-      status?: "open" | "reviewing" | "accepted" | "declined";
+      status?: "open" | "reviewing" | "noted" | "accepted" | "declined";
     }) =>
       fetchApi<RoadmapSuggestion>(`/api/roadmap/suggestions/${id}`, {
         method: "PATCH",

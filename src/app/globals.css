@@ -138,11 +138,11 @@
 }
 
 .dark {
-  --background: #1f221a;
+  --background: #1a1d15;
   --foreground: #e6e7dc;
-  --card: #2c3028;
+  --card: #33372e;
   --card-foreground: #e6e7dc;
-  --popover: #2c3028;
+  --popover: #33372e;
   --popover-foreground: #e6e7dc;
   --primary: #a6dba4;
   --primary-foreground: #043911;
@@ -161,22 +161,23 @@
   --chart-3: #3a86ff;
   --chart-4: #c77c94;
   --chart-5: #8b9388;
-  --sidebar: #272b23;
+  --sidebar: #33372e;
   --sidebar-foreground: #e6e7dc;
   --sidebar-primary: #a6dba4;
   --sidebar-primary-foreground: #043911;
-  --sidebar-accent: #373b32;
+  --sidebar-accent: #3d4138;
   --sidebar-accent-foreground: #e6e7dc;
   --sidebar-border: #535a51;
   --sidebar-ring: #7ab078;
 
-  /* Extended tokens for Family Pack */
-  --surface-lowest: #1a1d16;
+  /* Extended tokens for Family Pack — surface ramp nests inside cards so
+     `surface-low` rows recess slightly beneath a `bg-card` container. */
+  --surface-lowest: #16180f;
   --surface-low: #272b23;
   --surface-base: #2c3028;
-  --surface-high: #373b32;
-  --surface-highest: #43473d;
-  --surface-bright: #4a4e43;
+  --surface-high: #3d4138;
+  --surface-highest: #484c42;
+  --surface-bright: #525649;
   --primary-container: #7ab078;
   --on-primary-container: #00330d;
   --outline: #a1a99d;

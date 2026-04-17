@@ -8,6 +8,16 @@ export interface ChangelogEntry {
 // Newest first.
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    at: "2026-04-17T18:00:00-06:00",
+    title: "Roadmap renumbered + suggestion triage",
+    items: [
+      "Visual roadmap renumbered so Done phases (1-7) read as a continuous sequence, with Planned picking up from 8+. No more 'Phase 7 Done' above 'Phase 6 Planned'. Phase 4.7 and Phase 7 (Gear Pool + Drag-and-Drop) closed out.",
+      "Suggestions never disappear. Developers triage via a single CLI — `npm run suggestions` lists every open row across households, prompts to mark them all as noted, and dims the cards to 60% with a strikethrough + 'Noted' badge. Users never lose sight of what they submitted.",
+      "Dark mode tiles pop more — background lifted further and cards brightened, ~25-point contrast between body and `bg-card` now.",
+      "Integrated Jennifer's suggestions from the Bear Family household: category pie chart (out of 'Deprioritized', back into Phase 8), base/consumable/carried stacked chart, base-weight-over-time trend with filters, and a post-trip report feature (5-star pack rating, what-worked notes, MVP/LVP, actual vs planned distance/vert) as a new row in Phase 11.",
+    ],
+  },
+  {
     at: "2026-04-17T17:00:00-06:00",
     title: "Theme refresh + pack class labels",
     items: [

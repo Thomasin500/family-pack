@@ -19,7 +19,7 @@
     "seed:catalog:merged": "tsx scripts/seed-catalog-merged.ts",
     "seed:dev": "tsx scripts/seed-dev-data.ts",
     "seed:demo": "tsx scripts/seed-demo-family.ts",
-    "suggestions:list": "tsx scripts/list-suggestions.ts",
+    "suggestions": "tsx scripts/suggestions.ts",
     "seed": "npm run seed:catalog && npm run seed:dev",
     "catalog:extract-gwdb": "tsx scripts/catalog/extract-gwdb.ts",
     "catalog:extract-lp": "tsx scripts/catalog/extract-lighterpack.ts",
