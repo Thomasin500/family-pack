@@ -88,22 +88,32 @@ export const ROADMAP: RoadmapPhase[] = [
     name: "Phase 4.7 · Quick Wins & Polish",
     status: "partial",
     summary:
-      "Batchable small fixes from beta feedback. Six XS items shipped; unit split, theme contrast pass, and pet-creation revamp still open.",
+      "Almost everything shipped in an April-16 pass. Three items remain: split unit prefs, light/dark contrast tuning, and pet-creation revamp.",
     features: [
       {
-        title: "Theme toggle first-click fix",
+        title: "Theme persistence + no-flash load",
         status: "done",
-        description: "useSyncExternalStore reads DOM truth; toggle flips class + colorScheme",
-      },
-      {
-        title: "Dark-mode flash on load",
-        status: "done",
-        description: "SSR html now ships with class='dark'; script only flips to light on opt-in",
+        description: "Cookie-backed SSR renders the right class before first paint",
       },
       {
         title: "Pack-class ↔ pet-carry color parity",
         status: "done",
-        description: "Green→yellow→orange→red scale shared across pack class + carry warnings",
+        description: "Green → yellow → orange → red scale shared across pack class + carry",
+      },
+      {
+        title: "Tier slider UI",
+        status: "done",
+        description: "Multi-thumb slider with colored regions on the household settings page",
+      },
+      {
+        title: "Auto-save + per-section save pill",
+        status: "done",
+        description: "Saves 500ms after last change; Saved pill pops next to the edited section",
+      },
+      {
+        title: "Pack class rename (4 tiers)",
+        status: "done",
+        description: "Back to Ultralight / Lightweight / Traditional / Heavy with legacy migration",
       },
       {
         title: "Hide Sort menu on collapsed trip categories",
@@ -115,14 +125,34 @@ export const ROADMAP: RoadmapPhase[] = [
         status: "done",
       },
       {
-        title: "% body weight color scale legend",
+        title: "% body-weight color scale legend",
         status: "done",
-        description: "4-segment gradient + hover popover positioned right of the bar",
+        description: "4-segment gradient + hover popover beside the %bw badge",
       },
       {
         title: "End date picker fix",
         status: "done",
         description: "Dates normalized, new-trip mirrors start→end, min={startDate}",
+      },
+      {
+        title: "Season removed, terrain → notes",
+        status: "done",
+        description: "Trip form simplified; notes is now a multi-line textarea",
+      },
+      {
+        title: "Nav 'New Trip' opens modal",
+        status: "done",
+        description: "Nav button links to /app/trips?new=true; param is stripped on close",
+      },
+      {
+        title: "Inline category editor",
+        status: "done",
+        description: "Settings page edits categories directly; closet keeps the popup",
+      },
+      {
+        title: "Changelog date grouping + top-10",
+        status: "done",
+        description: "Drawer groups by date (no time) with a 'Show N older' toggle",
       },
       {
         title: "Split unit prefs",
@@ -135,6 +165,10 @@ export const ROADMAP: RoadmapPhase[] = [
       {
         title: "Revamp pet creation",
         description: "Proper guided dialog replacing the dashboard inline form",
+      },
+      {
+        title: "Trip pack totals position (design Q)",
+        description: "Top of card, bottom, or both? Prototype and pick.",
       },
     ],
   },

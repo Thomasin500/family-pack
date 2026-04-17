@@ -88,23 +88,29 @@ _Built April 16, 2026. A long iteration pass driven by beta-testing feedback._
 
 ---
 
-## Phase 4.7: Quick Wins & Polish — NEXT
+## Phase 4.7: Quick Wins & Polish — MOSTLY DONE
 
-_Small, batchable fixes driven by beta-testing feedback. Ship these together before Phase 5 so the app feels tighter before the stats panel lands._
+_Small, batchable fixes driven by beta-testing feedback. Almost everything shipped in a single April-16 pass; three items (unit split, light/dark contrast, pet-creation revamp) are still open._
 
-| Feature                        | What                                                                                                                                                                                                               | Effort | Status      |
-| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------ | ----------- |
-| Split unit prefs               | Two-axis preference: `itemsUnit` (per-item display) + `totalsUnit` (per-pack + summary display). Totals default to lb, items default to oz. Toggle cycles `itemsUnit`; totals unit set in household/user settings. | S-M    | Not started |
-| Theme toggle first-click fix   | `nav-bar.tsx` now reads DOM truth via `useSyncExternalStore`; toggle flips `classList` + `colorScheme` + localStorage in one go. No more two-click bug.                                                            | XS     | **Done**    |
-| Dark-mode flash on load        | Root `<html>` now ships with `class="dark"` + `style="color-scheme: dark"` in SSR; inline `<script>` only flips to light when the user explicitly chose it. Dark-first users see no flash.                         | XS     | **Done**    |
-| Lighten dark / darken light    | Pull the dark bg/surface tokens up a step, pull the light tokens down a step. Coordinate with the design-exports palette.                                                                                          | S      | Not started |
-| Pack class color parity        | `packClassColor` now returns the same green→red scale as `getCarryWarning`. Settings page sections (pack class, human carry, pet carry) all use the matching color words in their descriptions.                    | XS     | **Done**    |
-| Hide collapsed category chrome | Trip pack categories keep showing item count + subtotal when collapsed, but the `CategorySortMenu` is hidden until re-expanded.                                                                                    | XS     | **Done**    |
-| Collapse-all button            | Header control on the gear closet (top-right "Collapse all"/"Expand all") and an icon button in each trip pack column header that toggles every category at once.                                                  | XS     | **Done**    |
-| % body weight color scale      | `CarryScaleLegend` — 4-segment gradient next to the `% Body Wt` label; hover reveals a popover (positioned to the right of the bar so it doesn't cover the %) with tier thresholds from household settings.        | XS     | **Done**    |
-| End date picker fix            | Dates normalized to `YYYY-MM-DD` so the picker pre-fills. New-trip dialog mirrors start → end when end is empty, and both dialogs set `min={startDate}` so end can't precede start.                                | XS     | **Done**    |
-| Revamp pet creation            | Replace inline dashboard pet form with a proper guided dialog (name, breed/size, body weight, carry %, managed-by adult). Mirror the polish of the trip/member dialogs.                                            | S      | Not started |
-| Trip pack totals position (Q)  | Design question: top of card, bottom, or both? Prototype and pick. See `docs/bugs.md`.                                                                                                                             | S      | Not started |
+| Feature                               | What                                                                                                                                                                                                                                                               | Effort | Status      |
+| ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------ | ----------- |
+| Theme persistence + no-flash          | `layout.tsx` reads `cookies().get("theme")` and renders `<html class="dark" style="color-scheme: dark">` (or light) in SSR. Toggle writes both cookie + localStorage; inline `<script>` migrates legacy localStorage-only sessions. No flash, single-click toggle. | XS     | **Done**    |
+| Pack-class ↔ pet-carry color parity   | `packClassColor` returns the same green → yellow → orange → red scale as `getCarryWarning`. Settings page tier labels use matching colors.                                                                                                                         | XS     | **Done**    |
+| Tier slider UI                        | New `TierSlider` (`src/components/app/tier-slider.tsx`) — multi-thumb horizontal slider with colored regions + keyboard support. Settings page Pack class / Human carry / Pet carry each render one slider; default values sit perfectly quartered on the track.   | M      | **Done**    |
+| Settings auto-save + per-section pill | Each section saves on change (500ms debounce). `SectionSavePill` renders next to the header you just edited (Saving… / Saved / error), auto-dismissing 2.5s after save. Reset-to-defaults also triggers the autosave.                                              | S      | **Done**    |
+| Pack class rename                     | Briefly introduced a 5th "Hyperlight" tier (sky accent) and then reverted — four tiers with defaults 10 / 20 / 30 lb. `resolveSettings` migrates both legacy v1 (`light` key) and v2 (`hyperlight` key) shapes transparently.                                      | XS     | **Done**    |
+| Hide collapsed category chrome        | Trip pack categories keep showing item count + subtotal when collapsed; only the `CategorySortMenu` hides until re-expanded.                                                                                                                                       | XS     | **Done**    |
+| Collapse-all button                   | Header control on the gear closet (top-right "Collapse all"/"Expand all") and an icon button in each trip pack column header that toggles every category at once.                                                                                                  | XS     | **Done**    |
+| % body-weight color scale             | `CarryScaleLegend` — 4-segment gradient next to the `% Body Wt` label; hover reveals a popover with tier thresholds from household settings.                                                                                                                       | XS     | **Done**    |
+| End date picker fix                   | Dates normalized to `YYYY-MM-DD` so the picker pre-fills. New-trip dialog mirrors start → end when end is empty; both dialogs set `min={startDate}` so end can't precede start.                                                                                    | XS     | **Done**    |
+| Season removed, terrain → notes       | Season field removed from the new/edit trip forms (DB column + validator kept for back-compat). Terrain relabeled Notes, rendered as a 3-row textarea.                                                                                                             | XS     | **Done**    |
+| Nav "New Trip" opens modal            | Nav button now links to `/app/trips?new=true`; trips page reads the param to auto-open the dialog and strips the param on close.                                                                                                                                   | XS     | **Done**    |
+| Inline category editor                | `CategoryEditor` extracted from `CategoryManager` so the household settings page edits categories inline instead of opening a popup. Closet still uses the Dialog wrapper.                                                                                         | XS     | **Done**    |
+| Changelog grouping                    | Drawer groups entries by date (no time) and caps the visible list at 10 items with a "Show N older changes" toggle.                                                                                                                                                | XS     | **Done**    |
+| Split unit prefs                      | Two-axis preference: `itemsUnit` (per-item display) + `totalsUnit` (per-pack + summary display). Totals default to lb, items default to oz. Toggle cycles `itemsUnit`; totals unit set in household/user settings.                                                 | S-M    | Not started |
+| Lighten dark / darken light           | Pull the dark bg/surface tokens up a step, pull the light tokens down a step. Coordinate with the design-exports palette.                                                                                                                                          | S      | Not started |
+| Revamp pet creation                   | Replace inline dashboard pet form with a proper guided dialog (name, breed/size, body weight, carry %, managed-by adult). Mirror the polish of the trip/member dialogs.                                                                                            | S      | Not started |
+| Trip pack totals position (Q)         | Design question: top of card, bottom, or both? Prototype and pick. See `docs/bugs.md`.                                                                                                                                                                             | S      | Not started |
 
 ---
 
@@ -300,19 +306,20 @@ _Features pushed out of the near-term plan. Still in spec, revisit when the need
 
 ## Summary
 
-| Phase   | Theme                      | Features | Cumulative               |
-| ------- | -------------------------- | -------- | ------------------------ |
-| **1-4** | Foundation through core    | ~30      | ~30/140 (21%) — **DONE** |
-| **4.5** | Quick wins + fixes         | ~20      | ~50 (36%) — **DONE**     |
-| **8**   | Tech debt (core)           | 5        | ~55 (39%) — **DONE**     |
-| **4.6** | Beta-ready polish          | ~18      | ~73 (52%) — **DONE**     |
-| **5**   | Trip stats & visualization | 6        | ~79 (56%)                |
-| **6**   | Party view & loadout       | 5        | ~84 (60%)                |
-| **7**   | Drag-and-drop + cut list   | 4        | ~88 (63%)                |
-| **8b**  | Polish (mobile, sharing)   | 3        | ~91 (65%)                |
-| **9**   | Intelligence & readiness   | 4        | ~95 (68%)                |
-| **10**  | Import/export + advanced   | 5        | ~100 (71%)               |
-| **11**  | Community & scale          | 8        | ~108 (77%)               |
+| Phase   | Theme                      | Features | Cumulative                                 |
+| ------- | -------------------------- | -------- | ------------------------------------------ |
+| **1-4** | Foundation through core    | ~30      | ~30/140 (21%) — **DONE**                   |
+| **4.5** | Quick wins + fixes         | ~20      | ~50 (36%) — **DONE**                       |
+| **8**   | Tech debt (core)           | 5        | ~55 (39%) — **DONE**                       |
+| **4.6** | Beta-ready polish          | ~18      | ~73 (52%) — **DONE**                       |
+| **4.7** | Quick wins & polish        | ~13      | ~86 (61%) — **MOSTLY DONE** (3 items open) |
+| **5**   | Trip stats & visualization | 6        | ~92 (66%)                                  |
+| **6**   | Party view & loadout       | 5        | ~97 (69%)                                  |
+| **7**   | Drag-and-drop + cut list   | 4        | ~101 (72%)                                 |
+| **8b**  | Polish (mobile, sharing)   | 3        | ~104 (74%)                                 |
+| **9**   | Intelligence & readiness   | 4        | ~108 (77%)                                 |
+| **10**  | Import/export + advanced   | 5        | ~113 (81%)                                 |
+| **11**  | Community & scale          | 8        | ~121 (86%)                                 |
 
 Phase 4.6 (beta-ready polish) shipped April 16 — household settings, roadmap page + suggestions, unified trip flow, collapsible categories, click-outside editors, confirm dialogs, trip workspace scroll, security headers + schema hygiene, and more.
 

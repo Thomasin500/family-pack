@@ -35,6 +35,13 @@ type PetPctForm = { ok: string; warn: string; max: string };
 
 type SaveStatus = "idle" | "saving" | "saved" | "error";
 
+/**
+ * Which settings section the user most recently touched. Drives where the
+ * Saving/Saved/Error pill renders so the feedback sits next to the section
+ * header they just changed instead of floating in the corner.
+ */
+type ActiveSection = "pack" | "human" | "pet" | "reset" | null;
+
 // Pack class has 4 tiers and 3 boundaries, so the slider shows four coloured
 // regions with a draggable thumb at each internal boundary.
 const PACK_SEGMENTS: TierSegment[] = [
@@ -90,7 +97,10 @@ export function HouseholdSettingsPage() {
 
   const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
   const [saveError, setSaveError] = useState<string | null>(null);
+  const [activeSection, setActiveSection] = useState<ActiveSection>(null);
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Auto-hides the "Saved" pill a couple seconds after a successful save.
+  const savedDismissTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   // Ref mirror so the debounced save always reads the most recent form values
   // without waiting for a re-render to flow the state into the closure.
   // Initialized once from the same resolved defaults the useState hooks read;
@@ -174,10 +184,23 @@ export function HouseholdSettingsPage() {
       }
       setSaveError(null);
       setSaveStatus("saving");
+      if (savedDismissTimerRef.current) {
+        clearTimeout(savedDismissTimerRef.current);
+        savedDismissTimerRef.current = null;
+      }
       updateHousehold.mutate(
         { settings: parsed },
         {
-          onSuccess: () => setSaveStatus("saved"),
+          onSuccess: () => {
+            setSaveStatus("saved");
+            if (savedDismissTimerRef.current) clearTimeout(savedDismissTimerRef.current);
+            savedDismissTimerRef.current = setTimeout(() => {
+              // Only clear if still showing "saved" — another save in flight
+              // or a subsequent error shouldn't be clobbered back to idle.
+              // activeSection stays set so the next edit resumes in place.
+              setSaveStatus((s) => (s === "saved" ? "idle" : s));
+            }, 2500);
+          },
           onError: (e) => {
             setSaveStatus("error");
             setSaveError(e instanceof Error ? e.message : "Failed to save");
@@ -190,16 +213,19 @@ export function HouseholdSettingsPage() {
   function updatePackAll(next: PackClassForm) {
     setPackClass(next);
     formRef.current.packClass = next;
+    setActiveSection("pack");
     scheduleAutosave();
   }
   function updateHumanAll(next: HumanPctForm) {
     setHuman(next);
     formRef.current.human = next;
+    setActiveSection("human");
     scheduleAutosave();
   }
   function updatePetAll(next: PetPctForm) {
     setPet(next);
     formRef.current.pet = next;
+    setActiveSection("pet");
     scheduleAutosave();
   }
 
@@ -241,6 +267,7 @@ export function HouseholdSettingsPage() {
     setHuman(resetHuman);
     setPet(resetPet);
     formRef.current = { packClass: resetPack, human: resetHuman, pet: resetPet };
+    setActiveSection("reset");
     scheduleAutosave();
   }
 
@@ -257,7 +284,6 @@ export function HouseholdSettingsPage() {
         <div className="flex flex-wrap items-center gap-3">
           <Settings2 className="size-6 text-primary" />
           <h1 className="text-3xl font-extrabold tracking-tight">Household settings</h1>
-          <SaveStatusPill status={saveStatus} error={saveError} />
         </div>
         <p className="text-outline">
           Tune the rules for <span className="font-bold">{data.household.name}</span>. Changes save
@@ -267,7 +293,14 @@ export function HouseholdSettingsPage() {
 
       <section className="rounded-xl bg-card p-6 border border-outline-variant/10 space-y-5">
         <div>
-          <h2 className="text-lg font-bold">Pack class tiers</h2>
+          <div className="flex flex-wrap items-center gap-3">
+            <h2 className="text-lg font-bold">Pack class tiers</h2>
+            <SectionSavePill
+              status={saveStatus}
+              error={saveError}
+              visible={activeSection === "pack"}
+            />
+          </div>
           <p className="text-sm text-outline mt-1">
             Base weight is your pack minus consumables and worn items — the standard benchmark
             backpackers optimize. These cut-offs decide the class shown on each pack in the
@@ -297,7 +330,14 @@ export function HouseholdSettingsPage() {
 
       <section className="rounded-xl bg-card p-6 border border-outline-variant/10 space-y-5">
         <div>
-          <h2 className="text-lg font-bold">Human carry thresholds</h2>
+          <div className="flex flex-wrap items-center gap-3">
+            <h2 className="text-lg font-bold">Human carry thresholds</h2>
+            <SectionSavePill
+              status={saveStatus}
+              error={saveError}
+              visible={activeSection === "human"}
+            />
+          </div>
           <p className="text-sm text-outline mt-1">
             Carry weight relative to body weight predicts how a pack will feel over long miles.
             These thresholds drive the color-coded %body-wt indicator on every pack.
@@ -326,7 +366,14 @@ export function HouseholdSettingsPage() {
 
       <section className="rounded-xl bg-card p-6 border border-outline-variant/10 space-y-5">
         <div>
-          <h2 className="text-lg font-bold">Pet carry thresholds</h2>
+          <div className="flex flex-wrap items-center gap-3">
+            <h2 className="text-lg font-bold">Pet carry thresholds</h2>
+            <SectionSavePill
+              status={saveStatus}
+              error={saveError}
+              visible={activeSection === "pet"}
+            />
+          </div>
           <p className="text-sm text-outline mt-1">
             Dogs have a narrower safe range than people. Common vet guidance is 10-20% of body
             weight depending on breed, age, and fitness — tune these for your pup.
@@ -366,7 +413,12 @@ export function HouseholdSettingsPage() {
         <CategoryEditor categories={categories ?? []} items={items ?? []} />
       </section>
 
-      <div className="flex justify-end">
+      <div className="flex items-center justify-end gap-3">
+        <SectionSavePill
+          status={saveStatus}
+          error={saveError}
+          visible={activeSection === "reset"}
+        />
         <Button variant="outline" size="sm" onClick={handleReset} className="gap-1.5">
           <RotateCcw className="size-3.5" />
           Reset settings to defaults
@@ -396,11 +448,30 @@ export function HouseholdSettingsPage() {
   );
 }
 
-function SaveStatusPill({ status, error }: { status: SaveStatus; error: string | null }) {
-  if (status === "idle") return null;
+/**
+ * Inline per-section save-status pill. Renders next to the section header the
+ * user most recently edited (via `activeSection`) and auto-hides 2.5s after a
+ * successful save. `visible={false}` or `status==="idle"` collapses to null so
+ * other sections don't show stale pills.
+ */
+function SectionSavePill({
+  status,
+  error,
+  visible,
+}: {
+  status: SaveStatus;
+  error: string | null;
+  visible: boolean;
+}) {
+  if (!visible || status === "idle") return null;
+  const base =
+    "inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold border transition-opacity";
   if (status === "saving") {
     return (
-      <span className="inline-flex items-center gap-1.5 rounded-full bg-surface-low px-3 py-1 text-xs font-bold text-outline">
+      <span
+        className={`${base} bg-surface-high/80 border-outline-variant/30 text-outline`}
+        role="status"
+      >
         <Loader2 className="size-3 animate-spin" />
         Saving…
       </span>
@@ -408,7 +479,10 @@ function SaveStatusPill({ status, error }: { status: SaveStatus; error: string |
   }
   if (status === "saved") {
     return (
-      <span className="inline-flex items-center gap-1.5 rounded-full bg-green-500/10 px-3 py-1 text-xs font-bold text-green-600 dark:text-green-400">
+      <span
+        className={`${base} bg-green-500/15 border-green-500/40 text-green-600 dark:text-green-400`}
+        role="status"
+      >
         <Check className="size-3" />
         Saved
       </span>
@@ -416,11 +490,12 @@ function SaveStatusPill({ status, error }: { status: SaveStatus; error: string |
   }
   return (
     <span
-      className="inline-flex items-center gap-1.5 rounded-full bg-destructive/10 px-3 py-1 text-xs font-bold text-destructive"
+      className={`${base} bg-destructive/10 border-destructive/40 text-destructive max-w-xs`}
+      role="alert"
       title={error ?? undefined}
     >
-      <CircleAlert className="size-3" />
-      {error ?? "Couldn't save"}
+      <CircleAlert className="size-3 shrink-0" />
+      <span className="truncate">{error ?? "Couldn't save"}</span>
     </span>
   );
 }

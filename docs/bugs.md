@@ -45,9 +45,14 @@
 - Weight totals removed from the Gear Closet; trip tiles + per-person panels are where totals live now.
 - Collapsed category totals enlarged in the closet.
 - Confirmation prompts are now centered modals with a dimmed backdrop (delete item, delete trip, remove member, etc.) — everyday success toasts stay small/corner.
-- Theme toggle no longer requires two clicks — nav-bar now uses `useSyncExternalStore` reading from `document.documentElement.classList`, so state tracks DOM truth across SSR/hydration.
-- Pack-class and pet-carry tiers now share one green → yellow → orange → red color scale via `packClassColor`.
-- Trip pack collapsed categories hide the "Sort by" menu and subtotal row, leaving just the header + chevron.
+- Theme preference is persisted in a cookie + localStorage and read server-side by the root layout — dark-mode flash on load is gone and the toggle no longer needs two clicks to take effect. Inline `<script>` handles cookie-less visitors (migrates from legacy localStorage).
+- Pack-class and pet-carry tiers now share one green → yellow → orange → red color scale via `packClassColor`. Hyperlight tier was briefly introduced (with a teal/sky accent) and then removed — defaults are back to four tiers with cut-offs at 10 / 20 / 30 lb.
+- Trip pack collapsed categories keep the item count + subtotal visible; only the Sort menu hides until the category is expanded.
 - Collapse-all / Expand-all button added to the gear closet (top right) and each trip pack column header.
 - % body-weight display has an inline color gradient with a hover legend showing the four tiers (Comfortable / OK / Warn / Overloaded) and their thresholds from household settings.
-- Edit-trip dialog now normalizes `startDate` / `endDate` to `YYYY-MM-DD` so the end-date picker pre-fills correctly when the API returns an ISO timestamp.
+- Edit-trip dialog now normalizes `startDate` / `endDate` to `YYYY-MM-DD` so the end-date picker pre-fills correctly when the API returns an ISO timestamp. New-trip modal mirrors start → end when end is empty; both dialogs set `min={startDate}` so end can't precede start.
+- Household settings page: every section (Pack class / Human carry / Pet carry) is now a multi-thumb slider with colored regions. Changes auto-save (500ms debounce) and each section shows its own inline Saving… / Saved / error pill next to the section header; Saved pill auto-dismisses after 2.5s.
+- Gear categories are edited inline on the settings page — the popup version only lives in the closet now.
+- Season removed from the trip new/edit forms (the DB column and validator stay for backward compatibility). Terrain relabeled to Notes and expanded to a textarea.
+- Nav "New Trip" button now opens the trips page with the new-trip modal already open (`/app/trips?new=true`). Closing the modal strips the param.
+- Changelog drawer groups entries by date (no time) and caps the visible list at the 10 newest items with a "Show N older changes" toggle.

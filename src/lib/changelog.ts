@@ -8,6 +8,25 @@ export interface ChangelogEntry {
 // Newest first.
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    at: "2026-04-16T17:45:00-06:00",
+    title: "Tier sliders, theme persistence, and trip form polish",
+    items: [
+      "Household settings page now uses a single multi-thumb slider for each of Pack class / Human carry / Pet carry — drag the handles to set tier boundaries. Colored regions read left-to-right green → red (Pack class: 4 tiers Ultralight / Lightweight / Traditional / Heavy).",
+      "Settings auto-save as you drag. A chunky Saving… → Saved pill appears next to the section header you just changed and disappears after 2.5s.",
+      "Gear categories are now edited inline on the settings page (no more popup). The closet still opens it as a dialog.",
+      "Theme preference is now stored in a cookie + localStorage. SSR renders the correct class immediately, so the dark → light flash on load is gone and the toggle no longer needs two clicks to take effect.",
+      "Pack-class colors now match the carry-warning scale (green → yellow → orange → red) so 'lighter is better' reads the same everywhere.",
+      "New Trip button in the nav opens the trips page with the modal pre-open — works from any screen.",
+      "End date picker in the new-trip modal mirrors start → end when end is empty, and both dialogs prevent end < start. Existing trips also load the date correctly now (was breaking on ISO timestamps).",
+      "Season field removed from the trip forms. Sort by newest / oldest in the trip list already covers what season did for grouping.",
+      "Terrain field renamed to Notes and expanded to a multi-line textarea — jot route, weather, or anything worth remembering.",
+      "Collapse-all / Expand-all button added to the gear closet and each trip pack column header.",
+      "Trip pack categories keep their item count + subtotal visible when collapsed; only the sort menu hides.",
+      "% Body-weight badge on each pack gained a tiny gradient legend to its left — hover to see the four carry tiers and where they kick in, driven by your household settings.",
+      "Changelog drawer groups entries by date (no time) and shows the top 10 changes by default with a '…Show N older' link for the rest.",
+    ],
+  },
+  {
     at: "2026-04-16T14:45:00-06:00",
     title: "Household settings + trip category polish",
     items: [

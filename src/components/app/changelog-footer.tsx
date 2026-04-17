@@ -1,12 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { CHANGELOG, type ChangelogEntry } from "@/lib/changelog";
 import { ChevronDown, ChevronUp, Map, Sparkles } from "lucide-react";
 
+const INITIAL_ITEM_LIMIT = 10;
+
 export function ChangelogFooter() {
   const [open, setOpen] = useState(false);
+  const [showAll, setShowAll] = useState(false);
   const latest = CHANGELOG[0];
 
   // Close on Escape, but don't lock body scroll and don't darken the page.
@@ -19,6 +22,14 @@ export function ChangelogFooter() {
     return () => document.removeEventListener("keydown", onKey);
   }, [open]);
 
+  const { groups, totalItems } = useMemo(() => buildGroups(CHANGELOG), []);
+  const visibleItemCount = showAll ? totalItems : Math.min(INITIAL_ITEM_LIMIT, totalItems);
+  const hiddenCount = totalItems - visibleItemCount;
+  const visibleGroups = useMemo(
+    () => truncateGroups(groups, visibleItemCount),
+    [groups, visibleItemCount]
+  );
+
   if (!latest) return null;
 
   const triggerLabel = (
@@ -28,7 +39,7 @@ export function ChangelogFooter() {
         {"What's new"}
       </span>
       <span className="text-xs text-outline truncate">
-        {formatTimestamp(latest.at)} &bull; {latest.title}
+        {formatDate(latest.at)} &bull; {latest.title}
       </span>
     </div>
   );
@@ -85,10 +96,34 @@ export function ChangelogFooter() {
             <div className="absolute right-6 top-1/2 -translate-y-1/2">{roadmapButton}</div>
           </div>
           <div className="flex-1 overflow-y-auto">
-            <div className="mx-auto max-w-7xl px-6 py-6 space-y-6">
-              {CHANGELOG.map((entry) => (
-                <ChangelogSection key={entry.at + entry.title} entry={entry} />
+            <div className="mx-auto max-w-7xl px-6 py-6 space-y-8">
+              {visibleGroups.map((g) => (
+                <DateGroup key={g.date} group={g} />
               ))}
+              {hiddenCount > 0 && !showAll && (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowAll(true);
+                  }}
+                  className="w-full rounded-md border border-outline-variant/20 bg-surface-high py-2 text-xs font-bold uppercase tracking-widest text-outline hover:bg-surface-highest hover:text-foreground transition-colors"
+                >
+                  … Show {hiddenCount} older {hiddenCount === 1 ? "change" : "changes"}
+                </button>
+              )}
+              {showAll && totalItems > INITIAL_ITEM_LIMIT && (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowAll(false);
+                  }}
+                  className="w-full rounded-md border border-outline-variant/20 bg-surface-high py-2 text-xs font-bold uppercase tracking-widest text-outline hover:bg-surface-highest hover:text-foreground transition-colors"
+                >
+                  Show less
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -97,35 +132,81 @@ export function ChangelogFooter() {
   );
 }
 
-function ChangelogSection({ entry }: { entry: ChangelogEntry }) {
+interface DateGroupData {
+  date: string; // formatted for display
+  entries: ChangelogEntry[];
+}
+
+/**
+ * Collapse the flat, newest-first CHANGELOG into date-grouped buckets. Entries
+ * land in their display-date bucket (local timezone, no time component) and
+ * stay in original order within the bucket.
+ */
+function buildGroups(entries: ChangelogEntry[]): { groups: DateGroupData[]; totalItems: number } {
+  const groups: DateGroupData[] = [];
+  let totalItems = 0;
+  for (const entry of entries) {
+    const date = formatDate(entry.at);
+    totalItems += entry.items.length;
+    const last = groups[groups.length - 1];
+    if (last && last.date === date) last.entries.push(entry);
+    else groups.push({ date, entries: [entry] });
+  }
+  return { groups, totalItems };
+}
+
+/**
+ * Keep only the first `limit` individual items (counted across entries and
+ * groups, newest-first). Entries and groups with zero items after truncation
+ * are dropped so we don't render empty headers.
+ */
+function truncateGroups(groups: DateGroupData[], limit: number): DateGroupData[] {
+  let budget = limit;
+  const out: DateGroupData[] = [];
+  for (const g of groups) {
+    if (budget <= 0) break;
+    const trimmedEntries: ChangelogEntry[] = [];
+    for (const e of g.entries) {
+      if (budget <= 0) break;
+      if (e.items.length <= budget) {
+        trimmedEntries.push(e);
+        budget -= e.items.length;
+      } else {
+        trimmedEntries.push({ ...e, items: e.items.slice(0, budget) });
+        budget = 0;
+      }
+    }
+    if (trimmedEntries.length > 0) out.push({ date: g.date, entries: trimmedEntries });
+  }
+  return out;
+}
+
+function DateGroup({ group }: { group: DateGroupData }) {
   return (
-    <section>
-      <h3 className="text-sm font-bold mb-2 flex items-baseline gap-2 flex-wrap">
-        <span className="text-outline font-mono text-xs tabular-nums">
-          {formatTimestamp(entry.at)}
-        </span>
-        <span>{entry.title}</span>
-      </h3>
-      <ul className="list-disc list-inside space-y-1 text-sm text-on-surface-variant pl-2">
-        {entry.items.map((item, i) => (
-          <li key={i}>{item}</li>
-        ))}
-      </ul>
+    <section className="space-y-4">
+      <h2 className="text-xs font-bold uppercase tracking-widest text-outline border-b border-outline-variant/10 pb-2">
+        {group.date}
+      </h2>
+      {group.entries.map((entry) => (
+        <div key={entry.at + entry.title}>
+          <h3 className="text-sm font-bold mb-2">{entry.title}</h3>
+          <ul className="list-disc list-inside space-y-1 text-sm text-on-surface-variant pl-2">
+            {entry.items.map((item, i) => (
+              <li key={i}>{item}</li>
+            ))}
+          </ul>
+        </div>
+      ))}
     </section>
   );
 }
 
-function formatTimestamp(iso: string): string {
+function formatDate(iso: string): string {
   const date = new Date(iso);
   if (Number.isNaN(date.getTime())) return iso;
-  const datePart = date.toLocaleDateString(undefined, {
+  return date.toLocaleDateString(undefined, {
     year: "numeric",
     month: "short",
     day: "numeric",
   });
-  const timePart = date.toLocaleTimeString(undefined, {
-    hour: "numeric",
-    minute: "2-digit",
-  });
-  return `${datePart} ${timePart}`;
 }
