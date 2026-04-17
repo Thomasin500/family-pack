@@ -12,13 +12,18 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+
+/**
+ * Native `<input type="date">` requires a `YYYY-MM-DD` value. Drizzle/Postgres
+ * may hand back a full ISO timestamp when the runtime driver treats the column
+ * as a Date; strip the time portion so the picker actually pre-fills.
+ */
+function toDateInputValue(value: string | null | undefined): string {
+  if (!value) return "";
+  if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
+  if (value.includes("T")) return value.split("T")[0];
+  return value;
+}
 
 interface EditTripDialogProps {
   open: boolean;
@@ -29,7 +34,6 @@ interface EditTripDialogProps {
     location?: string | null;
     startDate?: string | null;
     endDate?: string | null;
-    season?: string | null;
     terrain?: string | null;
   };
 }
@@ -58,9 +62,8 @@ function EditTripForm({
 
   const [name, setName] = useState(trip.name ?? "");
   const [location, setLocation] = useState(trip.location ?? "");
-  const [startDate, setStartDate] = useState(trip.startDate ?? "");
-  const [endDate, setEndDate] = useState(trip.endDate ?? "");
-  const [season, setSeason] = useState(trip.season ?? "");
+  const [startDate, setStartDate] = useState(toDateInputValue(trip.startDate));
+  const [endDate, setEndDate] = useState(toDateInputValue(trip.endDate));
   const [terrain, setTerrain] = useState(trip.terrain ?? "");
 
   async function handleSubmit(e: React.FormEvent) {
@@ -73,8 +76,6 @@ function EditTripForm({
       location: location.trim() || null,
       startDate: startDate || null,
       endDate: endDate || null,
-      season:
-        season && season !== "none" ? (season as "spring" | "summer" | "fall" | "winter") : null,
       terrain: terrain.trim() || null,
     });
 
@@ -121,36 +122,22 @@ function EditTripForm({
             id="edit-trip-end"
             type="date"
             value={endDate}
+            min={startDate || undefined}
             onChange={(e) => setEndDate(e.target.value)}
           />
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
-        <div className="space-y-2">
-          <Label htmlFor="edit-trip-season">Season</Label>
-          <Select value={season} onValueChange={setSeason}>
-            <SelectTrigger id="edit-trip-season">
-              <SelectValue placeholder="Select..." />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="none">None</SelectItem>
-              <SelectItem value="spring">Spring</SelectItem>
-              <SelectItem value="summer">Summer</SelectItem>
-              <SelectItem value="fall">Fall</SelectItem>
-              <SelectItem value="winter">Winter</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="edit-trip-terrain">Terrain</Label>
-          <Input
-            id="edit-trip-terrain"
-            placeholder="e.g. Alpine"
-            value={terrain}
-            onChange={(e) => setTerrain(e.target.value)}
-          />
-        </div>
+      <div className="space-y-2">
+        <Label htmlFor="edit-trip-notes">Notes</Label>
+        <textarea
+          id="edit-trip-notes"
+          placeholder="Terrain, route, weather expectations, anything worth remembering…"
+          value={terrain}
+          onChange={(e) => setTerrain(e.target.value)}
+          rows={3}
+          className="flex min-h-[72px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+        />
       </div>
 
       <DialogFooter>

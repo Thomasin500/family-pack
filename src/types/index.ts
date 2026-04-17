@@ -5,7 +5,6 @@ export interface HouseholdSettings {
   packClassGrams?: {
     ultralight: number;
     lightweight: number;
-    light: number;
     traditional: number;
   };
   humanCarryPercent?: { ok: number; warn: number; max: number };

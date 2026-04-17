@@ -73,7 +73,10 @@
       "Bash(magick identify *)",
       "Bash(magick \"/Users/thomasfreeman/Downloads/Gemini_Generated_Image_5tjwiv5tjwiv5tjw.png\" -channel alpha -threshold 50% +channel -fuzz 1% -trim +repage /tmp/backpack-trimmed.png)",
       "Bash(magick *)",
-      "Bash(docker compose *)"
+      "Bash(docker compose *)",
+      "Bash(source ~/.nvm/nvm.sh)",
+      "Bash(nvm use *)",
+      "Skill(update-config)"
     ]
   }
 }

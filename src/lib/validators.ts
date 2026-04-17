@@ -13,7 +13,6 @@ export const joinHouseholdSchema = z.object({
 const packClassGramsSchema = z.object({
   ultralight: z.number().int().positive(),
   lightweight: z.number().int().positive(),
-  light: z.number().int().positive(),
   traditional: z.number().int().positive(),
 });
 

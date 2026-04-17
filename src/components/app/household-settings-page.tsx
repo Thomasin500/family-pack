@@ -1,34 +1,66 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useHousehold, useUpdateHousehold } from "@/hooks/use-household";
 import { useCategories } from "@/hooks/use-categories";
 import { useItems } from "@/hooks/use-items";
-import { CategoryManager } from "@/components/closet/category-manager";
+import { CategoryEditor } from "@/components/closet/category-manager";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { DEFAULT_SETTINGS, resolveSettings } from "@/lib/household-settings";
-import { gramsToLb, lbToGrams, displayWeight } from "@/lib/weight";
-import { useWeightUnit } from "@/components/providers/weight-unit-provider";
-import { ArrowLeft, Loader2, LogOut, RotateCcw, Save, Settings2, Tag } from "lucide-react";
+import { gramsToLb, lbToGrams } from "@/lib/weight";
+import {
+  ArrowLeft,
+  Check,
+  CircleAlert,
+  Loader2,
+  LogOut,
+  RotateCcw,
+  Settings2,
+  Tag,
+} from "lucide-react";
 import { toast } from "sonner";
 import { useConfirm } from "@/components/providers/confirm-provider";
 import { fetchApi } from "@/lib/fetch";
+import { TierSlider, type TierSegment } from "@/components/app/tier-slider";
 
 type PackClassForm = {
   ultralight: string;
   lightweight: string;
-  light: string;
   traditional: string;
 };
 
 type HumanPctForm = { ok: string; warn: string; max: string };
 type PetPctForm = { ok: string; warn: string; max: string };
 
+type SaveStatus = "idle" | "saving" | "saved" | "error";
+
+// Pack class has 4 tiers and 3 boundaries, so the slider shows four coloured
+// regions with a draggable thumb at each internal boundary.
+const PACK_SEGMENTS: TierSegment[] = [
+  { label: "Ultralight", tone: "green" },
+  { label: "Lightweight", tone: "yellow" },
+  { label: "Traditional", tone: "orange" },
+  { label: "Heavy", tone: "red" },
+];
+
+// Carry thresholds share one 4-tier scale for both humans and pets.
+const CARRY_SEGMENTS: TierSegment[] = [
+  { label: "Comfortable", tone: "green" },
+  { label: "OK", tone: "yellow" },
+  { label: "Warn", tone: "orange" },
+  { label: "Overloaded", tone: "red" },
+];
+
+const AUTOSAVE_DEBOUNCE_MS = 500;
+
 function gramsToLbStr(g: number): string {
   return gramsToLb(g).toFixed(1);
+}
+
+function parseNumericOr(s: string, fallback: number): number {
+  const n = parseFloat(s);
+  return Number.isFinite(n) ? n : fallback;
 }
 
 export function HouseholdSettingsPage() {
@@ -36,7 +68,6 @@ export function HouseholdSettingsPage() {
   const { data: categories } = useCategories();
   const { data: items } = useItems();
   const updateHousehold = useUpdateHousehold();
-  const { unit } = useWeightUnit();
   const confirm = useConfirm();
 
   const resolved = useMemo(() => resolveSettings(data?.household?.settings), [data]);
@@ -44,7 +75,6 @@ export function HouseholdSettingsPage() {
   const [packClass, setPackClass] = useState<PackClassForm>(() => ({
     ultralight: gramsToLbStr(resolved.packClassGrams.ultralight),
     lightweight: gramsToLbStr(resolved.packClassGrams.lightweight),
-    light: gramsToLbStr(resolved.packClassGrams.light),
     traditional: gramsToLbStr(resolved.packClassGrams.traditional),
   }));
   const [human, setHuman] = useState<HumanPctForm>(() => ({
@@ -57,7 +87,15 @@ export function HouseholdSettingsPage() {
     warn: String(resolved.petCarryPercent.warn),
     max: String(resolved.petCarryPercent.max),
   }));
-  const [categoryManagerOpen, setCategoryManagerOpen] = useState(false);
+
+  const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Ref mirror so the debounced save always reads the most recent form values
+  // without waiting for a re-render to flow the state into the closure.
+  // Initialized once from the same resolved defaults the useState hooks read;
+  // the update handlers below keep it in sync — never write to it in render.
+  const formRef = useRef({ packClass, human, pet });
 
   if (isLoading) {
     return (
@@ -68,63 +106,101 @@ export function HouseholdSettingsPage() {
   }
   if (!data?.household) return null;
 
-  function parseForm() {
-    const packClassGrams = {
-      ultralight: lbToGrams(parseFloat(packClass.ultralight)),
-      lightweight: lbToGrams(parseFloat(packClass.lightweight)),
-      light: lbToGrams(parseFloat(packClass.light)),
-      traditional: lbToGrams(parseFloat(packClass.traditional)),
+  function parseForm(snap: { packClass: PackClassForm; human: HumanPctForm; pet: PetPctForm }) {
+    return {
+      packClassGrams: {
+        ultralight: lbToGrams(parseFloat(snap.packClass.ultralight)),
+        lightweight: lbToGrams(parseFloat(snap.packClass.lightweight)),
+        traditional: lbToGrams(parseFloat(snap.packClass.traditional)),
+      },
+      humanCarryPercent: {
+        ok: parseFloat(snap.human.ok),
+        warn: parseFloat(snap.human.warn),
+        max: parseFloat(snap.human.max),
+      },
+      petCarryPercent: {
+        ok: parseFloat(snap.pet.ok),
+        warn: parseFloat(snap.pet.warn),
+        max: parseFloat(snap.pet.max),
+      },
     };
-    const humanCarryPercent = {
-      ok: parseFloat(human.ok),
-      warn: parseFloat(human.warn),
-      max: parseFloat(human.max),
-    };
-    const petCarryPercent = {
-      ok: parseFloat(pet.ok),
-      warn: parseFloat(pet.warn),
-      max: parseFloat(pet.max),
-    };
-    return { packClassGrams, humanCarryPercent, petCarryPercent };
   }
 
-  function validate(): string | null {
-    const { packClassGrams, humanCarryPercent, petCarryPercent } = parseForm();
+  function validate(parsed: ReturnType<typeof parseForm>): string | null {
     const tiers = [
-      packClassGrams.ultralight,
-      packClassGrams.lightweight,
-      packClassGrams.light,
-      packClassGrams.traditional,
+      parsed.packClassGrams.ultralight,
+      parsed.packClassGrams.lightweight,
+      parsed.packClassGrams.traditional,
     ];
     if (tiers.some((n) => !Number.isFinite(n) || n <= 0))
       return "Pack-class values must be positive numbers";
     for (let i = 1; i < tiers.length; i++) {
       if (tiers[i] <= tiers[i - 1]) return "Pack-class tiers must be strictly increasing";
     }
-    if (humanCarryPercent.warn <= humanCarryPercent.ok)
+    const humanTiers = [
+      parsed.humanCarryPercent.ok,
+      parsed.humanCarryPercent.warn,
+      parsed.humanCarryPercent.max,
+    ];
+    if (humanTiers.some((n) => !Number.isFinite(n) || n < 0))
+      return "Human carry %s must be non-negative numbers";
+    if (parsed.humanCarryPercent.warn <= parsed.humanCarryPercent.ok)
       return "Human carry: warn % must be greater than ok %";
-    if (humanCarryPercent.max <= humanCarryPercent.warn)
+    if (parsed.humanCarryPercent.max <= parsed.humanCarryPercent.warn)
       return "Human carry: max % must be greater than warn %";
-    if (petCarryPercent.warn <= petCarryPercent.ok)
+    const petTiers = [
+      parsed.petCarryPercent.ok,
+      parsed.petCarryPercent.warn,
+      parsed.petCarryPercent.max,
+    ];
+    if (petTiers.some((n) => !Number.isFinite(n) || n < 0))
+      return "Pet carry %s must be non-negative numbers";
+    if (parsed.petCarryPercent.warn <= parsed.petCarryPercent.ok)
       return "Pet carry: warn % must be greater than ok %";
-    if (petCarryPercent.max <= petCarryPercent.warn)
+    if (parsed.petCarryPercent.max <= parsed.petCarryPercent.warn)
       return "Pet carry: max % must be greater than warn %";
     return null;
   }
 
-  function handleSave() {
-    const err = validate();
-    if (err) {
-      toast.error(err);
-      return;
-    }
-    updateHousehold.mutate(
-      { settings: parseForm() },
-      {
-        onSuccess: () => toast.success("Settings saved"),
-        onError: (e) => toast.error(e instanceof Error ? e.message : "Failed to save"),
+  function scheduleAutosave() {
+    if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+    saveTimerRef.current = setTimeout(() => {
+      const parsed = parseForm(formRef.current);
+      const err = validate(parsed);
+      if (err) {
+        setSaveStatus("error");
+        setSaveError(err);
+        return;
       }
-    );
+      setSaveError(null);
+      setSaveStatus("saving");
+      updateHousehold.mutate(
+        { settings: parsed },
+        {
+          onSuccess: () => setSaveStatus("saved"),
+          onError: (e) => {
+            setSaveStatus("error");
+            setSaveError(e instanceof Error ? e.message : "Failed to save");
+          },
+        }
+      );
+    }, AUTOSAVE_DEBOUNCE_MS);
+  }
+
+  function updatePackAll(next: PackClassForm) {
+    setPackClass(next);
+    formRef.current.packClass = next;
+    scheduleAutosave();
+  }
+  function updateHumanAll(next: HumanPctForm) {
+    setHuman(next);
+    formRef.current.human = next;
+    scheduleAutosave();
+  }
+  function updatePetAll(next: PetPctForm) {
+    setPet(next);
+    formRef.current.pet = next;
+    scheduleAutosave();
   }
 
   async function handleLeaveHousehold() {
@@ -146,25 +222,26 @@ export function HouseholdSettingsPage() {
   }
 
   function handleReset() {
-    setPackClass({
+    const resetPack = {
       ultralight: gramsToLbStr(DEFAULT_SETTINGS.packClassGrams.ultralight),
       lightweight: gramsToLbStr(DEFAULT_SETTINGS.packClassGrams.lightweight),
-      light: gramsToLbStr(DEFAULT_SETTINGS.packClassGrams.light),
       traditional: gramsToLbStr(DEFAULT_SETTINGS.packClassGrams.traditional),
-    });
-    setHuman({
+    };
+    const resetHuman = {
       ok: String(DEFAULT_SETTINGS.humanCarryPercent.ok),
       warn: String(DEFAULT_SETTINGS.humanCarryPercent.warn),
       max: String(DEFAULT_SETTINGS.humanCarryPercent.max),
-    });
-    setPet({
+    };
+    const resetPet = {
       ok: String(DEFAULT_SETTINGS.petCarryPercent.ok),
       warn: String(DEFAULT_SETTINGS.petCarryPercent.warn),
       max: String(DEFAULT_SETTINGS.petCarryPercent.max),
-    });
-    toast("Reset to defaults. Press Save to apply.", {
-      action: { label: "Save now", onClick: handleSave },
-    });
+    };
+    setPackClass(resetPack);
+    setHuman(resetHuman);
+    setPet(resetPet);
+    formRef.current = { packClass: resetPack, human: resetHuman, pet: resetPet };
+    scheduleAutosave();
   }
 
   return (
@@ -177,165 +254,124 @@ export function HouseholdSettingsPage() {
           <ArrowLeft className="size-3" />
           Back to dashboard
         </Link>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <Settings2 className="size-6 text-primary" />
           <h1 className="text-3xl font-extrabold tracking-tight">Household settings</h1>
+          <SaveStatusPill status={saveStatus} error={saveError} />
         </div>
         <p className="text-outline">
-          Tune the rules for <span className="font-bold">{data.household.name}</span>.
+          Tune the rules for <span className="font-bold">{data.household.name}</span>. Changes save
+          automatically.
         </p>
       </header>
 
-      <section className="rounded-xl bg-card p-6 border border-outline-variant/10 space-y-4">
+      <section className="rounded-xl bg-card p-6 border border-outline-variant/10 space-y-5">
         <div>
           <h2 className="text-lg font-bold">Pack class tiers</h2>
           <p className="text-sm text-outline mt-1">
-            Base weight (lb) cut-offs for Ultralight → Lightweight → Light → Traditional → Heavy.
-            Each tier must be strictly greater than the previous.
+            Base weight is your pack minus consumables and worn items — the standard benchmark
+            backpackers optimize. These cut-offs decide the class shown on each pack in the
+            workspace and on trip cards.
           </p>
         </div>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <PackTierInput
-            label="Ultralight <"
-            value={packClass.ultralight}
-            onChange={(v) => setPackClass((s) => ({ ...s, ultralight: v }))}
-          />
-          <PackTierInput
-            label="Lightweight <"
-            value={packClass.lightweight}
-            onChange={(v) => setPackClass((s) => ({ ...s, lightweight: v }))}
-          />
-          <PackTierInput
-            label="Light <"
-            value={packClass.light}
-            onChange={(v) => setPackClass((s) => ({ ...s, light: v }))}
-          />
-          <PackTierInput
-            label="Traditional <"
-            value={packClass.traditional}
-            onChange={(v) => setPackClass((s) => ({ ...s, traditional: v }))}
-          />
-        </div>
-        <p className="text-[11px] text-outline">
-          Everything at or above <span className="font-mono">{packClass.traditional} lb</span> is
-          classified Heavy.
-        </p>
+        <TierSlider
+          segments={PACK_SEGMENTS}
+          values={[
+            parseNumericOr(packClass.ultralight, 0),
+            parseNumericOr(packClass.lightweight, 0),
+            parseNumericOr(packClass.traditional, 0),
+          ]}
+          min={0}
+          max={40}
+          step={0.5}
+          suffix="lb"
+          onChange={(vals) =>
+            updatePackAll({
+              ultralight: vals[0].toFixed(1),
+              lightweight: vals[1].toFixed(1),
+              traditional: vals[2].toFixed(1),
+            })
+          }
+        />
       </section>
 
-      <section className="rounded-xl bg-card p-6 border border-outline-variant/10 space-y-4">
+      <section className="rounded-xl bg-card p-6 border border-outline-variant/10 space-y-5">
         <div>
           <h2 className="text-lg font-bold">Human carry thresholds</h2>
           <p className="text-sm text-outline mt-1">
-            Total carried as % of body weight. Four tiers:{" "}
-            <span className="font-bold text-primary">Comfortable</span> →{" "}
-            <span className="font-bold text-foreground">OK</span> →{" "}
-            <span className="font-bold text-secondary">Warn</span> →{" "}
-            <span className="font-bold text-destructive">Overloaded</span>.
+            Carry weight relative to body weight predicts how a pack will feel over long miles.
+            These thresholds drive the color-coded %body-wt indicator on every pack.
           </p>
         </div>
-        <div className="grid grid-cols-3 gap-3">
-          <PercentInput
-            label="OK ≤"
-            value={human.ok}
-            onChange={(v) => setHuman((s) => ({ ...s, ok: v }))}
-          />
-          <PercentInput
-            label="Warn ≤"
-            value={human.warn}
-            onChange={(v) => setHuman((s) => ({ ...s, warn: v }))}
-          />
-          <PercentInput
-            label="Max ≤"
-            value={human.max}
-            onChange={(v) => setHuman((s) => ({ ...s, max: v }))}
-          />
+        <TierSlider
+          segments={CARRY_SEGMENTS}
+          values={[
+            parseNumericOr(human.ok, 0),
+            parseNumericOr(human.warn, 0),
+            parseNumericOr(human.max, 0),
+          ]}
+          min={10}
+          max={30}
+          step={1}
+          suffix="%"
+          onChange={(vals) =>
+            updateHumanAll({
+              ok: String(vals[0]),
+              warn: String(vals[1]),
+              max: String(vals[2]),
+            })
+          }
+        />
+      </section>
+
+      <section className="rounded-xl bg-card p-6 border border-outline-variant/10 space-y-5">
+        <div>
+          <h2 className="text-lg font-bold">Pet carry thresholds</h2>
+          <p className="text-sm text-outline mt-1">
+            Dogs have a narrower safe range than people. Common vet guidance is 10-20% of body
+            weight depending on breed, age, and fitness — tune these for your pup.
+          </p>
         </div>
+        <TierSlider
+          segments={CARRY_SEGMENTS}
+          values={[
+            parseNumericOr(pet.ok, 0),
+            parseNumericOr(pet.warn, 0),
+            parseNumericOr(pet.max, 0),
+          ]}
+          min={5}
+          max={25}
+          step={1}
+          suffix="%"
+          onChange={(vals) =>
+            updatePetAll({
+              ok: String(vals[0]),
+              warn: String(vals[1]),
+              max: String(vals[2]),
+            })
+          }
+        />
       </section>
 
       <section className="rounded-xl bg-card p-6 border border-outline-variant/10 space-y-4">
         <div>
-          <h2 className="text-lg font-bold">Pet carry thresholds</h2>
+          <h2 className="text-lg font-bold flex items-center gap-2">
+            <Tag className="size-5 text-primary" />
+            Gear categories
+          </h2>
           <p className="text-sm text-outline mt-1">
-            Dogs typically safely carry 10-20% of body weight. Use your vet&apos;s guidance if
-            available.
+            Shared across everyone in the household. Changes here affect every closet tab.
           </p>
         </div>
-        <div className="grid grid-cols-3 gap-3">
-          <PercentInput
-            label="OK ≤"
-            value={pet.ok}
-            onChange={(v) => setPet((s) => ({ ...s, ok: v }))}
-          />
-          <PercentInput
-            label="Warn ≤"
-            value={pet.warn}
-            onChange={(v) => setPet((s) => ({ ...s, warn: v }))}
-          />
-          <PercentInput
-            label="Max ≤"
-            value={pet.max}
-            onChange={(v) => setPet((s) => ({ ...s, max: v }))}
-          />
-        </div>
+        <CategoryEditor categories={categories ?? []} items={items ?? []} />
       </section>
 
-      <div className="flex items-center gap-3">
-        <Button
-          onClick={handleSave}
-          disabled={updateHousehold.isPending}
-          className="bg-gradient-to-br from-primary-container to-primary text-on-primary-container font-bold rounded-xl"
-        >
-          <Save className="size-4" data-icon="inline-start" />
-          {updateHousehold.isPending ? "Saving…" : "Save settings"}
-        </Button>
-        <Button variant="outline" onClick={handleReset}>
-          <RotateCcw className="size-4" data-icon="inline-start" />
-          Reset to defaults
+      <div className="flex justify-end">
+        <Button variant="outline" size="sm" onClick={handleReset} className="gap-1.5">
+          <RotateCcw className="size-3.5" />
+          Reset settings to defaults
         </Button>
       </div>
-
-      <section className="rounded-xl bg-card p-6 border border-outline-variant/10 space-y-4">
-        <div className="flex items-center justify-between gap-3">
-          <div>
-            <h2 className="text-lg font-bold flex items-center gap-2">
-              <Tag className="size-5 text-primary" />
-              Gear categories
-            </h2>
-            <p className="text-sm text-outline mt-1">
-              Shared across everyone in the household. Changes here affect every closet tab.
-            </p>
-          </div>
-          <Button variant="outline" onClick={() => setCategoryManagerOpen(true)}>
-            Manage categories
-          </Button>
-        </div>
-        <div className="flex flex-wrap gap-2 pt-2">
-          {(categories ?? []).map((c) => (
-            <span
-              key={c.id}
-              className="inline-flex items-center gap-1.5 rounded-full bg-surface-low px-3 py-1 text-xs"
-            >
-              <span className="size-2 rounded-full" style={{ backgroundColor: c.color }} />
-              {c.name}
-            </span>
-          ))}
-        </div>
-      </section>
-
-      <CategoryManager
-        open={categoryManagerOpen}
-        onOpenChange={setCategoryManagerOpen}
-        categories={categories ?? []}
-        items={items ?? []}
-      />
-
-      {/* Helpful reference in the viewer's preferred unit */}
-      <p className="text-[11px] text-outline text-center">
-        Current Ultralight cap in your display unit:{" "}
-        <span className="font-mono">
-          {displayWeight(lbToGrams(parseFloat(packClass.ultralight) || 0), unit)}
-        </span>
-      </p>
 
       <section className="rounded-xl bg-card p-6 border border-destructive/20 space-y-3">
         <div>
@@ -360,57 +396,31 @@ export function HouseholdSettingsPage() {
   );
 }
 
-function PackTierInput({
-  label,
-  value,
-  onChange,
-}: {
-  label: string;
-  value: string;
-  onChange: (v: string) => void;
-}) {
+function SaveStatusPill({ status, error }: { status: SaveStatus; error: string | null }) {
+  if (status === "idle") return null;
+  if (status === "saving") {
+    return (
+      <span className="inline-flex items-center gap-1.5 rounded-full bg-surface-low px-3 py-1 text-xs font-bold text-outline">
+        <Loader2 className="size-3 animate-spin" />
+        Saving…
+      </span>
+    );
+  }
+  if (status === "saved") {
+    return (
+      <span className="inline-flex items-center gap-1.5 rounded-full bg-green-500/10 px-3 py-1 text-xs font-bold text-green-600 dark:text-green-400">
+        <Check className="size-3" />
+        Saved
+      </span>
+    );
+  }
   return (
-    <div className="grid gap-1">
-      <Label className="text-[11px] font-bold uppercase tracking-wider text-outline">{label}</Label>
-      <div className="flex items-center gap-1">
-        <Input
-          type="number"
-          min="0"
-          step="0.1"
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          className="text-right"
-        />
-        <span className="text-xs text-outline">lb</span>
-      </div>
-    </div>
-  );
-}
-
-function PercentInput({
-  label,
-  value,
-  onChange,
-}: {
-  label: string;
-  value: string;
-  onChange: (v: string) => void;
-}) {
-  return (
-    <div className="grid gap-1">
-      <Label className="text-[11px] font-bold uppercase tracking-wider text-outline">{label}</Label>
-      <div className="flex items-center gap-1">
-        <Input
-          type="number"
-          min="0"
-          max="100"
-          step="0.1"
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          className="text-right"
-        />
-        <span className="text-xs text-outline">%</span>
-      </div>
-    </div>
+    <span
+      className="inline-flex items-center gap-1.5 rounded-full bg-destructive/10 px-3 py-1 text-xs font-bold text-destructive"
+      title={error ?? undefined}
+    >
+      <CircleAlert className="size-3" />
+      {error ?? "Couldn't save"}
+    </span>
   );
 }

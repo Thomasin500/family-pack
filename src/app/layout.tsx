@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import { Toaster } from "sonner";
+import { cookies } from "next/headers";
 import "./globals.css";
 
 const plusJakarta = Plus_Jakarta_Sans({
@@ -46,21 +47,32 @@ export const viewport: Viewport = {
   ],
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Read the theme cookie server-side so the `class="dark"` on <html> matches
+  // whatever the client is about to show. This avoids hydration reconciliation
+  // fighting the inline script (which was re-adding "dark" after the script
+  // had removed it, so light mode didn't persist on reload). The inline script
+  // stays as a fallback for the first visit before any cookie is written — it
+  // migrates an older `localStorage.theme` value into a cookie.
+  const cookieStore = await cookies();
+  const theme = cookieStore.get("theme")?.value;
+  const isDark = theme !== "light"; // default to dark when the cookie is missing
+
   return (
     <html
       lang="en"
-      className={`${plusJakarta.variable} ${jetbrainsMono.variable} h-full antialiased`}
+      className={`${plusJakarta.variable} ${jetbrainsMono.variable} h-full antialiased${isDark ? " dark" : ""}`}
+      style={{ colorScheme: isDark ? "dark" : "light" }}
       suppressHydrationWarning
     >
       <head>
         <script
           dangerouslySetInnerHTML={{
-            __html: `try{const t=localStorage.getItem("theme");if(t!=="light")document.documentElement.classList.add("dark")}catch(e){document.documentElement.classList.add("dark")}`,
+            __html: `try{var m=document.cookie.match(/(?:^|;\\s*)theme=(light|dark)/);var c=m?m[1]:null;if(!c){var l=localStorage.getItem("theme");if(l==="light"||l==="dark"){c=l;document.cookie="theme="+l+"; path=/; max-age=31536000; SameSite=Lax"}}if(c==="light"){document.documentElement.classList.remove("dark");document.documentElement.style.colorScheme="light"}else if(c==="dark"){document.documentElement.classList.add("dark");document.documentElement.style.colorScheme="dark"}}catch(e){}`,
           }}
         />
       </head>

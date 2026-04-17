@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useTrips, useDuplicateTrip, useDeleteTrip } from "@/hooks/use-trips";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -102,10 +102,33 @@ export function TripsPage() {
   const { data: trips, isLoading } = useTrips();
   const duplicateTrip = useDuplicateTrip();
   const deleteTrip = useDeleteTrip();
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  // `?new=true` (from the nav "New Trip" button) auto-opens the modal. Stays
+  // derived from the URL until the user dismisses it, so the same link works
+  // whether or not the user is already on this page.
+  const newParamOpen = searchParams.get("new") === "true";
+  const [localOpen, setLocalOpen] = useState(false);
+  const [newParamDismissed, setNewParamDismissed] = useState(false);
+  const dialogOpen = localOpen || (newParamOpen && !newParamDismissed);
+  function setDialogOpen(open: boolean) {
+    if (open) {
+      setLocalOpen(true);
+      setNewParamDismissed(false);
+    } else {
+      setLocalOpen(false);
+      if (newParamOpen) {
+        setNewParamDismissed(true);
+        const params = new URLSearchParams(searchParams.toString());
+        params.delete("new");
+        const qs = params.toString();
+        router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
+      }
+    }
+  }
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState<string>("newest");
-  const router = useRouter();
   const confirm = useConfirm();
   const { unit } = useWeightUnit();
   const { data: householdData } = useHousehold();
@@ -254,11 +277,6 @@ export function TripsPage() {
                       {trip.completedAt && (
                         <Badge variant="default" className="bg-primary/20 text-primary">
                           Done
-                        </Badge>
-                      )}
-                      {trip.season && (
-                        <Badge variant="muted" className="capitalize">
-                          {trip.season}
                         </Badge>
                       )}
                     </div>

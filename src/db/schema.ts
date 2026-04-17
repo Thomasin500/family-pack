@@ -31,8 +31,7 @@ export const catalogSourceEnum = pgEnum("catalog_source", ["seed", "community"])
 export interface HouseholdSettings {
   packClassGrams?: {
     ultralight: number; // base weight < this = Ultralight
-    lightweight: number; // < this = Lightweight (else continue)
-    light: number; // < this = Light
+    lightweight: number; // < this = Lightweight
     traditional: number; // < this = Traditional, >= this = Heavy
   };
   humanCarryPercent?: {

@@ -28,7 +28,7 @@ import {
   useSortable,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Trash2, ChevronDown, ChevronRight, GripVertical } from "lucide-react";
+import { Trash2, ChevronDown, ChevronRight, GripVertical, ChevronsUpDown } from "lucide-react";
 import { CategorySortMenu, sortItems, type SortMode } from "@/components/ui/sort-menu";
 import { useConfirm } from "@/components/providers/confirm-provider";
 import type { Item, Category } from "@/types";
@@ -542,11 +542,28 @@ export function ItemTable({ items, categories, owners = [], readOnly = false }: 
   }
 
   const categoryIds = grouped.map((g) => g.category.id);
+  const allCollapsed = categoryIds.length > 0 && categoryIds.every((id) => collapsedIds.has(id));
+  function toggleCollapseAll() {
+    setCollapsedIds(allCollapsed ? new Set() : new Set(categoryIds));
+  }
 
   return (
     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
       <SortableContext items={categoryIds} strategy={verticalListSortingStrategy}>
         <div className="space-y-8">
+          {!readOnly && categoryIds.length > 1 && (
+            <div className="flex justify-end">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={toggleCollapseAll}
+                className="gap-1.5 text-xs uppercase tracking-wider text-outline hover:text-foreground"
+              >
+                <ChevronsUpDown className="size-3.5" />
+                {allCollapsed ? "Expand all" : "Collapse all"}
+              </Button>
+            </div>
+          )}
           {grouped.map(({ category, items: catItems }) => {
             const subtotal = catItems.reduce((s, i) => s + (i.weightGrams ?? 0), 0);
             const isCollapsed = collapsedIds.has(category.id);

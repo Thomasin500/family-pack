@@ -38,6 +38,29 @@ interface CategoryManagerProps {
 }
 
 export function CategoryManager({ open, onOpenChange, categories, items }: CategoryManagerProps) {
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>Manage Categories</DialogTitle>
+        </DialogHeader>
+        <CategoryEditor categories={categories} items={items} />
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+interface CategoryEditorProps {
+  categories: Category[];
+  items: any[];
+}
+
+/**
+ * Inline-renderable version of the category editor body. Used directly on the
+ * household settings page (so category management isn't behind a dialog) and
+ * wrapped in a Dialog by `CategoryManager` for the closet page.
+ */
+export function CategoryEditor({ categories, items }: CategoryEditorProps) {
   const createCategory = useCreateCategory();
   const updateCategory = useUpdateCategory();
   const deleteCategory = useDeleteCategory();
@@ -141,132 +164,121 @@ export function CategoryManager({ open, onOpenChange, categories, items }: Categ
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>Manage Categories</DialogTitle>
-        </DialogHeader>
+    <>
+      <div className="space-y-2">
+        {sorted.map((cat) => {
+          const count = getItemCount(cat.id);
+          const isEditing = editingId === cat.id;
 
-        <div className="space-y-2">
-          {sorted.map((cat) => {
-            const count = getItemCount(cat.id);
-            const isEditing = editingId === cat.id;
-
-            if (isEditing) {
-              return (
-                <div key={cat.id} ref={editRef} className="space-y-1">
-                  <div
-                    className={`flex items-center gap-2 rounded-lg bg-surface-low p-2 ${dirtyError ? "ring-2 ring-destructive/60" : ""}`}
-                  >
-                    <div className="flex gap-1">
-                      {PRESET_COLORS.map((c) => (
-                        <button
-                          key={c}
-                          type="button"
-                          className={`size-4 rounded-full border-2 ${editColor === c ? "border-foreground" : "border-transparent"}`}
-                          style={{ backgroundColor: c }}
-                          onClick={() => {
-                            setEditColor(c);
-                            setDirtyError(false);
-                          }}
-                        />
-                      ))}
-                    </div>
-                    <Input
-                      className="h-7 text-sm flex-1"
-                      value={editName}
-                      onChange={(e) => {
-                        setEditName(e.target.value);
-                        setDirtyError(false);
-                      }}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") saveEdit();
-                        if (e.key === "Escape") setEditingId(null);
-                      }}
-                      autoFocus
-                    />
-                    <Button size="sm" onClick={saveEdit} disabled={!editName.trim()}>
-                      Save
-                    </Button>
-                    <Button variant="ghost" size="icon-xs" onClick={() => setEditingId(null)}>
-                      <X className="size-3" />
-                    </Button>
-                  </div>
-                  {dirtyError && (
-                    <p className="text-[10px] font-bold text-destructive pl-2">
-                      Unsaved changes — Save or press Esc to cancel
-                    </p>
-                  )}
-                </div>
-              );
-            }
-
+          if (isEditing) {
             return (
-              <div
-                key={cat.id}
-                className="group flex items-center gap-3 rounded-lg bg-surface-low p-3"
-              >
+              <div key={cat.id} ref={editRef} className="space-y-1">
                 <div
-                  className="size-4 rounded-full shrink-0"
-                  style={{ backgroundColor: cat.color }}
-                />
-                <div className="flex-1 min-w-0">
-                  <span className="text-sm font-bold">{cat.name}</span>
-                  <span className="text-xs text-outline ml-2">
-                    {count} {count === 1 ? "item" : "items"}
-                  </span>
-                </div>
-                <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <Button
-                    variant="ghost"
-                    size="icon-xs"
-                    onClick={() => startEdit(cat)}
-                    title="Edit"
-                  >
-                    <Pencil className="size-3" />
+                  className={`flex items-center gap-2 rounded-lg bg-surface-low p-2 ${dirtyError ? "ring-2 ring-destructive/60" : ""}`}
+                >
+                  <div className="flex gap-1">
+                    {PRESET_COLORS.map((c) => (
+                      <button
+                        key={c}
+                        type="button"
+                        className={`size-4 rounded-full border-2 ${editColor === c ? "border-foreground" : "border-transparent"}`}
+                        style={{ backgroundColor: c }}
+                        onClick={() => {
+                          setEditColor(c);
+                          setDirtyError(false);
+                        }}
+                      />
+                    ))}
+                  </div>
+                  <Input
+                    className="h-7 text-sm flex-1"
+                    value={editName}
+                    onChange={(e) => {
+                      setEditName(e.target.value);
+                      setDirtyError(false);
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") saveEdit();
+                      if (e.key === "Escape") setEditingId(null);
+                    }}
+                    autoFocus
+                  />
+                  <Button size="sm" onClick={saveEdit} disabled={!editName.trim()}>
+                    Save
                   </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon-xs"
-                    onClick={() => handleDelete(cat)}
-                    title="Delete"
-                    className="text-destructive"
-                  >
-                    <Trash2 className="size-3" />
+                  <Button variant="ghost" size="icon-xs" onClick={() => setEditingId(null)}>
+                    <X className="size-3" />
                   </Button>
                 </div>
+                {dirtyError && (
+                  <p className="text-[10px] font-bold text-destructive pl-2">
+                    Unsaved changes — Save or press Esc to cancel
+                  </p>
+                )}
               </div>
             );
-          })}
-        </div>
+          }
 
-        <form
-          onSubmit={handleCreate}
-          className="flex items-center gap-2 pt-4 border-t border-outline-variant/10"
-        >
-          <div className="flex gap-1 shrink-0">
-            {PRESET_COLORS.slice(0, 5).map((c) => (
-              <button
-                key={c}
-                type="button"
-                className={`size-4 rounded-full border-2 ${newColor === c ? "border-foreground" : "border-transparent"}`}
-                style={{ backgroundColor: c }}
-                onClick={() => setNewColor(c)}
+          return (
+            <div
+              key={cat.id}
+              className="group flex items-center gap-3 rounded-lg bg-surface-low p-3"
+            >
+              <div
+                className="size-4 rounded-full shrink-0"
+                style={{ backgroundColor: cat.color }}
               />
-            ))}
-          </div>
-          <Input
-            className="h-7 text-sm flex-1"
-            placeholder="New category..."
-            value={newName}
-            onChange={(e) => setNewName(e.target.value)}
-          />
-          <Button type="submit" size="sm" disabled={!newName.trim() || createCategory.isPending}>
-            <Plus className="size-3" />
-            Add
-          </Button>
-        </form>
-      </DialogContent>
-    </Dialog>
+              <div className="flex-1 min-w-0">
+                <span className="text-sm font-bold">{cat.name}</span>
+                <span className="text-xs text-outline ml-2">
+                  {count} {count === 1 ? "item" : "items"}
+                </span>
+              </div>
+              <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                <Button variant="ghost" size="icon-xs" onClick={() => startEdit(cat)} title="Edit">
+                  <Pencil className="size-3" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon-xs"
+                  onClick={() => handleDelete(cat)}
+                  title="Delete"
+                  className="text-destructive"
+                >
+                  <Trash2 className="size-3" />
+                </Button>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <form
+        onSubmit={handleCreate}
+        className="flex items-center gap-2 pt-4 border-t border-outline-variant/10"
+      >
+        <div className="flex gap-1 shrink-0">
+          {PRESET_COLORS.slice(0, 5).map((c) => (
+            <button
+              key={c}
+              type="button"
+              className={`size-4 rounded-full border-2 ${newColor === c ? "border-foreground" : "border-transparent"}`}
+              style={{ backgroundColor: c }}
+              onClick={() => setNewColor(c)}
+            />
+          ))}
+        </div>
+        <Input
+          className="h-7 text-sm flex-1"
+          placeholder="New category..."
+          value={newName}
+          onChange={(e) => setNewName(e.target.value)}
+        />
+        <Button type="submit" size="sm" disabled={!newName.trim() || createCategory.isPending}>
+          <Plus className="size-3" />
+          Add
+        </Button>
+      </form>
+    </>
   );
 }

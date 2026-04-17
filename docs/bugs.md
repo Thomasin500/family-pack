@@ -12,7 +12,6 @@
 
 - [ ] **Dark theme is too dark** — Lighten the dark mode backgrounds and surfaces
 - [ ] **Light theme is too bright** — Darken the light mode to reduce glare
-- [ ] **Theme toggle first-click is a no-op** — The nav-bar `useState` initializer reads `document.documentElement.classList` but SSR hydration gives it the wrong initial value. First click appears to do nothing; second click toggles correctly. Fix by initializing from `localStorage("theme")` inside a `useEffect` (or reading the server-rendered class attribute).
 
 ### Weight Units
 
@@ -20,17 +19,7 @@
 
 ### Trip Planner
 
-- [ ] **End date picker shows start date** — Opening the end date field in the edit trip dialog pre-fills/shows the start date instead of the end date.
-- [ ] **Pack class tier colors don't match pet carry threshold colors** — Human pack-class tiers and pet carry tiers use different palettes. They should share a color scale so the same "level" reads the same across the app.
-- [ ] **"Sort by" label visible when category is collapsed** — In trip pack columns, the category subheader still renders the sort menu when the category is collapsed. Hide it (and the subtotal row) when collapsed.
 - [ ] **Trip pack totals placement** — Totals currently sit at the bottom of the pack card. Consider moving them (or mirroring them) to the top so they're visible without scrolling on long packs.
-
-### Closet
-
-- [ ] **Drag-reorder within a category is clunky** — dnd-kit reorder on categories works; reorder within items is less polished. Left as-is until Phase 7 drag-and-drop pass.
-- [ ] **Auto-sort within categories feels unpredictable** — When items are edited/added, the order can jump. Explicit per-category sort menu helps, but we want a more elegant "sort order you set is the order you see" experience with optional auto-sort modes.
-- [ ] **No "collapse all" button** — Closet and trip pack columns have per-category collapse but no bulk collapse/expand. Add a single header control.
-- [ ] **No legend/scale for % body weight colors** — The colored %bw badges imply a scale (green → red) but there's no visible legend explaining what weights map to which tier. Add a subtle inline scale or tooltip.
 
 ### Household & Members
 
@@ -56,3 +45,9 @@
 - Weight totals removed from the Gear Closet; trip tiles + per-person panels are where totals live now.
 - Collapsed category totals enlarged in the closet.
 - Confirmation prompts are now centered modals with a dimmed backdrop (delete item, delete trip, remove member, etc.) — everyday success toasts stay small/corner.
+- Theme toggle no longer requires two clicks — nav-bar now uses `useSyncExternalStore` reading from `document.documentElement.classList`, so state tracks DOM truth across SSR/hydration.
+- Pack-class and pet-carry tiers now share one green → yellow → orange → red color scale via `packClassColor`.
+- Trip pack collapsed categories hide the "Sort by" menu and subtotal row, leaving just the header + chevron.
+- Collapse-all / Expand-all button added to the gear closet (top right) and each trip pack column header.
+- % body-weight display has an inline color gradient with a hover legend showing the four tiers (Comfortable / OK / Warn / Overloaded) and their thresholds from household settings.
+- Edit-trip dialog now normalizes `startDate` / `endDate` to `YYYY-MM-DD` so the end-date picker pre-fills correctly when the API returns an ISO timestamp.

@@ -16,13 +16,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 interface NewTripDialogProps {
   open: boolean;
@@ -38,7 +31,6 @@ export function NewTripDialog({ open, onOpenChange }: NewTripDialogProps) {
   const [location, setLocation] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [season, setSeason] = useState("");
   const [terrain, setTerrain] = useState("");
   const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
 
@@ -55,7 +47,6 @@ export function NewTripDialog({ open, onOpenChange }: NewTripDialogProps) {
     setLocation("");
     setStartDate("");
     setEndDate("");
-    setSeason("");
     setTerrain("");
     setSelectedMembers([]);
   }
@@ -71,7 +62,6 @@ export function NewTripDialog({ open, onOpenChange }: NewTripDialogProps) {
         startDate: startDate || undefined,
         endDate: endDate || undefined,
         location: location.trim() || undefined,
-        season: season && season !== "none" ? season : undefined,
         terrain: terrain.trim() || undefined,
         memberIds: selectedMembers,
       });
@@ -123,7 +113,15 @@ export function NewTripDialog({ open, onOpenChange }: NewTripDialogProps) {
                 id="trip-start"
                 type="date"
                 value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
+                onChange={(e) => {
+                  const next = e.target.value;
+                  setStartDate(next);
+                  // If end date hasn't been set yet, mirror the start so the
+                  // picker opens on the right month and the trip isn't
+                  // accidentally saved without an end date. Functional setter
+                  // avoids a stale closure read of `endDate`.
+                  if (next) setEndDate((prev) => prev || next);
+                }}
               />
             </div>
             <div className="space-y-2">
@@ -132,36 +130,22 @@ export function NewTripDialog({ open, onOpenChange }: NewTripDialogProps) {
                 id="trip-end"
                 type="date"
                 value={endDate}
+                min={startDate || undefined}
                 onChange={(e) => setEndDate(e.target.value)}
               />
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-2">
-              <Label htmlFor="trip-season">Season</Label>
-              <Select value={season} onValueChange={setSeason}>
-                <SelectTrigger id="trip-season">
-                  <SelectValue placeholder="Select..." />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="none">None</SelectItem>
-                  <SelectItem value="spring">Spring</SelectItem>
-                  <SelectItem value="summer">Summer</SelectItem>
-                  <SelectItem value="fall">Fall</SelectItem>
-                  <SelectItem value="winter">Winter</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="trip-terrain">Terrain</Label>
-              <Input
-                id="trip-terrain"
-                placeholder="e.g. Alpine"
-                value={terrain}
-                onChange={(e) => setTerrain(e.target.value)}
-              />
-            </div>
+          <div className="space-y-2">
+            <Label htmlFor="trip-notes">Notes</Label>
+            <textarea
+              id="trip-notes"
+              placeholder="Terrain, route, weather expectations, anything worth remembering…"
+              value={terrain}
+              onChange={(e) => setTerrain(e.target.value)}
+              rows={3}
+              className="flex min-h-[72px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+            />
           </div>
 
           <div className="space-y-3">

@@ -2,13 +2,25 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useCallback, useSyncExternalStore } from "react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { signOutAction } from "@/app/app/actions";
 import { cn } from "@/lib/utils";
 import { LogOut, Sun, Moon, Settings } from "lucide-react";
 import { useWeightUnit } from "@/components/providers/weight-unit-provider";
+
+const themeListeners = new Set<() => void>();
+function subscribeTheme(cb: () => void) {
+  themeListeners.add(cb);
+  return () => themeListeners.delete(cb);
+}
+function getThemeSnapshot() {
+  return document.documentElement.classList.contains("dark");
+}
+function getThemeServerSnapshot() {
+  return true;
+}
 
 interface NavBarProps {
   user: {
@@ -27,19 +39,19 @@ const navLinks = [
 export function NavBar({ user }: NavBarProps) {
   const pathname = usePathname();
   const { unit, toggle } = useWeightUnit();
-  const [dark, setDark] = useState(() => {
-    if (typeof document !== "undefined") {
-      return document.documentElement.classList.contains("dark");
-    }
-    return true;
-  });
+  const dark = useSyncExternalStore(subscribeTheme, getThemeSnapshot, getThemeServerSnapshot);
 
-  function toggleDark() {
-    const next = !dark;
-    setDark(next);
+  const toggleDark = useCallback(() => {
+    const next = !document.documentElement.classList.contains("dark");
     document.documentElement.classList.toggle("dark", next);
-    localStorage.setItem("theme", next ? "dark" : "light");
-  }
+    document.documentElement.style.colorScheme = next ? "dark" : "light";
+    const value = next ? "dark" : "light";
+    localStorage.setItem("theme", value);
+    // Cookie is the source of truth for SSR — writing both keeps localStorage
+    // and cookie in sync so the server renders the correct class on reload.
+    document.cookie = `theme=${value}; path=/; max-age=31536000; SameSite=Lax`;
+    themeListeners.forEach((cb) => cb());
+  }, []);
 
   const initials = user.name
     ? user.name
@@ -117,7 +129,7 @@ export function NavBar({ user }: NavBarProps) {
             </Button>
           </Link>
 
-          <Link href="/app/trips">
+          <Link href="/app/trips?new=true">
             <Button
               size="sm"
               className="bg-gradient-to-br from-primary-container to-primary text-on-primary-container font-bold rounded-xl hover:brightness-110 active:scale-95 transition-all"

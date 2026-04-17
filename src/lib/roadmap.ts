@@ -86,43 +86,55 @@ export const ROADMAP: RoadmapPhase[] = [
   {
     id: "phase-4-7",
     name: "Phase 4.7 · Quick Wins & Polish",
-    status: "next",
+    status: "partial",
     summary:
-      "Batchable small fixes from beta feedback — unit split, theme polish, color parity, pet flow revamp.",
+      "Batchable small fixes from beta feedback. Six XS items shipped; unit split, theme contrast pass, and pet-creation revamp still open.",
     features: [
+      {
+        title: "Theme toggle first-click fix",
+        status: "done",
+        description: "useSyncExternalStore reads DOM truth; toggle flips class + colorScheme",
+      },
+      {
+        title: "Dark-mode flash on load",
+        status: "done",
+        description: "SSR html now ships with class='dark'; script only flips to light on opt-in",
+      },
+      {
+        title: "Pack-class ↔ pet-carry color parity",
+        status: "done",
+        description: "Green→yellow→orange→red scale shared across pack class + carry warnings",
+      },
+      {
+        title: "Hide Sort menu on collapsed trip categories",
+        status: "done",
+        description: "Count + subtotal still visible when collapsed; sort menu hidden",
+      },
+      {
+        title: "Collapse-all button (closet + trip packs)",
+        status: "done",
+      },
+      {
+        title: "% body weight color scale legend",
+        status: "done",
+        description: "4-segment gradient + hover popover positioned right of the bar",
+      },
+      {
+        title: "End date picker fix",
+        status: "done",
+        description: "Dates normalized, new-trip mirrors start→end, min={startDate}",
+      },
       {
         title: "Split unit prefs",
         description: "Separate itemsUnit + totalsUnit so totals stay in lb while items flex",
-      },
-      {
-        title: "Theme toggle first-click fix",
-        description: "Initialize from localStorage inside useEffect to match SSR class",
       },
       {
         title: "Lighten dark / darken light",
         description: "Step the bg/surface tokens on each side to reduce glare",
       },
       {
-        title: "Pack-class color parity",
-        description: "Human tiers + pet carry tiers share one green→red scale",
-      },
-      {
-        title: "Hide collapsed category chrome",
-        description: "No 'Sort by' or subtotal subline when a trip category is collapsed",
-      },
-      { title: "Collapse-all button on closet + trip packs" },
-      {
-        title: "% body weight color scale legend",
-        description: "Subtle inline legend/tooltip on %bw badges",
-      },
-      { title: "End date picker pre-fills end date, not start" },
-      {
         title: "Revamp pet creation",
         description: "Proper guided dialog replacing the dashboard inline form",
-      },
-      {
-        title: "Closet sort/reorder polish",
-        description: "Stop items jumping out of view, remember per-category sort",
       },
     ],
   },
@@ -147,7 +159,7 @@ export const ROADMAP: RoadmapPhase[] = [
       },
       {
         title: "Pack class labels",
-        description: "Ultralight / Lightweight / Light / Traditional / Heavy",
+        description: "Ultralight / Lightweight / Traditional / Heavy",
       },
       {
         title: "Smart trip tags",

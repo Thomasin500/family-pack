@@ -6,13 +6,14 @@ import { Button } from "@/components/ui/button";
 import { displayWeight, bodyWeightPercent } from "@/lib/weight";
 import type { DisplayUnit } from "@/lib/weight";
 import { getCarryWarning } from "@/lib/carry-warnings";
+import { resolveSettings } from "@/lib/household-settings";
 import { useWeightUnit } from "@/components/providers/weight-unit-provider";
 import { useHousehold } from "@/hooks/use-household";
 import { useUpdatePackItem } from "@/hooks/use-trip-pack-items";
 import type { HouseholdSettings } from "@/db/schema";
 import { Checkbox } from "@/components/ui/checkbox";
 import { LoadoutModal } from "./loadout-modal";
-import { X, Backpack, ChevronDown, ChevronRight, Plus } from "lucide-react";
+import { X, Backpack, ChevronDown, ChevronRight, Plus, ChevronsUpDown } from "lucide-react";
 import { CategorySortMenu, sortItems, type SortMode } from "@/components/ui/sort-menu";
 import dynamic from "next/dynamic";
 
@@ -99,6 +100,16 @@ export function PackColumn({ pack, tripId, checklistMode = false, allPacks }: Pa
     });
   }
 
+  const categoryIds = [
+    ...sortedCategories.map(({ category }) => category.id),
+    ...(uncategorized.length > 0 ? ["__uncategorized"] : []),
+  ];
+  const allCategoriesCollapsed =
+    categoryIds.length > 0 && categoryIds.every((id) => collapsedCats.has(id));
+  function toggleCollapseAll() {
+    setCollapsedCats(allCategoriesCollapsed ? new Set() : new Set(categoryIds));
+  }
+
   async function handleRemove(packItemId: string, itemName: string) {
     const ok = await confirm({
       title: `Remove "${itemName}" from pack?`,
@@ -130,7 +141,12 @@ export function PackColumn({ pack, tripId, checklistMode = false, allPacks }: Pa
         <div className="text-lg font-extrabold tabular-nums">{displayWeight(skinOut, unit)}</div>
       </div>
       <div className="rounded-lg bg-surface-low p-3">
-        <div className="text-[10px] font-bold uppercase text-outline">% Body Wt</div>
+        <div className="flex items-center justify-between">
+          <div className="text-[10px] font-bold uppercase text-outline">% Body Wt</div>
+          {user?.bodyWeightKg && user.bodyWeightKg > 0 && (
+            <CarryScaleLegend role={user.role ?? "adult"} settings={householdSettings} />
+          )}
+        </div>
         {user?.bodyWeightKg && user.bodyWeightKg > 0 ? (
           (() => {
             const percent = bodyWeightPercent(totalCarried, user.bodyWeightKg);
@@ -185,6 +201,17 @@ export function PackColumn({ pack, tripId, checklistMode = false, allPacks }: Pa
             >
               <Plus className="size-3.5" />
             </Button>
+            {categoryIds.length > 0 && (
+              <Button
+                variant="ghost"
+                size="icon-xs"
+                onClick={toggleCollapseAll}
+                title={allCategoriesCollapsed ? "Expand all categories" : "Collapse all categories"}
+                className="text-outline hover:text-primary"
+              >
+                <ChevronsUpDown className="size-3.5" />
+              </Button>
+            )}
             <Button
               variant="ghost"
               size="icon-xs"
@@ -388,9 +415,11 @@ function CategoryGroup({
           <span className="text-xs font-bold font-mono tabular-nums text-on-surface-variant shrink-0">
             {displayWeight(subtotal, unit)}
           </span>
-          <div onClick={(e) => e.stopPropagation()} className="shrink-0 ml-auto">
-            <CategorySortMenu value={sortMode} onChange={onChangeSort} />
-          </div>
+          {!collapsed && (
+            <div onClick={(e) => e.stopPropagation()} className="shrink-0 ml-auto">
+              <CategorySortMenu value={sortMode} onChange={onChangeSort} />
+            </div>
+          )}
         </div>
       </div>
       {!collapsed && (
@@ -446,6 +475,46 @@ function CategoryGroup({
           })}
         </div>
       )}
+    </div>
+  );
+}
+
+function CarryScaleLegend({
+  role,
+  settings,
+}: {
+  role: "adult" | "child" | "pet";
+  settings: HouseholdSettings | null;
+}) {
+  const resolved = resolveSettings(settings);
+  const cfg = role === "pet" ? resolved.petCarryPercent : resolved.humanCarryPercent;
+  const tiers = [
+    { label: "Comfortable", max: `< ${cfg.ok}%`, color: "bg-green-500" },
+    { label: "OK", max: `${cfg.ok}–${cfg.warn}%`, color: "bg-yellow-500" },
+    { label: "Warn", max: `${cfg.warn}–${cfg.max}%`, color: "bg-orange-500" },
+    { label: "Overloaded", max: `≥ ${cfg.max}%`, color: "bg-red-500" },
+  ];
+  return (
+    <div className="group relative">
+      <div
+        className="flex h-1.5 w-12 overflow-hidden rounded-full cursor-help"
+        aria-label="Carry weight color scale"
+      >
+        <div className="flex-1 bg-green-500" />
+        <div className="flex-1 bg-yellow-500" />
+        <div className="flex-1 bg-orange-500" />
+        <div className="flex-1 bg-red-500" />
+      </div>
+      <div className="pointer-events-none absolute left-full top-1/2 z-20 ml-2 -translate-y-1/2 hidden min-w-40 rounded-md border border-outline-variant/20 bg-popover p-2 text-[10px] shadow-md group-hover:block">
+        <div className="mb-1 font-bold uppercase tracking-wider text-outline">Body-wt tiers</div>
+        {tiers.map((t) => (
+          <div key={t.label} className="flex items-center gap-2 py-0.5">
+            <span className={`inline-block size-2 rounded-full ${t.color}`} />
+            <span className="flex-1">{t.label}</span>
+            <span className="font-mono tabular-nums text-outline">{t.max}</span>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
