@@ -46,6 +46,7 @@ export const addMemberSchema = z.object({
   role: z.enum(["child", "pet"]),
   bodyWeightKg: z.number().positive().optional(),
   breed: z.string().max(100).optional(),
+  birthDate: z.string().optional(),
 });
 
 export const updateMemberSchema = z.object({

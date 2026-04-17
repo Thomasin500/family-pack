@@ -89,7 +89,7 @@ These were discussed and agreed upon. Do not revisit unless the user asks.
 
 1. **Owner vs Carrier:** `TripPackItem` has `trip_pack_id` (whose pack it's IN = carrier) and `owned_by_user_id` (whose gear it IS = owner). This one distinction enables: parent carries kid's sleeping bag, human carries overflow dog food, partner carries shared tent.
 
-2. **Pets as Users:** A pet is a User with `role: "pet"`, `managedByUserId` pointing to an adult, and `bodyWeightKg` for carry-limit calculations. No email, no login. Their closet is managed by the adult. In the trip workspace, they get their own pack column. This reuses the entire existing architecture.
+2. **Pets as Users:** A pet is a User with `role: "pet"` and `bodyWeightKg` for carry-limit calculations. No email, no login. **Any adult in the household** can edit, remove, or add gear to a pet (shared custody). `managedByUserId` is still recorded on create as an audit field ("who added Birch") but is no longer a permission gate. Children use the same model. In the trip workspace, pets get their own pack column. This reuses the entire existing architecture.
 
 3. **Shared gear pool:** Items with `owner_type: "shared"` belong to the household, not a person. On group trips, they appear in an unassigned pool and are dragged into someone's pack column.
 

@@ -6,7 +6,7 @@ import {
   Search,
   X,
   ChevronDown,
-  ChevronUp,
+  ChevronRight,
   Shirt,
   Flame,
   Layers,
@@ -82,6 +82,9 @@ export function GearPool({
   });
 
   const [expanded, setExpanded] = useState(false);
+  // Tracks an explicit collapse from the user — overrides the auto-expand that
+  // fires when there's unassigned shared gear. Reset when they open again.
+  const [userCollapsed, setUserCollapsed] = useState(false);
   const [search, setSearch] = useState("");
   const [ownerFilter, setOwnerFilter] = useState<string>("all");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
@@ -101,6 +104,7 @@ export function GearPool({
       if (tgt && tgt.isContentEditable) return;
       e.preventDefault();
       setExpanded(true);
+      setUserCollapsed(false);
       // Defer focus so the panel is rendered if it was collapsed.
       setTimeout(() => searchRef.current?.focus(), 0);
     }
@@ -113,8 +117,9 @@ export function GearPool({
     (it) => it.ownerType === "shared" && (packedQuantities[it.id] ?? 0) === 0
   ).length;
 
-  // Any unassigned shared → auto-expand (unless user has collapsed it this session).
-  const isOpen = forceExpanded || expanded || unassignedSharedCount > 0;
+  // Any unassigned shared → auto-expand, unless the user has explicitly
+  // collapsed the pool. Drag-and-drop forces open regardless.
+  const isOpen = forceExpanded || expanded || (unassignedSharedCount > 0 && !userCollapsed);
 
   // Effective pool source — includes already-packed items as a dimmed overlay
   // when the toggle is on. Deduped by id.
@@ -210,7 +215,10 @@ export function GearPool({
       <button
         ref={setPoolDropRef}
         type="button"
-        onClick={() => setExpanded(true)}
+        onClick={() => {
+          setExpanded(true);
+          setUserCollapsed(false);
+        }}
         className={`w-full rounded-xl border border-dashed px-4 py-3 text-left transition-colors ${
           poolIsOver
             ? "border-primary bg-primary/10"
@@ -218,11 +226,11 @@ export function GearPool({
         }`}
       >
         <div className="flex items-center gap-2">
+          <ChevronRight className="size-4 text-outline" />
           <Package className="size-4 text-outline" />
           <span className="text-xs font-bold uppercase tracking-widest text-outline">
             Gear Pool · {items.length} available
           </span>
-          <ChevronDown className="ml-auto size-4 text-outline" />
         </div>
       </button>
     );
@@ -235,8 +243,18 @@ export function GearPool({
         poolIsOver ? "border-primary ring-2 ring-primary/30" : "border-outline-variant/20"
       }`}
     >
-      {/* Header */}
-      <div className="flex items-center gap-2 px-4 py-2.5 border-b border-outline-variant/10">
+      {/* Header — entire bar toggles collapse (except the sort menu area) */}
+      <div
+        className={`flex items-center gap-2 px-4 py-2.5 border-b border-outline-variant/10 select-none ${
+          forceExpanded ? "" : "cursor-pointer"
+        }`}
+        onClick={() => {
+          if (forceExpanded) return;
+          setExpanded(false);
+          setUserCollapsed(true);
+        }}
+      >
+        <ChevronDown className="size-4 text-outline" />
         <Package className="size-4 text-primary" />
         <span className="text-xs font-bold uppercase tracking-widest">Gear Pool</span>
         <span className="text-xs text-outline">
@@ -247,20 +265,8 @@ export function GearPool({
             </span>
           )}
         </span>
-        <div className="ml-auto flex items-center gap-1.5">
+        <div className="ml-auto flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
           <CategorySortMenu value={sortMode} onChange={setSortMode} />
-          {/* Only allow user-collapse when there's no urgent unassigned shared gear */}
-          {unassignedSharedCount === 0 && !forceExpanded && (
-            <Button
-              variant="ghost"
-              size="icon-xs"
-              onClick={() => setExpanded(false)}
-              aria-label="Collapse pool"
-              title="Collapse pool"
-            >
-              <ChevronUp className="size-4 text-outline" />
-            </Button>
-          )}
         </div>
       </div>
 

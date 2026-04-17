@@ -6,7 +6,15 @@ import { Button } from "@/components/ui/button";
 import { displayWeight, bodyWeightPercent } from "@/lib/weight";
 import type { DisplayUnit } from "@/lib/weight";
 import { getCarryWarning } from "@/lib/carry-warnings";
-import { resolveSettings } from "@/lib/household-settings";
+import {
+  resolveSettings,
+  packClass,
+  packClassLabel,
+  packClassColor,
+  petClass,
+  petClassLabel,
+  petClassColor,
+} from "@/lib/household-settings";
 import { useWeightUnit } from "@/components/providers/weight-unit-provider";
 import { useHousehold } from "@/hooks/use-household";
 import { useUpdatePackItem } from "@/hooks/use-trip-pack-items";
@@ -152,20 +160,18 @@ export function PackColumn({ pack, tripId, checklistMode = false, allPacks }: Pa
         <div className="text-lg font-extrabold tabular-nums">{displayWeight(skinOut, unit)}</div>
       </div>
       <div className="rounded-lg bg-surface-low p-3">
-        <div className="flex items-center justify-between">
-          <div className="text-[10px] font-bold uppercase text-outline">% Body Wt</div>
-          {user?.bodyWeightKg && user.bodyWeightKg > 0 && (
-            <CarryScaleLegend role={user.role ?? "adult"} settings={householdSettings} />
-          )}
-        </div>
+        <div className="text-[10px] font-bold uppercase text-outline">% Body Wt</div>
         {user?.bodyWeightKg && user.bodyWeightKg > 0 ? (
           (() => {
             const percent = bodyWeightPercent(totalCarried, user.bodyWeightKg);
             const warning = getCarryWarning(percent, user.role ?? "adult", householdSettings);
             return (
-              <div className={`text-lg font-extrabold tabular-nums ${warning.color}`}>
-                {percent.toFixed(1)}%
-              </div>
+              <CarryPercentWithLegend
+                percent={percent}
+                color={warning.color}
+                role={user.role ?? "adult"}
+                settings={householdSettings}
+              />
             );
           })()
         ) : (
@@ -192,6 +198,13 @@ export function PackColumn({ pack, tripId, checklistMode = false, allPacks }: Pa
         </div>
         <div className="min-w-0 flex-1">
           <h2 className="text-base font-bold truncate">{user?.name}&apos;s Pack</h2>
+          <PackClassBadge
+            role={user?.role ?? "adult"}
+            baseWeightGrams={baseWeight}
+            totalCarriedGrams={totalCarried}
+            bodyWeightKg={user?.bodyWeightKg ?? null}
+            settings={householdSettings}
+          />
         </div>
         {collapsed ? (
           <span className="text-xs text-outline">
@@ -242,6 +255,9 @@ export function PackColumn({ pack, tripId, checklistMode = false, allPacks }: Pa
 
       {!collapsed && (
         <>
+          {/* Weight Summary — at top of pack */}
+          <div className="border-b border-outline-variant/10">{statsFooter}</div>
+
           {/* Checklist progress bar — segmented by category */}
           {checklistMode &&
             packItems.length > 0 &&
@@ -340,9 +356,6 @@ export function PackColumn({ pack, tripId, checklistMode = false, allPacks }: Pa
               />
             )}
           </div>
-
-          {/* Weight Summary Footer — same block reused in collapsed state */}
-          <div className="border-t border-outline-variant/10">{statsFooter}</div>
         </>
       )}
 
@@ -583,10 +596,63 @@ export function SortablePackItemRow({
   );
 }
 
-function CarryScaleLegend({
+/**
+ * Small class label shown under the person's name in the pack header.
+ * Humans get Ultralight / Lightweight / Traditional / Heavy based on base
+ * weight. Pets get Trail Runner / Trail Partner / Pack Dog / Overloaded
+ * based on carry % of body weight. Labels are hidden until the pack has
+ * enough data to classify (non-empty pack for humans, non-empty pack plus
+ * known body weight for pets).
+ */
+function PackClassBadge({
+  role,
+  baseWeightGrams,
+  totalCarriedGrams,
+  bodyWeightKg,
+  settings,
+}: {
+  role: "adult" | "child" | "pet";
+  baseWeightGrams: number;
+  totalCarriedGrams: number;
+  bodyWeightKg: number | null;
+  settings: HouseholdSettings | null;
+}) {
+  const resolved = resolveSettings(settings);
+
+  if (role === "pet") {
+    if (!bodyWeightKg || bodyWeightKg <= 0 || totalCarriedGrams <= 0) return null;
+    const percent = (totalCarriedGrams / (bodyWeightKg * 1000)) * 100;
+    const cls = petClass(percent, resolved.petCarryPercent);
+    return (
+      <div
+        className={`text-[10px] font-bold uppercase tracking-wider ${petClassColor(cls)}`}
+        title="Pet pack class, based on carry % of body weight"
+      >
+        {petClassLabel(cls)}
+      </div>
+    );
+  }
+
+  if (baseWeightGrams <= 0) return null;
+  const cls = packClass(baseWeightGrams, resolved.packClassGrams);
+  return (
+    <div
+      className={`text-[10px] font-bold uppercase tracking-wider ${packClassColor(cls)}`}
+      title="Pack class, based on base weight. Tiers configurable in Household Settings."
+    >
+      {packClassLabel(cls)}
+    </div>
+  );
+}
+
+function CarryPercentWithLegend({
+  percent,
+  color,
   role,
   settings,
 }: {
+  percent: number;
+  color: string;
   role: "adult" | "child" | "pet";
   settings: HouseholdSettings | null;
 }) {
@@ -599,17 +665,14 @@ function CarryScaleLegend({
     { label: "Overloaded", max: `≥ ${cfg.max}%`, color: "bg-red-500" },
   ];
   return (
-    <div className="group relative">
+    <div className="group relative inline-block">
       <div
-        className="flex h-1.5 w-12 overflow-hidden rounded-full cursor-help"
-        aria-label="Carry weight color scale"
+        className={`text-lg font-extrabold tabular-nums cursor-help ${color}`}
+        aria-label="Body weight percent — hover for tier legend"
       >
-        <div className="flex-1 bg-green-500" />
-        <div className="flex-1 bg-yellow-500" />
-        <div className="flex-1 bg-orange-500" />
-        <div className="flex-1 bg-red-500" />
+        {percent.toFixed(1)}%
       </div>
-      <div className="pointer-events-none absolute left-full top-1/2 z-20 ml-2 -translate-y-1/2 hidden min-w-40 rounded-md border border-outline-variant/20 bg-popover p-2 text-[10px] shadow-md group-hover:block">
+      <div className="pointer-events-none absolute left-0 top-full z-20 mt-1 hidden min-w-40 rounded-md border border-outline-variant/20 bg-popover p-2 text-[10px] shadow-md group-hover:block">
         <div className="mb-1 font-bold uppercase tracking-wider text-outline">Body-wt tiers</div>
         {tiers.map((t) => (
           <div key={t.label} className="flex items-center gap-2 py-0.5">

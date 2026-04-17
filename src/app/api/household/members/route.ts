@@ -8,7 +8,7 @@ export async function POST(req: NextRequest) {
   try {
     const user = await getAuthenticatedUser();
 
-    const { name, role, bodyWeightKg, breed } = addMemberSchema.parse(await req.json());
+    const { name, role, bodyWeightKg, breed, birthDate } = addMemberSchema.parse(await req.json());
 
     const [member] = await db
       .insert(users)
@@ -17,6 +17,7 @@ export async function POST(req: NextRequest) {
         role,
         bodyWeightKg: bodyWeightKg ?? null,
         breed: breed ?? null,
+        birthDate: birthDate ?? null,
         managedByUserId: user.id,
         householdId: user.householdId,
       })

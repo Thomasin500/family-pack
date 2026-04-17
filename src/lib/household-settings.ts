@@ -100,10 +100,54 @@ export function packClassColor(cls: PackClass): string {
 
 export function packClassLabel(cls: PackClass): string {
   return cls === "ultralight"
-    ? "Ultralight"
+    ? "Ultralight Pack"
     : cls === "lightweight"
-      ? "Lightweight"
+      ? "Lightweight Pack"
       : cls === "traditional"
-        ? "Traditional"
-        : "Heavy";
+        ? "Traditional Pack"
+        : "Heavy Pack";
+}
+
+export type PetClass = "trail-runner" | "trail-partner" | "pack-dog" | "overloaded";
+
+/**
+ * Classify a pet pack by carry-% of body weight, using the household's pet
+ * carry tiers. Mirrors the four-tier ramp used for humans and
+ * `getCarryWarning` but outputs the pet-specific Trail Runner / Trail Partner
+ * / Pack Dog / Overloaded labels from the roadmap.
+ */
+export function petClass(
+  carryPercentOfBodyWeight: number,
+  settings: Required<HouseholdSettings>["petCarryPercent"]
+): PetClass {
+  if (carryPercentOfBodyWeight < settings.ok) return "trail-runner";
+  if (carryPercentOfBodyWeight < settings.warn) return "trail-partner";
+  if (carryPercentOfBodyWeight < settings.max) return "pack-dog";
+  return "overloaded";
+}
+
+export function petClassLabel(cls: PetClass): string {
+  switch (cls) {
+    case "trail-runner":
+      return "Trail Runner";
+    case "trail-partner":
+      return "Trail Partner";
+    case "pack-dog":
+      return "Pack Dog";
+    case "overloaded":
+      return "Overloaded";
+  }
+}
+
+export function petClassColor(cls: PetClass): string {
+  switch (cls) {
+    case "trail-runner":
+      return "text-green-600 dark:text-green-400";
+    case "trail-partner":
+      return "text-yellow-600 dark:text-yellow-400";
+    case "pack-dog":
+      return "text-orange-600 dark:text-orange-400";
+    case "overloaded":
+      return "text-red-600 dark:text-red-400";
+  }
 }

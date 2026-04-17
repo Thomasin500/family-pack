@@ -108,7 +108,7 @@ _Small, batchable fixes driven by beta-testing feedback. Almost everything shipp
 | Inline category editor                | `CategoryEditor` extracted from `CategoryManager` so the household settings page edits categories inline instead of opening a popup. Closet still uses the Dialog wrapper.                                                                                         | XS     | **Done**    |
 | Changelog grouping                    | Drawer groups entries by date (no time) and caps the visible list at 10 items with a "Show N older changes" toggle.                                                                                                                                                | XS     | **Done**    |
 | Lighten dark / darken light           | Pull the dark bg/surface tokens up a step, pull the light tokens down a step. Coordinate with the design-exports palette.                                                                                                                                          | S      | Not started |
-| Revamp pet creation                   | Replace inline dashboard pet form with a proper guided dialog (name, breed/size, body weight, carry %, managed-by adult). Mirror the polish of the trip/member dialogs.                                                                                            | S      | Not started |
+| Revamp pet creation                   | New `PetDialog` replaces the inline dashboard form (name, weight, age, breed). Age stored as birthDate so it drifts forward each year. Permission fan-out: any adult in the household can now manage pets and children (shared custody).                           | S      | **Done**    |
 | Trip pack totals position (Q)         | Design question: top of card, bottom, or both? Prototype and pick. See `docs/bugs.md`.                                                                                                                                                                             | S      | Not started |
 
 ---
@@ -117,15 +117,16 @@ _Small, batchable fixes driven by beta-testing feedback. Almost everything shipp
 
 _Make the trip workspace visually rich and data-driven. Pulled forward from Phases 6, 7, 9. This is where the app stops feeling like a spreadsheet. Pack-class labels landed ahead of time in Phase 4.6 via the household settings page and the trip tile color scale._
 
-| Feature                         | What                                                                                                                                                                                                  | Effort | Status      |
-| ------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | ----------- |
-| Trip stats panel                | Collapsible bottom/side panel on workspace. Per-person weight breakdown, category bar charts (recharts), pack class labels, shared gear balance, total household weight. Toggle via button in header. | M      | Not started |
-| Shared weight balance           | Stacked bar showing shared vs personal vs activity gear per person. Smart summary: "Thomas carries 68% of shared gear." Delta indicator. Separates fairness from personal choice.                     | S-M    | Not started |
-| Personal vs shared % (per pack) | Each pack card shows a small inline breakdown: "72% personal, 28% shared" (or similar). Visible at-a-glance without opening the stats panel. Counterpart to the group-level balance view above.       | S      | Not started |
-| Pack class labels (UI)          | Visible labels (Ultralight / Lightweight / Light / Traditional / Heavy) on pack column headers. Thresholds already configurable per-household via `/app/settings/household`.                          | S      | Partial     |
-| Smart trip tags                 | Auto-derived from pack contents: Warm Rated, Cold Weather, Fishing, Multi-Day, Ultralight, Lightweight, Bear Safe, Dog Friendly, Minimalist, Well-Equipped. Shown on trip cards + workspace header.   | S      | Not started |
-| Trip metadata expansion         | Show/edit terrain, temp range, description in workspace. New schema fields: `distanceMiles`, `durationDays`, `elevationGainFt`, `elevationHighFt`. Display in header + stats panel + edit dialog.     | S-M    | Not started |
-| Category weight charts          | Horizontal bar chart per category using recharts, per-person or stacked comparison view. Displayed in stats panel.                                                                                    | S      | Not started |
+| Feature                         | What                                                                                                                                                                                                                                   | Effort | Status      |
+| ------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | ----------- |
+| Trip stats panel                | Collapsible bottom/side panel on workspace. Per-person weight breakdown, category bar charts (recharts), pack class labels, shared gear balance, total household weight. Toggle via button in header.                                  | M      | Not started |
+| Shared weight balance           | Stacked bar showing shared vs personal vs activity gear per person. Smart summary: "Thomas carries 68% of shared gear." Delta indicator. Separates fairness from personal choice.                                                      | S-M    | Not started |
+| Personal vs shared % (per pack) | Each pack card shows a small inline breakdown: "72% personal, 28% shared" (or similar). Visible at-a-glance without opening the stats panel. Counterpart to the group-level balance view above.                                        | S      | Not started |
+| Pack class labels (UI)          | Visible labels (Ultralight / Lightweight / Traditional / Heavy) on pack column headers for humans; Trail Runner / Trail Partner / Pack Dog / Overloaded for pets. Thresholds configurable per-household via `/app/settings/household`. | S      | **Done**    |
+| Smart trip tags                 | Auto-derived from pack contents: Warm Rated, Cold Weather, Fishing, Multi-Day, Ultralight, Lightweight, Bear Safe, Dog Friendly, Minimalist, Well-Equipped. Shown on trip cards + workspace header.                                    | S      | Not started |
+| Trip metadata expansion         | Show/edit terrain, temp range, description in workspace. New schema fields: `distanceMiles`, `durationDays`, `elevationGainFt`, `elevationHighFt`. Display in header + stats panel + edit dialog.                                      | S-M    | Not started |
+| Category weight charts          | Horizontal bar chart per category using recharts, per-person or stacked comparison view. Displayed in stats panel.                                                                                                                     | S      | Not started |
+| Body weight % on trip tile      | Show `% body weight` as a child row under Carried weight on each per-person column of the trip tile (reusing the colored 4-tier scale from the pack card).                                                                             | XS     | Not started |
 
 ### Pack Class Labels
 
@@ -140,6 +141,19 @@ _Make the trip workspace visually rich and data-driven. Pulled forward from Phas
 ### Smart Trip Tags (auto-derived)
 
 Warm Rated, Cold Weather, Fishing, Multi-Day, Ultralight, Lightweight, Bear Safe, Dog Friendly, Minimalist, Well-Equipped
+
+---
+
+## Phase 5.5: Dashboard Refresh
+
+_The dashboard is currently mostly empty outside of the Household/Invite panel. Long-term it should answer "what's next?" at a glance. See bugs.md design Q for the broader "what should the dashboard show" conversation._
+
+| Feature              | What                                                                                                                                                          | Effort | Status      |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | ----------- |
+| Upcoming trip tile   | Card showing the next upcoming trip (by startDate) with name, dates, countdown, quick-link to the workspace. Empty state links to "Plan a trip."              | S      | Not started |
+| Most recent pack     | Snapshot of the most recently touched pack — trip name, owner, total weight, pack class. Quick-link into that pack on its trip workspace.                     | S      | Not started |
+| Quick stats row      | Household at-a-glance: active trip count, total closet weight, lightest base weight across trips, items packed this year. Compact row, no graphs.             | S      | Not started |
+| Dashboard Q (design) | Open design question: what _else_ belongs on the dashboard long-term? Readiness summary, carry balance warnings, gear history highlights? See `docs/bugs.md`. | —      | —           |
 
 ---
 
@@ -202,6 +216,7 @@ _Upgrading the trip workspace into a drag-and-drop loadout builder. Broken into 
 | Cut list                  | Mark trip items as "considering cutting." Dimmed display, running savings tally, "new base weight if cuts applied" preview.                                                                                                                                                      | S-M    | Not started       |
 | "Not on This Trip"        | Subsumed by the Gear Pool's "show already packed" toggle (M6).                                                                                                                                                                                                                   | —      | Planned in M6     |
 | Closet item drag-and-drop | Reorder items within categories, drag items between categories.                                                                                                                                                                                                                  | S      | dnd-kit installed |
+| Item details modal        | Clicking a Gear Pool chip (or a pack row) opens a read-only item-details modal — name, brand/model, notes, weight in all units, category, owner, trip history, product link (Phase 9). Click still assigns via primary action; details is a secondary affordance (icon or hold). | S      | Not started       |
 
 ---
 
@@ -226,12 +241,13 @@ _Pay down debt before scaling further. Core tech debt completed April 15, 2026._
 
 _Tie trips to real places so we can layer in external data (starting with weather)._
 
-| Feature                  | What                                                                                                                                                                                                  | Effort | Status      |
-| ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | ----------- |
-| Geocoded trip location   | Replace freeform location text with a typeahead backed by a geocoding API (Nominatim / Mapbox / Google). Store `lat`, `lng`, `placeId`, `displayName`. Keep freeform as fallback.                     | M      | Not started |
-| Weather forecast panel   | For trips within forecast window (0-14 days), show daily forecast (high/low/precip/wind) for the trip location on the workspace header and share page. Use NOAA / Open-Meteo (free, no key needed).   | M      | Not started |
-| Seasonal climate hint    | For trips beyond forecast window, show 30-year climate normals (typical high/low/precip for that place and month). Drives readiness warnings (e.g., "below freezing expected — no insulation layer"). | S-M    | Not started |
-| Weather-driven readiness | Feed forecast into the readiness system — missing rain gear when precip forecast, missing insulation below threshold temps, etc.                                                                      | S      | Not started |
+| Feature                  | What                                                                                                                                                                                                                                                            | Effort | Status      |
+| ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | ----------- |
+| Geocoded trip location   | Replace freeform location text with a typeahead backed by a geocoding API (Nominatim / Mapbox / Google). Store `lat`, `lng`, `placeId`, `displayName`. Keep freeform as fallback.                                                                               | M      | Not started |
+| Weather forecast panel   | For trips within forecast window (0-14 days), show daily forecast (high/low/precip/wind) for the trip location on the workspace header and share page. Use NOAA / Open-Meteo (free, no key needed).                                                             | M      | Not started |
+| Seasonal climate hint    | For trips beyond forecast window, show 30-year climate normals (typical high/low/precip for that place and month). Drives readiness warnings (e.g., "below freezing expected — no insulation layer").                                                           | S-M    | Not started |
+| Weather-driven readiness | Feed forecast into the readiness system — missing rain gear when precip forecast, missing insulation below threshold temps, etc.                                                                                                                                | S      | Not started |
+| Trip alerts & advisories | Pull land-manager alerts for the trip location: fire restrictions (USFS / InciWeb), NPS park alerts, flood warnings (NWS), trail closures, water availability (CalTopo / community). Surface in the trip header above the forecast, with links out for details. | M-L    | Not started |
 
 ---
 
@@ -239,24 +255,41 @@ _Tie trips to real places so we can layer in external data (starting with weathe
 
 _The features that make the app feel smart._
 
-| Feature               | What                                                                                                                         | Effort | Status      |
-| --------------------- | ---------------------------------------------------------------------------------------------------------------------------- | ------ | ----------- |
-| Readiness system      | Ten Essentials fuzzy matching on item names/categories, per-person score (0-100%), dismissable warnings, dog-specific checks | M-L    | Not started |
-| Activity tags         | Tag picker UI on items/categories, closet filter, trip activity selection auto-suggests relevant categories                  | S      | Not started |
-| Balance intelligence  | Capacity % view, highlight most overloaded member, one-click auto-suggest rebalance ("move tent to Partner to equalize")     | M      | Not started |
-| Gear history insights | Core vs occasional gear identification, actual vs planned weight, per-trip notes ("bring longer stakes next time")           | S-M    | Not started |
+| Feature                  | What                                                                                                                                                                                                                                                                                                       | Effort | Status      |
+| ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | ----------- |
+| Readiness system         | Ten Essentials fuzzy matching on item names/categories, per-person score (0-100%), dismissable warnings, dog-specific checks                                                                                                                                                                               | M-L    | Not started |
+| Activity tags            | Tag picker UI on items/categories, closet filter, trip activity selection auto-suggests relevant categories                                                                                                                                                                                                | S      | Not started |
+| Balance intelligence     | Capacity % view, highlight most overloaded member, one-click auto-suggest rebalance ("move tent to Partner to equalize")                                                                                                                                                                                   | M      | Not started |
+| Gear history insights    | Core vs occasional gear identification, actual vs planned weight, per-trip notes ("bring longer stakes next time")                                                                                                                                                                                         | S-M    | Not started |
+| Gear class ratings       | Category-specific weight classes on items (e.g. tents: Ultralight < 2 lb / Lightweight 2-3 lb / Standard 3-5 lb / Heavy > 5 lb; sleeping pads, bags, backpacks get their own scales). Rated inline on the item row ("Your tent is Standard-class"). Data seeded from community consensus on catalog items. | M      | Not started |
+| Product links on catalog | Smart brand/model match links out to the manufacturer's product page plus REI / Backcountry / Amazon / Garage Grown Gear search. One-click "shop" from any item; shows review count + spec snippet when available. No affiliate relationship for MVP.                                                      | M      | Not started |
 
 ---
 
 ## Phase 10: Import/Export & Advanced
 
-| Feature            | What                                                                   | Effort | Status      |
-| ------------------ | ---------------------------------------------------------------------- | ------ | ----------- |
-| LighterPack import | Parse CSV, map columns to schema, preview/confirm, generic CSV import  | M      | Not started |
-| CSV/PDF export     | Per-pack and whole-trip CSV, print-friendly PDF view                   | M      | Not started |
-| Reusable kits      | Kit CRUD, add kit to pack, shared vs personal kits, kit weight summary | M      | Not started |
-| Comparison view    | Side-by-side trip comparison, diff highlighting, weight delta summary  | M      | Not started |
-| Household stats    | Trip count, lightest trip, total gear investment, fun summaries        | S      | Not started |
+| Feature                   | What                                                                                                                                                                                                                                                                                                        | Effort | Status      |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | ----------- |
+| LighterPack import        | Parse CSV, map columns to schema, preview/confirm, generic CSV import                                                                                                                                                                                                                                       | M      | Not started |
+| CSV/PDF export            | Per-pack and whole-trip CSV, print-friendly PDF view                                                                                                                                                                                                                                                        | M      | Not started |
+| Reusable kits             | Kit CRUD, add kit to pack, shared vs personal kits, kit weight summary                                                                                                                                                                                                                                      | M      | Not started |
+| Comparison view           | Side-by-side trip comparison, diff highlighting, weight delta summary                                                                                                                                                                                                                                       | M      | Not started |
+| Household stats           | Trip count, lightest trip, total gear investment, fun summaries                                                                                                                                                                                                                                             | S      | Not started |
+| Copy pack to another trip | From any pack on any trip, "Copy to…" dropdown lists the user's other trips (and "New trip from this pack"). Atomic server-side copy — replicates the `TripPack` and every `TripPackItem` (preserving `ownedByUserId`, quantity, worn/consumable overrides). Target pack merges or replaces, user prompted. | S-M    | Not started |
+
+---
+
+## Phase 10.5: Kid Accounts
+
+_Evolve the latent `child` role into a real first-class account type. Today a child is just a User row with `role: "child"` that any adult can manage — there's no way for a kid to log in or see their own gear._
+
+| Feature                      | What                                                                                                                                                                                                                                                                                                            | Effort | Status      |
+| ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | ----------- |
+| Child dialog (parity w/ pet) | Counterpart to `PetDialog` — name, body weight, birth date (known precisely for kids), sex (optional). Any adult can add/edit/remove. No email, no login yet.                                                                                                                                                   | S      | Not started |
+| Child login                  | Kids can sign in on their own — simple credentials (short username + parent-set PIN, or magic-link via parent email). Account is linked to the same household, but gates are on `role`.                                                                                                                         | M-L    | Not started |
+| Restricted permissions       | Logged-in children can view the household closet, their own pack on trips, check items off in checklist mode, and edit their own gear. They **cannot** delete trips, remove members, change household settings, edit other people's packs, or touch shared gear assignments. Adult-only endpoints return 403.   | M      | Not started |
+| Age-aware defaults           | Default carry %, default loadout routing, UI simplifications tied to the child's birth date (see spec §4 — 0-4 / 5-7 / 8-11 / 12-15 / 16+ buckets).                                                                                                                                                             | S-M    | Not started |
+| Kids mode (far future)       | Opt-in simplified UI skin for logged-in kid accounts. Bigger touch targets, fewer columns, playful icons, RPG-flavored copy ("You're a Trail Scout"). Hides advanced features (what-if, stats panels, household settings). Parents toggle it on per-child. Also usable as a guest/"younger kid" mode on mobile. | L      | Not started |
 
 ---
 
@@ -278,6 +311,22 @@ _Tier 4. Only when the core is rock solid._
 | Gear condition tracking | Lifespan, wear tracking                                                                                                                                                                                            | S      | Not started |
 | Cost tracking           | Gear investment per category, over time                                                                                                                                                                            | S      | Not started |
 | Split unit prefs        | Two-axis preference: `itemsUnit` (per-item display) + `totalsUnit` (per-pack + summary display). Totals default to lb, items default to oz. Toggle cycles `itemsUnit`; totals unit set in household/user settings. | S-M    | Not started |
+
+---
+
+## Phase 12: AI Copilot
+
+_Natural-language interface over the user's own household, trips, and closet. Not a general gear chatbot — it's the readiness system and stats panel talking. Strongest fit once Phase 9 (Readiness) is built, since that's what gives the model something real to say._
+
+| Feature                  | What                                                                                                                                                                                                                             | Effort | Status      |
+| ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | ----------- |
+| Chat drawer              | Collapsible right-hand drawer on `/app/*`. "Ask about your household, trips, or gear." Streaming responses via Vercel AI SDK v6 + AI Gateway. Default Anthropic model; fall back through the gateway.                            | M      | Not started |
+| Household context tools  | LLM tools that query the current user's data: `get_trip(id)`, `list_packs(trip_id)`, `get_closet(user_id)`, `get_readiness(trip_id)`, `search_items(query)`, `get_settings()`. Scoped by session; never sees other households.   | M      | Not started |
+| Conversation history     | Persist threads server-side per user: `ai_thread` + `ai_message` tables. List past conversations in the drawer, click to resume. Messages store role + content + tool calls + tool results. Auto-title from the first user turn. | M      | Not started |
+| Trip-scoped shortcuts    | Buttons like "Why is my readiness 72%?", "What's the heaviest item?", "Rebalance my pack" on the trip workspace fire pre-canned prompts with the current trip as context. Keeps new users from staring at a blank text box.      | S      | Not started |
+| Chat-to-action           | Model can propose mutations (`move_item(trip, from, to)`, `toggle_cut(item)`, `add_to_pack(item, pack)`) as tool calls, but every action is surfaced as a confirm dialog before hitting the DB. Never silently mutates.          | M-L    | Not started |
+| Streaming + citations    | Responses stream token-by-token; each claim links back to the source (the specific pack row, the readiness check that fired, the catalog entry). Click a citation to scroll to it.                                               | S-M    | Not started |
+| Context budget + caching | Every response uses prompt caching on the large household-context section. Conversation history uses the "last N turns + summarized older" compaction pattern so long threads don't blow the context window.                     | S      | Not started |
 
 ---
 
@@ -311,20 +360,24 @@ _Features pushed out of the near-term plan. Still in spec, revisit when the need
 
 ## Summary
 
-| Phase   | Theme                                              | Features | Cumulative                                  |
-| ------- | -------------------------------------------------- | -------- | ------------------------------------------- |
-| **1-4** | Foundation through core                            | ~30      | ~30/140 (21%) — **DONE**                    |
-| **4.5** | Quick wins + fixes                                 | ~20      | ~50 (36%) — **DONE**                        |
-| **8**   | Tech debt (core)                                   | 5        | ~55 (39%) — **DONE**                        |
-| **4.6** | Beta-ready polish                                  | ~18      | ~73 (52%) — **DONE**                        |
-| **4.7** | Quick wins & polish                                | ~13      | ~86 (61%) — **MOSTLY DONE** (2 items open)  |
-| **7**   | Gear Pool + Drag-and-drop (M1–M6) + security audit | ~12      | ~98 (70%) — **MOSTLY DONE** (Cut list TODO) |
-| **5**   | Trip stats & visualization                         | 6        | ~104 (74%)                                  |
-| **6**   | Party view & loadout                               | 5        | ~109 (78%)                                  |
-| **8b**  | Polish (mobile, sharing)                           | 3        | ~112 (80%)                                  |
-| **9**   | Intelligence & readiness                           | 4        | ~116 (83%)                                  |
-| **10**  | Import/export + advanced                           | 5        | ~121 (86%)                                  |
-| **11**  | Community & scale                                  | 8        | ~129 (92%)                                  |
+| Phase    | Theme                                              | Features | Cumulative                                  |
+| -------- | -------------------------------------------------- | -------- | ------------------------------------------- |
+| **1-4**  | Foundation through core                            | ~30      | ~30/140 (21%) — **DONE**                    |
+| **4.5**  | Quick wins + fixes                                 | ~20      | ~50 (36%) — **DONE**                        |
+| **8**    | Tech debt (core)                                   | 5        | ~55 (39%) — **DONE**                        |
+| **4.6**  | Beta-ready polish                                  | ~18      | ~73 (52%) — **DONE**                        |
+| **4.7**  | Quick wins & polish                                | ~13      | ~86 (61%) — **MOSTLY DONE** (2 items open)  |
+| **7**    | Gear Pool + Drag-and-drop (M1–M6) + security audit | ~12      | ~98 (70%) — **MOSTLY DONE** (Cut list TODO) |
+| **5**    | Trip stats & visualization                         | 7        | ~105 (75%)                                  |
+| **5.5**  | Dashboard refresh                                  | 3        | ~108 (77%)                                  |
+| **6**    | Party view & loadout                               | 5        | ~113 (81%)                                  |
+| **8b**   | Polish (mobile, sharing)                           | 3        | ~116 (83%)                                  |
+| **8.5**  | Location, weather, alerts                          | 5        | ~121 (86%)                                  |
+| **9**    | Intelligence & readiness                           | 6        | ~127 (91%)                                  |
+| **10**   | Import/export + advanced                           | 6        | ~133 (95%)                                  |
+| **10.5** | Kid accounts (login, restricted perms, kids mode)  | 5        | ~138 (99%)                                  |
+| **11**   | Community & scale                                  | 8        | ~146 (104%)                                 |
+| **12**   | AI copilot                                         | 7        | ~153 (109%)                                 |
 
 Phase 7 (Gear Pool + drag-and-drop) shipped April 16-17 — six milestones M1-M6 plus eight cross-household security holes closed plus uniform mutation error toasts across every hook in the app. Cut list + "not on this trip" still open for a later pass.
 

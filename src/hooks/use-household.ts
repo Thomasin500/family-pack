@@ -63,7 +63,13 @@ export function useJoinHousehold() {
 export function useAddMember() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: { name: string; role: string; bodyWeightKg?: number; breed?: string }) =>
+    mutationFn: (data: {
+      name: string;
+      role: string;
+      bodyWeightKg?: number;
+      breed?: string;
+      birthDate?: string;
+    }) =>
       fetchApi("/api/household/members", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

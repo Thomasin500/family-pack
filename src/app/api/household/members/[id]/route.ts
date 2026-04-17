@@ -21,11 +21,12 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       throw new ApiError(403, "Not in your household");
     }
 
-    // Only allow editing managed members (pets/children) or yourself
+    // Anyone in the household can manage pets and children (shared custody).
+    // Adults can only edit their own profile.
     const isSelf = member.id === authedUser.id;
-    const isManaged = member.managedByUserId === authedUser.id;
-    if (!isSelf && !isManaged) {
-      throw new ApiError(403, "You can only edit your own profile or members you manage");
+    const isManagedRole = member.role === "pet" || member.role === "child";
+    if (!isSelf && !isManagedRole) {
+      throw new ApiError(403, "Adults can only edit their own profile");
     }
 
     if (Object.keys(body).length === 0) {
@@ -57,14 +58,11 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
     if (member.id === authedUser.id) {
       throw new ApiError(400, "Cannot delete yourself");
     }
-    if (!member.managedByUserId) {
+    if (member.role === "adult") {
       throw new ApiError(
         400,
         "Cannot delete adult members — they must leave the household themselves"
       );
-    }
-    if (member.managedByUserId !== authedUser.id) {
-      throw new ApiError(403, "You can only delete members you manage");
     }
 
     // Kill any active sessions before the row goes away (cascade would do it too,

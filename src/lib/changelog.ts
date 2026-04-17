@@ -8,6 +8,35 @@ export interface ChangelogEntry {
 // Newest first.
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    at: "2026-04-17T17:00:00-06:00",
+    title: "Theme refresh + pack class labels",
+    items: [
+      "Light mode picked up a subtle warm-brown undertone and dropped a few points of brightness. Close to the original off-white feel — just enough warmth to stop feeling clinical without going into sage-swamp territory.",
+      "Dark theme lightened and pushed toward sage. Every surface / card / background / border / outline token bumped up ~8 points on a green-biased ramp. Primary accent warmed up a touch. Easier on the eyes, still moody.",
+      "Every pack column now shows its class under the person's name: Ultralight / Lightweight / Traditional / Heavy for humans, Trail Runner / Trail Partner / Pack Dog / Overloaded for pets. Color-coded on the same green → red ramp used elsewhere in the app. Thresholds still come from Household Settings.",
+      "The paw print in the Household panel is now a proper 'Add pet' button with label — no more mystery meat icon.",
+    ],
+  },
+  {
+    at: "2026-04-17T14:30:00-06:00",
+    title: "Pet creation revamp",
+    items: [
+      "New Pet dialog replaces the inline dashboard form. Cleaner layout with Name, Weight, Age, and Breed fields — same polish as the trip and member dialogs.",
+      "Age is new. Stored as a birthDate so the pet naturally ages each year without manual updates.",
+      "Shared custody: any adult in the household can now add, edit, or remove pets and children. The old rule that only the creating adult could manage them is gone.",
+      "Pets and children belong to the household, not to the adult who added them. Leaving a household no longer takes them with you — they stay where their family is.",
+      "Editing a pet opens the same dialog — no more inline edit strip on the member row.",
+    ],
+  },
+  {
+    at: "2026-04-17T12:00:00-06:00",
+    title: "Trip pack totals moved to the top",
+    items: [
+      "Pack weight stats (Base / Total Carried / Skin-Out / % Body Wt) now render at the top of each pack card instead of the bottom. Always visible without scrolling.",
+      "Body-weight tier legend is now a hover tooltip on the percent itself — no more standalone color bar next to the label. Hover the colored percent to see the Comfortable / OK / Warn / Overloaded thresholds.",
+    ],
+  },
+  {
     at: "2026-04-17T00:15:00-06:00",
     title: "Quick wins — deep links, error toasts, tighter API scoping",
     items: [

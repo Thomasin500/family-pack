@@ -77,52 +77,54 @@
    Finalized April 15, 2026 via 5 rounds of Stitch iteration */
 
 :root {
-  /* Light mode — minimal support, dark-first app */
-  --background: #f5f5f0;
+  /* Light mode — warm cream, subtle brown undertone. Dark-first app, so this
+     ramp deliberately stays close to the original off-white feel — just a few
+     points warmer (R > G) and a touch darker than before. */
+  --background: #ece6d6;
   --foreground: #13140f;
-  --card: #eaeae4;
+  --card: #dfd9c6;
   --card-foreground: #13140f;
-  --popover: #eaeae4;
+  --popover: #dfd9c6;
   --popover-foreground: #13140f;
   --primary: #38693b;
-  --primary-foreground: #e4e3d9;
+  --primary-foreground: #ede7d6;
   --secondary: #ea6b1e;
   --secondary-foreground: #ffffff;
-  --muted: #deded8;
-  --muted-foreground: #5a5d56;
-  --accent: #deded8;
+  --muted: #d2ccba;
+  --muted-foreground: #5a5242;
+  --accent: #d2ccba;
   --accent-foreground: #13140f;
   --destructive: #dc2626;
-  --border: #c1c9bd;
-  --input: #c1c9bd;
+  --border: #b8b097;
+  --input: #b8b097;
   --ring: #6b9e6b;
   --chart-1: #6b9e6b;
   --chart-2: #ea6b1e;
   --chart-3: #3a86ff;
   --chart-4: #c77c94;
-  --chart-5: #8b9388;
+  --chart-5: #8b8573;
   --radius: 0.5rem;
-  --sidebar: #eaeae4;
+  --sidebar: #dfd9c6;
   --sidebar-foreground: #13140f;
   --sidebar-primary: #38693b;
-  --sidebar-primary-foreground: #e4e3d9;
-  --sidebar-accent: #deded8;
+  --sidebar-primary-foreground: #ede7d6;
+  --sidebar-accent: #d2ccba;
   --sidebar-accent-foreground: #13140f;
-  --sidebar-border: #c1c9bd;
+  --sidebar-border: #b8b097;
   --sidebar-ring: #6b9e6b;
 
   /* Extended tokens — light mode equivalents */
-  --surface-lowest: #e8e8e2;
-  --surface-low: #eaeae4;
-  --surface-base: #f0f0ea;
-  --surface-high: #deded8;
-  --surface-highest: #d2d2cc;
-  --surface-bright: #c8c8c2;
+  --surface-lowest: #ddd6c3;
+  --surface-low: #dfd9c6;
+  --surface-base: #e6dfcc;
+  --surface-high: #d2ccba;
+  --surface-highest: #c6bea9;
+  --surface-bright: #bbb39e;
   --primary-container: #38693b;
-  --on-primary-container: #e4e3d9;
-  --outline: #5a5d56;
-  --outline-variant: #c1c9bd;
-  --on-surface-variant: #5a5d56;
+  --on-primary-container: #ede7d6;
+  --outline: #5a5242;
+  --outline-variant: #b8b097;
+  --on-surface-variant: #4a4235;
 
   --cat-shelter: #38693b;
   --cat-sleep: #2563eb;
@@ -136,50 +138,50 @@
 }
 
 .dark {
-  --background: #13140f;
-  --foreground: #e4e3d9;
-  --card: #1f201a;
-  --card-foreground: #e4e3d9;
-  --popover: #1f201a;
-  --popover-foreground: #e4e3d9;
-  --primary: #9ed49c;
+  --background: #1f221a;
+  --foreground: #e6e7dc;
+  --card: #2c3028;
+  --card-foreground: #e6e7dc;
+  --popover: #2c3028;
+  --popover-foreground: #e6e7dc;
+  --primary: #a6dba4;
   --primary-foreground: #043911;
   --secondary: #ea6b1e;
   --secondary-foreground: #ffffff;
-  --muted: #292a24;
-  --muted-foreground: #8b9388;
-  --accent: #292a24;
-  --accent-foreground: #e4e3d9;
+  --muted: #373b32;
+  --muted-foreground: #a1a99d;
+  --accent: #373b32;
+  --accent-foreground: #e6e7dc;
   --destructive: #ffb4ab;
-  --border: #414940;
-  --input: #414940;
-  --ring: #6b9e6b;
+  --border: #535a51;
+  --input: #535a51;
+  --ring: #7ab078;
   --chart-1: #9ed49c;
   --chart-2: #ea6b1e;
   --chart-3: #3a86ff;
   --chart-4: #c77c94;
   --chart-5: #8b9388;
-  --sidebar: #1b1c16;
-  --sidebar-foreground: #e4e3d9;
-  --sidebar-primary: #9ed49c;
+  --sidebar: #272b23;
+  --sidebar-foreground: #e6e7dc;
+  --sidebar-primary: #a6dba4;
   --sidebar-primary-foreground: #043911;
-  --sidebar-accent: #292a24;
-  --sidebar-accent-foreground: #e4e3d9;
-  --sidebar-border: #414940;
-  --sidebar-ring: #6b9e6b;
+  --sidebar-accent: #373b32;
+  --sidebar-accent-foreground: #e6e7dc;
+  --sidebar-border: #535a51;
+  --sidebar-ring: #7ab078;
 
   /* Extended tokens for Family Pack */
-  --surface-lowest: #0e0f0a;
-  --surface-low: #1b1c16;
-  --surface-base: #1f201a;
-  --surface-high: #292a24;
-  --surface-highest: #34352f;
-  --surface-bright: #393a33;
-  --primary-container: #6b9e6b;
+  --surface-lowest: #1a1d16;
+  --surface-low: #272b23;
+  --surface-base: #2c3028;
+  --surface-high: #373b32;
+  --surface-highest: #43473d;
+  --surface-bright: #4a4e43;
+  --primary-container: #7ab078;
   --on-primary-container: #00330d;
-  --outline: #8b9388;
-  --outline-variant: #414940;
-  --on-surface-variant: #c1c9bd;
+  --outline: #a1a99d;
+  --outline-variant: #535a51;
+  --on-surface-variant: #d2d9ce;
 
   /* Category border colors */
   --cat-shelter: #6b9e6b;
