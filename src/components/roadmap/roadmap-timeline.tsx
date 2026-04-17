@@ -1,7 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { CheckCircle2, ChevronDown, ChevronRight, Circle, Clock, Dot } from "lucide-react";
+import {
+  CheckCircle2,
+  ChevronDown,
+  ChevronRight,
+  Circle,
+  Clock,
+  Dot,
+  Lightbulb,
+} from "lucide-react";
 import { ROADMAP, type PhaseStatus, type RoadmapPhase } from "@/lib/roadmap";
 import { PhaseSuggestions, SuggestButton } from "@/components/roadmap/suggestions-panel";
 
@@ -60,6 +68,15 @@ function PhaseItem({ phase }: { phase: RoadmapPhase }) {
                 <span className={done ? "text-on-surface-variant" : "text-foreground"}>
                   {f.title}
                 </span>
+                {f.fromSuggestion && (
+                  <span
+                    className="ml-1.5 inline-flex items-center gap-0.5 rounded-full bg-primary/15 text-primary px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-widest align-middle"
+                    title="Added from a user suggestion"
+                  >
+                    <Lightbulb className="size-2.5" />
+                    Suggested
+                  </span>
+                )}
                 {f.description && <span className="text-outline"> — {f.description}</span>}
               </div>
             </li>

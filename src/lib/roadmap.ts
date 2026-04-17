@@ -4,6 +4,12 @@ export interface RoadmapFeature {
   title: string;
   description?: string;
   status?: PhaseStatus; // defaults to parent phase status
+  /**
+   * Mark features that came in via a user suggestion so the roadmap page
+   * shows a small "From a suggestion" badge. Anything not from explicit user
+   * feedback should leave this unset.
+   */
+  fromSuggestion?: boolean;
 }
 
 export interface RoadmapPhase {
@@ -229,19 +235,23 @@ export const ROADMAP: RoadmapPhase[] = [
       {
         title: "Category weight charts (bar + pie)",
         description: "Horizontal bars default; pie/donut toggle for LighterPack converts",
+        fromSuggestion: true,
       },
       {
         title: "Base / Consumable / Carried breakdown chart",
         description: "Stacked bar per person showing base vs consumables vs worn-on-body split",
+        fromSuggestion: true,
       },
       {
         title: "Base weight over time",
         description:
           "Multi-trip trend chart on the profile. Filters: date range, season, solo vs group, trip tag",
+        fromSuggestion: true,
       },
       {
         title: "Distance + elevation trend charts",
         description: "Once trip metadata is captured, show trend graphs on the profile",
+        fromSuggestion: true,
       },
     ],
   },
@@ -329,6 +339,7 @@ export const ROADMAP: RoadmapPhase[] = [
         title: "Post-trip report",
         description:
           "5-star rating for how the pack performed, free-text 'what worked / what I'd change', MVP item, LVP item, actual distance / vert / duration. Compared against the planned fields from Phase 8.",
+        fromSuggestion: true,
       },
       { title: "Actual vs planned weight per pack" },
       {
