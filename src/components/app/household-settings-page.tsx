@@ -86,10 +86,13 @@ export function HouseholdSettingsPage() {
 
   const resolved = useMemo(() => resolveSettings(data?.household?.settings), [data]);
 
-  const [name, setName] = useState<string>(data?.household?.name ?? "");
-  // Seeded from the query on first render; we intentionally do not resync
-  // on refetch to avoid clobbering mid-edit text. Initial render is fine
-  // because the parent returns early while isLoading.
+  // Derived-state pattern: `nameDraft === null` means "no local edits yet" and
+  // we display the server value directly. Once the user types, the draft
+  // takes over so their edits aren't clobbered by a refetch. Side-steps the
+  // useState-only-seeds-once problem when the household query resolves after
+  // the component has already mounted.
+  const [nameDraft, setNameDraft] = useState<string | null>(null);
+  const name = nameDraft ?? data?.household?.name ?? "";
   const [packClass, setPackClass] = useState<PackClassForm>(() => ({
     ultralight: gramsToLbStr(resolved.packClassGrams.ultralight),
     lightweight: gramsToLbStr(resolved.packClassGrams.lightweight),
@@ -242,7 +245,7 @@ export function HouseholdSettingsPage() {
   }
 
   function updateName(next: string) {
-    setName(next);
+    setNameDraft(next);
     setActiveSection("name");
     if (nameSaveTimerRef.current) clearTimeout(nameSaveTimerRef.current);
     nameSaveTimerRef.current = setTimeout(() => {
@@ -263,6 +266,10 @@ export function HouseholdSettingsPage() {
         { name: trimmed },
         {
           onSuccess: () => {
+            // Clear the local draft — the query invalidation will refetch
+            // and the derived `name` will match. Keeping the draft would
+            // leave the input slightly ahead of or behind the truth.
+            setNameDraft(null);
             setSaveStatus("saved");
             if (savedDismissTimerRef.current) clearTimeout(savedDismissTimerRef.current);
             savedDismissTimerRef.current = setTimeout(() => {
@@ -601,6 +608,7 @@ function MembersSection() {
     bodyWeightKg?: number | null;
     breed?: string | null;
   }>;
+  const currentUserId = data.currentUserId;
 
   return (
     <section className="rounded-xl bg-card p-6 border border-outline-variant/10 space-y-4">
@@ -612,26 +620,37 @@ function MembersSection() {
         </p>
       </div>
       <div className="space-y-2">
-        {members.map((member) => (
-          <MemberWeightRow
-            key={member.id}
-            member={member}
-            unit={unit}
-            onUpdate={(kg) => {
-              if (member.role === "adult" && member.email) {
-                updateProfile.mutate(
-                  { bodyWeightKg: kg },
-                  { onSuccess: () => toast.success("Body weight updated") }
-                );
-              } else {
-                updateMember.mutate(
-                  { id: member.id, bodyWeightKg: kg },
-                  { onSuccess: () => toast.success("Weight updated") }
-                );
-              }
-            }}
-          />
-        ))}
+        {members.map((member) => {
+          const isSelf = member.id === currentUserId;
+          const isManaged = member.role === "pet" || member.role === "child";
+          // The API enforces this too, but gating client-side keeps the UI
+          // honest — "Set weight" on someone else's adult row would never
+          // have worked through the members PATCH (403).
+          const canEdit = isSelf || isManaged;
+          return (
+            <MemberWeightRow
+              key={member.id}
+              member={member}
+              unit={unit}
+              canEdit={canEdit}
+              onUpdate={(kg) => {
+                if (isSelf) {
+                  // Updates the authed session user via /api/user/profile.
+                  updateProfile.mutate(
+                    { bodyWeightKg: kg },
+                    { onSuccess: () => toast.success("Body weight updated") }
+                  );
+                } else {
+                  // Pets / children — /api/household/members/[id] PATCH.
+                  updateMember.mutate(
+                    { id: member.id, bodyWeightKg: kg },
+                    { onSuccess: () => toast.success("Weight updated") }
+                  );
+                }
+              }}
+            />
+          );
+        })}
       </div>
     </section>
   );
@@ -640,6 +659,7 @@ function MembersSection() {
 function MemberWeightRow({
   member,
   unit,
+  canEdit,
   onUpdate,
 }: {
   member: {
@@ -651,6 +671,7 @@ function MemberWeightRow({
     breed?: string | null;
   };
   unit: string;
+  canEdit: boolean;
   onUpdate: (kg: number) => void;
 }) {
   const [editing, setEditing] = useState(false);
@@ -697,10 +718,6 @@ function MemberWeightRow({
       ? `${member.bodyWeightKg} kg`
       : `${Math.round(member.bodyWeightKg * 2.20462)} lb`
     : null;
-
-  // Adults without email accounts (e.g., imported) and managed members can
-  // all have their weight edited here.
-  const canEdit = member.role !== "adult" || !!member.email;
 
   return (
     <div className="group flex items-center justify-between rounded-lg bg-surface-low px-4 py-3">

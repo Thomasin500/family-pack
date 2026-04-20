@@ -215,7 +215,6 @@ export function PackColumn({ pack, tripId, checklistMode = false, allPacks }: Pa
           sharedPct={sharedPct}
           personalGrams={personalCarried}
           sharedGrams={sharedCarried}
-          unit={unit}
         />
       )}
     </div>
@@ -695,18 +694,16 @@ function PersonalSharedChip({
   sharedPct,
   personalGrams,
   sharedGrams,
-  unit,
 }: {
   personalPct: number;
   sharedPct: number;
   personalGrams: number;
   sharedGrams: number;
-  unit: DisplayUnit;
 }) {
   return (
     <div
       className="mt-2 flex items-center gap-2 text-[11px] text-outline"
-      title={`Personal: ${displayWeight(personalGrams, unit)} · Shared: ${displayWeight(sharedGrams, unit)}`}
+      title={`Personal: ${displayTotalWeight(personalGrams)} · Shared: ${displayTotalWeight(sharedGrams)}`}
     >
       <div className="flex h-1.5 flex-1 overflow-hidden rounded-full bg-surface-low">
         <div

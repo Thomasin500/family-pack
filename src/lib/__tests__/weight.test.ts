@@ -4,6 +4,7 @@ import {
   ozToGrams,
   gramsToLb,
   displayWeight,
+  displayTotalWeight,
   bodyWeightPercent,
   inputToGrams,
   gramsToInput,
@@ -180,5 +181,23 @@ describe("bodyWeightPercent", () => {
 
   it("returns 0 when body weight is null-ish", () => {
     expect(bodyWeightPercent(5000, 0)).toBe(0);
+  });
+});
+
+describe("displayTotalWeight", () => {
+  it("renders in lb at pack-total scale", () => {
+    // ~12 kg — typical trip base weight
+    expect(displayTotalWeight(12000)).toMatch(/lb/);
+  });
+
+  it("matches the lb-mode output of displayWeight", () => {
+    // Pack totals must be stable across nav unit toggling — they're always
+    // the `lb` formatting regardless of what displayWeight picks otherwise.
+    expect(displayTotalWeight(5000)).toBe(displayWeight(5000, "lb"));
+  });
+
+  it("under a pound falls through to oz (same as lb mode)", () => {
+    // 100g → ~3.5 oz, lb output for sub-pound weights is oz-only.
+    expect(displayTotalWeight(100)).toMatch(/oz/);
   });
 });

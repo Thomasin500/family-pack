@@ -40,6 +40,14 @@ describe("sortItems", () => {
     ]);
   });
 
+  it("sorts by type-desc: consumable → carried → worn", () => {
+    expect(sortItems(items, "type-desc").map((i) => i.name)).toEqual([
+      "Bravo", // consumable
+      "Alpha", // carried
+      "Charlie", // worn
+    ]);
+  });
+
   it("manual mode sorts by sortOrder ascending", () => {
     expect(sortItems(items, "manual").map((i) => i.name)).toEqual([
       "Charlie", // sortOrder 0

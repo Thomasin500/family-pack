@@ -624,7 +624,9 @@ export function ItemTable({ items, categories, owners = [], readOnly = false }: 
                     await deleteItem.mutateAsync({ id, force });
                   } catch (err) {
                     // API returns 409 with `tripCount` when the item is in a
-                    // trip pack. Offer a force-delete path.
+                    // trip pack. Offer a force-delete path — wrap the retry
+                    // too so a network failure on the second attempt surfaces
+                    // through the hook's error toast without bubbling.
                     const e = err as { tripCount?: number };
                     if (e?.tripCount && !force) {
                       const ok = await confirm({
@@ -634,7 +636,11 @@ export function ItemTable({ items, categories, owners = [], readOnly = false }: 
                         destructive: true,
                       });
                       if (ok) {
-                        await deleteItem.mutateAsync({ id, force: true });
+                        try {
+                          await deleteItem.mutateAsync({ id, force: true });
+                        } catch {
+                          // Hook's mutationError handles the toast.
+                        }
                       }
                     }
                   }

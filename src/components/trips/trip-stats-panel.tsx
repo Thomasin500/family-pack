@@ -113,9 +113,9 @@ export function TripStatsPanel({ trip }: TripStatsPanelProps) {
             <>
               {tags.length > 0 && <TagsRow tags={tags} />}
               {insights.length > 0 && <InsightsList insights={insights} />}
-              <HouseholdTotalsRow stats={stats} unit={unit} />
+              <HouseholdTotalsRow stats={stats} />
               <BaseConsumableStackedBar stats={stats} unit={unit} />
-              {stats.sharedTotalGrams > 0 && <SharedBalanceViz stats={stats} unit={unit} />}
+              {stats.sharedTotalGrams > 0 && <SharedBalanceViz stats={stats} />}
               <CategoryChartGrid
                 stats={stats}
                 unit={unit}
@@ -240,12 +240,7 @@ function InsightRow({ insight }: { insight: Insight }) {
 
 // ── Household totals ─────────────────────────────────────────────────────────
 
-function HouseholdTotalsRow({
-  stats,
-}: {
-  stats: TripStats;
-  unit: ReturnType<typeof useWeightUnit>["unit"];
-}) {
+function HouseholdTotalsRow({ stats }: { stats: TripStats }) {
   const metrics = [
     { label: "Base", grams: stats.householdBaseGrams },
     { label: "Total Carried", grams: stats.householdCarriedGrams },
@@ -354,18 +349,12 @@ function StackedPackBar({
 
 // ── Shared balance viz ────────────────────────────────────────────────────────
 
-function SharedBalanceViz({
-  stats,
-  unit,
-}: {
-  stats: TripStats;
-  unit: ReturnType<typeof useWeightUnit>["unit"];
-}) {
+function SharedBalanceViz({ stats }: { stats: TripStats }) {
   const top = stats.sharedBalance[0];
   const smartSummary = (() => {
     if (stats.sharedBalance.length === 0) return null;
     if (stats.sharedBalance.length === 1) {
-      return `${firstName(top.name)} is carrying all shared gear (${displayWeight(top.grams, unit)}).`;
+      return `${firstName(top.name)} is carrying all shared gear (${displayTotalWeight(top.grams)}).`;
     }
     return `${firstName(top.name)} is carrying ${Math.round(top.pct)}% of shared gear.`;
   })();
@@ -382,7 +371,7 @@ function SharedBalanceViz({
             key={entry.packId}
             className={i === 0 ? "bg-primary" : i === 1 ? "bg-primary-container" : "bg-outline/40"}
             style={{ width: `${entry.pct}%` }}
-            title={`${entry.name}: ${displayWeight(entry.grams, unit)} (${entry.pct.toFixed(0)}%)`}
+            title={`${entry.name}: ${displayTotalWeight(entry.grams)} (${entry.pct.toFixed(0)}%)`}
             aria-label={`${entry.name}: ${entry.pct.toFixed(0)}%`}
           />
         ))}
@@ -397,7 +386,7 @@ function SharedBalanceViz({
             />
             <span className="font-bold text-foreground">{firstName(entry.name)}</span>
             <span className="tabular-nums">
-              {entry.pct.toFixed(0)}% · {displayWeight(entry.grams, unit)}
+              {entry.pct.toFixed(0)}% · {displayTotalWeight(entry.grams)}
             </span>
           </div>
         ))}

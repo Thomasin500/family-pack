@@ -2,7 +2,7 @@
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { displayWeight } from "@/lib/weight";
+import { displayWeight, displayTotalWeight } from "@/lib/weight";
 import type { DisplayUnit } from "@/lib/weight";
 import { useWeightUnit } from "@/components/providers/weight-unit-provider";
 import { PACK_ZONES, getZoneForItem } from "@/lib/pack-zones";
@@ -66,7 +66,7 @@ export function LoadoutModal({ open, onOpenChange, pack }: LoadoutModalProps) {
           <DialogTitle className="flex items-center gap-2">
             {user?.name}&apos;s Loadout
             <span className="text-sm font-normal text-muted-foreground">
-              {displayWeight(totalGrams, unit)}
+              {displayTotalWeight(totalGrams)}
             </span>
           </DialogTitle>
         </DialogHeader>
