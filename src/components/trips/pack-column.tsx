@@ -3,7 +3,7 @@
 import { useRemoveFromPack } from "@/hooks/use-trip-pack-items";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { displayWeight, bodyWeightPercent } from "@/lib/weight";
+import { displayWeight, displayTotalWeight, bodyWeightPercent } from "@/lib/weight";
 import type { DisplayUnit } from "@/lib/weight";
 import { getCarryWarning } from "@/lib/carry-warnings";
 import {
@@ -159,18 +159,18 @@ export function PackColumn({ pack, tripId, checklistMode = false, allPacks }: Pa
         <div className="rounded-lg bg-surface-low p-3">
           <div className="text-[10px] font-bold uppercase text-outline">Base Weight</div>
           <div className="text-lg font-extrabold tabular-nums">
-            {displayWeight(baseWeight, unit)}
+            {displayTotalWeight(baseWeight)}
           </div>
         </div>
         <div className="rounded-lg bg-surface-low p-3">
           <div className="text-[10px] font-bold uppercase text-outline">Total Carried</div>
           <div className="text-lg font-extrabold tabular-nums">
-            {displayWeight(totalCarried, unit)}
+            {displayTotalWeight(totalCarried)}
           </div>
         </div>
         <div className="rounded-lg bg-surface-low p-3">
           <div className="text-[10px] font-bold uppercase text-outline">Skin-Out</div>
-          <div className="text-lg font-extrabold tabular-nums">{displayWeight(skinOut, unit)}</div>
+          <div className="text-lg font-extrabold tabular-nums">{displayTotalWeight(skinOut)}</div>
         </div>
         <div className="rounded-lg bg-surface-low p-3">
           <div className="text-[10px] font-bold uppercase text-outline">% Body Wt</div>

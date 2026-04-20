@@ -61,9 +61,13 @@ export function Dashboard() {
       {/* Header */}
       <header className="mb-10">
         <h1 className="text-4xl font-extrabold tracking-tight mb-2">
-          Welcome back, {currentUser?.name ?? "there"}.
+          Welcome back to {household.name}.
         </h1>
-        <p className="text-outline text-lg">Your next trip is coming up.</p>
+        <p className="text-outline text-lg">
+          {currentUser?.name
+            ? `${currentUser.name}'s next trip is coming up.`
+            : "Your next trip is coming up."}
+        </p>
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

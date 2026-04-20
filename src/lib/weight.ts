@@ -115,3 +115,12 @@ export function bodyWeightPercent(carryGrams: number, bodyKg: number): number {
   if (!bodyKg || bodyKg === 0) return 0;
   return (carryGrams / (bodyKg * 1000)) * 100;
 }
+
+/**
+ * Pack / trip totals render in lb regardless of the unit toggle. Readable at
+ * the scale of a full pack (20-40 lb) — oz/g/kg obscure the number you actually
+ * care about. Items still flip with the toggle via {@link displayWeight}.
+ */
+export function displayTotalWeight(grams: number): string {
+  return displayWeight(grams, "lb");
+}

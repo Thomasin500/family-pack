@@ -100,9 +100,9 @@ export function NavBar({ user }: NavBarProps) {
           {/* Weight unit cycle toggle */}
           <button
             onClick={toggle}
-            className="group cursor-pointer inline-flex items-center gap-1.5 rounded-full border border-outline-variant/40 bg-surface-high px-3 py-1 text-xs font-bold uppercase tracking-wider text-foreground shadow-sm hover:border-primary/60 hover:bg-surface-highest hover:shadow active:scale-95 transition-all"
-            title={`Weight unit: ${unit.toUpperCase()} — click to switch (oz → lb → g → kg)`}
-            aria-label={`Weight unit ${unit}, click to change`}
+            className="group cursor-pointer inline-flex items-center gap-1.5 rounded-full border border-outline-variant/40 bg-surface-high px-3 py-1 text-xs font-bold uppercase tracking-wider text-foreground shadow-sm hover:scale-110 hover:border-primary/60 hover:bg-surface-highest hover:shadow active:scale-95 transition-all"
+            title={`Item weight unit: ${unit.toUpperCase()} — click to switch (oz → lb → g → kg). Pack totals always render in lb.`}
+            aria-label={`Item weight unit ${unit}, click to change. Pack totals render in lb.`}
           >
             <span>{unit}</span>
             <Repeat

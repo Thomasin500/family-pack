@@ -202,6 +202,10 @@
   }
   body {
     @apply bg-background text-foreground;
+    /* One step up from the default (16px). Bumps closet rows, pack rows,
+     * dashboard metadata one notch without touching headings (they scale
+     * explicitly). Uses rem so user OS-level font sizing still compounds. */
+    font-size: 1.0625rem; /* 17px */
   }
   html {
     @apply font-sans;

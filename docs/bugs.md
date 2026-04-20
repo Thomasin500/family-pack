@@ -2,7 +2,7 @@
 
 > Active bugs and UX issues. Fix as time allows, prioritize by user impact.
 
-**Last updated:** April 17, 2026
+**Last updated:** April 19, 2026
 
 ---
 
@@ -10,11 +10,53 @@
 
 ### Weight Units
 
-- [ ] **Separate unit settings for totals vs individual items** — Right now the unit toggle changes everything at once. Goal: totals stay in lb (or a chosen "totals unit") while individual item weights can be viewed in oz/g/etc. Two-axis preference: `itemsUnit` + `totalsUnit`.
+- [ ] **Separate unit settings for totals vs individual items** — Right now the unit toggle changes everything at once. Goal: totals stay in lb (or a chosen "totals unit") while individual item weights can be viewed in oz/g/etc. Two-axis preference: `itemsUnit` + `totalsUnit`. **Deferred past Phase 5** — touches too many surfaces to bundle with stats work.
+- [ ] **Trip totals should always render in lb (interim fix)** — Until the full items/totals split lands, every trip pack total (Base / Carried / Skin-Out) + trip-tile totals should force-render in lb regardless of the nav unit toggle. The nav toggle would then only flip _item_ weights. Tactical fix that keeps totals readable.
 
-### Items
+### Gear Closet — inline editing
 
-- [ ] **Expose `allowMultiple` at item create/edit time** — Stackable items currently require creating the item first, then flipping the Layers icon in the closet. Add an "Allow multiple in a single pack" checkbox to the add/edit item dialog so it can be set up front.
+- [ ] **Notes edits don't trigger the unsaved-changes warning.** Typing in the notes field without changing other fields lets you click outside and silently lose the edit. Notes should participate in `isDirty`.
+- [ ] **`allowMultiple` toggle isn't part of the unsaved-changes warning either.** Flipping the Layers icon while the row is in edit mode should mark the row dirty.
+- [ ] **Save / Cancel buttons on the inline weight editor have no hit target.** Clicking on them does nothing — they appear to render but no click handler fires (or the click target is too small / is intercepted). Verify with the closet item-table weight cell.
+- [ ] **Can't delete closet items that are in a trip pack.** The API returns a 409 with a trip count, and the UI is supposed to offer "Delete Anyway" — that flow is currently either not showing or not firing the force delete. Re-verify the path.
+- [ ] **Add/edit item owner picker only offers `shared` vs `personal`.** Should show every household member by name (+ Shared). Inline edit already does this (see `owner dropdown`); the create dialog lags behind.
+- [ ] **Click on a row should start edit, with a larger edit surface.** Currently requires clicking the pencil / specific cells. Click-anywhere-to-edit + larger inputs would match the LighterPack-speed mental model we're aiming at.
+- [ ] **Search in the closet doesn't match on worn / carried / consumable.** Users expect to search "worn" or "consumable" and see flagged items. Index those booleans into the search corpus, or expose them as pills.
+- [ ] **Searching in the closet doesn't surface other members' / shared items.** Should at least be toggleable — "include everyone's gear" checkbox, with results flagged "in Partner's closet" / "Shared".
+
+### Trips — pack UX
+
+- [ ] **Can't remove every trip member.** Deleting the last member fails silently (or leaves a trip with no packs). Either allow 0-member trips or offer a "Delete trip?" fallback when deleting the last member.
+- [ ] **Pack stats collapse lives on the right side.** The chevron / toggle should move to the left edge of the pack header to match every other collapsible in the app (Gear Pool, closet categories).
+- [ ] **Base weight + Total Carried tiles aren't color-coded like % Body Wt.** Once pack class is computed we can apply the same green → red ramp to the Base Weight number. Total Carried could use the carry-warning ramp.
+- [ ] **Body-weight % on the chart should be hoverable** (current tooltip only on the pack card). Applies to the per-person bar in the Trip Stats panel and the Base-Weight-Over-Time line chart.
+
+### Sorting
+
+- [ ] **No descending option for worn / carried type sort.** The `type` sort mode always groups worn → carried → consumable. There should be a way to flip direction.
+- [ ] **Sorting UX redesign — single-button toggle.** Instead of 5 sort modes (type, name↑, name↓, weight↑, weight↓), collapse into "Sort by X" with a separate direction toggle. Applies to closet + pack columns.
+
+### Trip stats polish (Phase 5 follow-ups)
+
+- [ ] **Clicking a pack-total tile should drill down.** Click Base Weight → small dropdown showing the categories + weights that compose it. Click Total Carried → shows all non-worn items. Click Skin-Out → shows the remainder (worn items). Keeps the stats inline without forcing the full stats panel open.
+
+### Nav / theme polish
+
+- [ ] **Unit pill should grow on hover.** Currently only gets a subtle border change — a tiny scale-up would make the affordance clearer.
+- [ ] **Fonts feel a touch small.** Bump body copy one step across the app (closet rows, pack rows, dashboard metadata). Headings are fine.
+- [ ] **Replace the nav paw-print icon with the settings gear.** The paw in the nav has outlived its usefulness now that pets are managed through `PetDialog`.
+- [ ] **Remove the "Breaking In" veterancy tag?** It fires after 1–2 trips and often feels redundant. Consider collapsing to 4 levels: New / Trusted / Veteran / Legendary.
+
+### Household
+
+- [ ] **Household name isn't editable, and isn't visible on the dashboard.** Make it editable on `/app/settings/household`, show it as the dashboard header ("Welcome back to <Household Name>"), and consider showing it in the trip overview.
+- [ ] **Edit-member body weight belongs in Household Settings too.** It's currently only on the dashboard. `/app/settings/household` should have a member list with inline weight edit (matches where Add Pet already lives).
+
+---
+
+## Confirmed behavior (documented, not a bug)
+
+- **Body-weight % is based on total _carried_ weight (not base or skin-out).** Called out because it's easy to misread. Code: `bodyWeightPercent(carriedGrams, bodyKg)` in `src/lib/weight.ts`. Used everywhere (pack card, trip tile, insights, carry warnings).
 
 ---
 
@@ -28,6 +70,11 @@
 - [ ] **Food weight guessamator?** Instead of (or alongside) logging individual food items, let the user estimate food weight from trip duration + calories/day + packaging assumptions. Quick rough number for planning without full meal library.
 - [ ] **Item details modal — click-to-assign vs click-for-details.** Gear Pool chips currently assign on click (and support drag). Adding a details modal means deciding the gesture: details on icon button? on long-press? on hover-then-click? Single click shouldn't do both.
 - [ ] **Light vs dark default** — Currently defaults to dark. Is that the right first impression, or should it follow system preference by default? (Separate from the first-click bug above.)
+- [ ] **Upcoming vs historical trip split.** The trip list is one flat grid right now. Should it split into "Upcoming" (no `completedAt`, start date in the future) and "Historical" (completed OR start date in the past)? With `completedAt` already in the schema this is cheap, but the sort/filter UI needs a point-of-view.
+- [ ] **"Added at" / "owned since" on closet items.** We store `createdAt` already. Should we surface it as a subtle metadata line in the closet ("Owned since Mar 2026") so users can spot ancient gear candidates for the attic? Phase 10 item attic feature would depend on this.
+- [ ] **Parent/child items.** A tent is actually body + poles + stakes + footprint. Users sometimes pack just the body, sometimes the whole thing. Do we model this as a first-class relation on `items`, as a lightweight "bundle" in the catalog, or punt it entirely? First-class parent/child makes reporting accurate; bundles keep the schema simple.
+- [ ] **Auto-balance: fair distribution goals.** Set a household goal ("everyone carries within 5% of each other" or "Thomas max 45 lb, Partner max 35 lb") and let the app rebalance shared gear to hit it on drag. Currently Phase 9 "Balance intelligence" implies auto-suggest, but this would go further — actually execute the redistribution.
+- [ ] **Price/weight comparison tool** (Jennifer's Excel pattern). For each candidate gear swap: current item (weight, price) vs. candidate (weight, price), showing $ per oz saved. Useful during gear-shopping research. Separate from the wishlist.
 
 ---
 

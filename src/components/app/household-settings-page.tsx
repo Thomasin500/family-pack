@@ -7,6 +7,13 @@ import { useCategories } from "@/hooks/use-categories";
 import { useItems } from "@/hooks/use-items";
 import { CategoryEditor } from "@/components/closet/category-manager";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useUpdateMember } from "@/hooks/use-household";
+import { useWeightUnit } from "@/components/providers/weight-unit-provider";
+import { useUpdateProfile } from "@/hooks/use-user-preferences";
+import { Pencil } from "lucide-react";
+import { useClickOutside } from "@/hooks/use-click-outside";
 import { DEFAULT_SETTINGS, resolveSettings } from "@/lib/household-settings";
 import { gramsToLb, lbToGrams } from "@/lib/weight";
 import {
@@ -40,7 +47,7 @@ type SaveStatus = "idle" | "saving" | "saved" | "error";
  * Saving/Saved/Error pill renders so the feedback sits next to the section
  * header they just changed instead of floating in the corner.
  */
-type ActiveSection = "pack" | "human" | "pet" | "reset" | null;
+type ActiveSection = "name" | "pack" | "human" | "pet" | "reset" | null;
 
 // Pack class has 4 tiers and 3 boundaries, so the slider shows four coloured
 // regions with a draggable thumb at each internal boundary.
@@ -79,6 +86,10 @@ export function HouseholdSettingsPage() {
 
   const resolved = useMemo(() => resolveSettings(data?.household?.settings), [data]);
 
+  const [name, setName] = useState<string>(data?.household?.name ?? "");
+  // Seeded from the query on first render; we intentionally do not resync
+  // on refetch to avoid clobbering mid-edit text. Initial render is fine
+  // because the parent returns early while isLoading.
   const [packClass, setPackClass] = useState<PackClassForm>(() => ({
     ultralight: gramsToLbStr(resolved.packClassGrams.ultralight),
     lightweight: gramsToLbStr(resolved.packClassGrams.lightweight),
@@ -106,6 +117,7 @@ export function HouseholdSettingsPage() {
   // Initialized once from the same resolved defaults the useState hooks read;
   // the update handlers below keep it in sync — never write to it in render.
   const formRef = useRef({ packClass, human, pet });
+  const nameSaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   if (isLoading) {
     return (
@@ -229,6 +241,43 @@ export function HouseholdSettingsPage() {
     scheduleAutosave();
   }
 
+  function updateName(next: string) {
+    setName(next);
+    setActiveSection("name");
+    if (nameSaveTimerRef.current) clearTimeout(nameSaveTimerRef.current);
+    nameSaveTimerRef.current = setTimeout(() => {
+      const trimmed = next.trim();
+      if (!trimmed) {
+        setSaveStatus("error");
+        setSaveError("Name is required");
+        return;
+      }
+      if (trimmed === data?.household?.name) return;
+      setSaveError(null);
+      setSaveStatus("saving");
+      if (savedDismissTimerRef.current) {
+        clearTimeout(savedDismissTimerRef.current);
+        savedDismissTimerRef.current = null;
+      }
+      updateHousehold.mutate(
+        { name: trimmed },
+        {
+          onSuccess: () => {
+            setSaveStatus("saved");
+            if (savedDismissTimerRef.current) clearTimeout(savedDismissTimerRef.current);
+            savedDismissTimerRef.current = setTimeout(() => {
+              setSaveStatus((s) => (s === "saved" ? "idle" : s));
+            }, 2500);
+          },
+          onError: (e) => {
+            setSaveStatus("error");
+            setSaveError(e instanceof Error ? e.message : "Failed to save");
+          },
+        }
+      );
+    }, AUTOSAVE_DEBOUNCE_MS);
+  }
+
   async function handleLeaveHousehold() {
     if (!data?.household) return;
     const ok = await confirm({
@@ -290,6 +339,34 @@ export function HouseholdSettingsPage() {
           automatically.
         </p>
       </header>
+
+      <section className="rounded-xl bg-card p-6 border border-outline-variant/10 space-y-4">
+        <div>
+          <div className="flex flex-wrap items-center gap-3">
+            <h2 className="text-lg font-bold">Household name</h2>
+            <SectionSavePill
+              status={saveStatus}
+              error={saveError}
+              visible={activeSection === "name"}
+            />
+          </div>
+          <p className="text-sm text-outline mt-1">
+            Shown on the dashboard header and anywhere the household is named.
+          </p>
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="household-name">Name</Label>
+          <Input
+            id="household-name"
+            value={name}
+            onChange={(e) => updateName(e.target.value)}
+            placeholder="The Freeman family"
+            maxLength={100}
+          />
+        </div>
+      </section>
+
+      <MembersSection />
 
       <section className="rounded-xl bg-card p-6 border border-outline-variant/10 space-y-5">
         <div>
@@ -497,5 +574,184 @@ function SectionSavePill({
       <CircleAlert className="size-3 shrink-0" />
       <span className="truncate">{error ?? "Couldn't save"}</span>
     </span>
+  );
+}
+
+// ── Members section ──────────────────────────────────────────────────────────
+
+/**
+ * Per-member list with inline body weight editing. Same edit affordance as
+ * the dashboard (click to edit, Enter to commit, click-outside warns when
+ * dirty) so the two surfaces stay in sync. Parity feature — putting member
+ * weight edit in Household Settings keeps member-ish data in one place with
+ * Add Pet.
+ */
+function MembersSection() {
+  const { data } = useHousehold();
+  const updateMember = useUpdateMember();
+  const updateProfile = useUpdateProfile();
+  const { unit } = useWeightUnit();
+
+  if (!data) return null;
+  const members = (data.members ?? []) as Array<{
+    id: string;
+    name: string;
+    role: string;
+    email?: string | null;
+    bodyWeightKg?: number | null;
+    breed?: string | null;
+  }>;
+
+  return (
+    <section className="rounded-xl bg-card p-6 border border-outline-variant/10 space-y-4">
+      <div>
+        <h2 className="text-lg font-bold">Members &amp; body weight</h2>
+        <p className="text-sm text-outline mt-1">
+          Body weight drives the % body-wt ramp on every pack. Adults edit their own; pets &amp;
+          children are editable by any adult in the household.
+        </p>
+      </div>
+      <div className="space-y-2">
+        {members.map((member) => (
+          <MemberWeightRow
+            key={member.id}
+            member={member}
+            unit={unit}
+            onUpdate={(kg) => {
+              if (member.role === "adult" && member.email) {
+                updateProfile.mutate(
+                  { bodyWeightKg: kg },
+                  { onSuccess: () => toast.success("Body weight updated") }
+                );
+              } else {
+                updateMember.mutate(
+                  { id: member.id, bodyWeightKg: kg },
+                  { onSuccess: () => toast.success("Weight updated") }
+                );
+              }
+            }}
+          />
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function MemberWeightRow({
+  member,
+  unit,
+  onUpdate,
+}: {
+  member: {
+    id: string;
+    name: string;
+    role: string;
+    email?: string | null;
+    bodyWeightKg?: number | null;
+    breed?: string | null;
+  };
+  unit: string;
+  onUpdate: (kg: number) => void;
+}) {
+  const [editing, setEditing] = useState(false);
+  const [value, setValue] = useState("");
+  const [dirtyError, setDirtyError] = useState(false);
+
+  const isMetricBody = unit === "g" || unit === "kg" || unit === "metric";
+  const label = isMetricBody ? "kg" : "lb";
+
+  function toKg(raw: string): number | null {
+    const n = parseFloat(raw);
+    if (Number.isNaN(n) || n <= 0) return null;
+    return isMetricBody ? Math.round(n) : Math.round(n / 2.20462);
+  }
+  function dirty(): boolean {
+    const kg = toKg(value);
+    return kg !== null && kg !== (member.bodyWeightKg ?? null);
+  }
+
+  const ref = useClickOutside<HTMLDivElement>(() => {
+    if (!editing) return;
+    if (dirty()) setDirtyError(true);
+    else setEditing(false);
+  }, editing);
+
+  function startEdit() {
+    if (isMetricBody) {
+      setValue(member.bodyWeightKg?.toString() ?? "");
+    } else {
+      setValue(member.bodyWeightKg ? (member.bodyWeightKg * 2.20462).toFixed(0) : "");
+    }
+    setDirtyError(false);
+    setEditing(true);
+  }
+  function commit() {
+    const kg = toKg(value);
+    setEditing(false);
+    setDirtyError(false);
+    if (kg !== null && kg !== (member.bodyWeightKg ?? null)) onUpdate(kg);
+  }
+
+  const display = member.bodyWeightKg
+    ? isMetricBody
+      ? `${member.bodyWeightKg} kg`
+      : `${Math.round(member.bodyWeightKg * 2.20462)} lb`
+    : null;
+
+  // Adults without email accounts (e.g., imported) and managed members can
+  // all have their weight edited here.
+  const canEdit = member.role !== "adult" || !!member.email;
+
+  return (
+    <div className="group flex items-center justify-between rounded-lg bg-surface-low px-4 py-3">
+      <div className="flex items-center gap-3">
+        <div className="flex size-9 items-center justify-center rounded-full bg-primary-container/20 text-primary text-xs font-bold">
+          {member.name?.[0]?.toUpperCase() ?? "?"}
+        </div>
+        <div>
+          <p className="text-sm font-bold">{member.name}</p>
+          <p className="text-[10px] uppercase tracking-wider text-outline">
+            {member.role}
+            {member.breed ? ` · ${member.breed}` : ""}
+          </p>
+        </div>
+      </div>
+      <div className="flex items-center gap-2">
+        {canEdit && editing ? (
+          <div
+            ref={ref}
+            className={`flex items-center gap-1 ${dirtyError ? "rounded-md ring-2 ring-destructive/60 px-1" : ""}`}
+          >
+            <Input
+              className="h-8 w-20 text-sm tabular-nums text-right"
+              type="number"
+              min="0"
+              value={value}
+              onChange={(e) => {
+                setValue(e.target.value);
+                setDirtyError(false);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") commit();
+                if (e.key === "Escape") setEditing(false);
+              }}
+              autoFocus
+            />
+            <span className="text-xs text-outline">{label}</span>
+          </div>
+        ) : canEdit ? (
+          <button
+            type="button"
+            onClick={startEdit}
+            className="flex items-center gap-1 text-sm font-bold hover:text-primary transition-colors"
+          >
+            {display ?? "Set weight"}
+            <Pencil className="size-3 text-outline" />
+          </button>
+        ) : (
+          display && <span className="text-sm font-bold">{display}</span>
+        )}
+      </div>
+    </div>
   );
 }

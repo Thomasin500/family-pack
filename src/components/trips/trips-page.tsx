@@ -17,8 +17,7 @@ import {
 import { MapPin, Calendar, Users, Plus, Copy, Trash2, Search, Backpack } from "lucide-react";
 import { toast } from "sonner";
 import { useConfirm } from "@/components/providers/confirm-provider";
-import { displayWeight, bodyWeightPercent } from "@/lib/weight";
-import { useWeightUnit } from "@/components/providers/weight-unit-provider";
+import { displayTotalWeight, bodyWeightPercent } from "@/lib/weight";
 import { useHousehold } from "@/hooks/use-household";
 import { packClass, packClassColor, resolveSettings } from "@/lib/household-settings";
 import { getCarryWarning } from "@/lib/carry-warnings";
@@ -48,7 +47,6 @@ function PackWeightRow({
   bodyWeightKg,
   base,
   carried,
-  unit,
   settings,
   householdSettings,
 }: {
@@ -57,7 +55,6 @@ function PackWeightRow({
   bodyWeightKg: number | null;
   base: number;
   carried: number;
-  unit: ReturnType<typeof useWeightUnit>["unit"];
   settings: ReturnType<typeof resolveSettings>;
   householdSettings: HouseholdSettings | null | undefined;
 }) {
@@ -73,10 +70,10 @@ function PackWeightRow({
       <span
         className={`font-mono tabular-nums text-xs text-right ${baseWeightColorClass(base, role, settings)}`}
       >
-        {displayWeight(base, unit)}
+        {displayTotalWeight(base)}
       </span>
       <span className="font-mono tabular-nums text-sm text-right whitespace-nowrap">
-        {displayWeight(carried, unit)}
+        {displayTotalWeight(carried)}
         {bwPercent !== null && (
           <span
             className={`ml-1.5 font-mono tabular-nums text-[10px] ${bwColor ?? "text-outline/60"}`}
@@ -148,7 +145,6 @@ export function TripsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState<string>("newest");
   const confirm = useConfirm();
-  const { unit } = useWeightUnit();
   const { data: householdData } = useHousehold();
   const settings = resolveSettings(
     householdData?.household?.settings as HouseholdSettings | null | undefined
@@ -336,7 +332,6 @@ export function TripsPage() {
                                 bodyWeightKg={p.bodyWeightKg}
                                 base={p.base}
                                 carried={p.carried}
-                                unit={unit}
                                 settings={settings}
                                 householdSettings={
                                   householdData?.household?.settings as

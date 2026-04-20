@@ -13,7 +13,7 @@ import {
   BarChart2,
 } from "lucide-react";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
-import { displayWeight } from "@/lib/weight";
+import { displayWeight, displayTotalWeight } from "@/lib/weight";
 import { useWeightUnit } from "@/components/providers/weight-unit-provider";
 import { useHousehold } from "@/hooks/use-household";
 import { computeTripStats, type PackStats, type TripStats } from "@/lib/trip-stats";
@@ -86,7 +86,7 @@ export function TripStatsPanel({ trip }: TripStatsPanelProps) {
           {tags.length} {tags.length === 1 ? "tag" : "tags"} · {stats.packs.length}{" "}
           {stats.packs.length === 1 ? "pack" : "packs"} ·{" "}
           <span className="font-mono tabular-nums">
-            {displayWeight(stats.householdCarriedGrams, unit)}
+            {displayTotalWeight(stats.householdCarriedGrams)}
           </span>{" "}
           total
         </span>
@@ -249,7 +249,6 @@ function InsightRow({ insight }: { insight: Insight }) {
 
 function HouseholdTotalsRow({
   stats,
-  unit,
 }: {
   stats: TripStats;
   unit: ReturnType<typeof useWeightUnit>["unit"];
@@ -268,7 +267,7 @@ function HouseholdTotalsRow({
           <div key={m.label} className="rounded-lg bg-surface-low p-3">
             <div className="text-[10px] font-bold uppercase text-outline">{m.label}</div>
             <div className="text-base font-extrabold tabular-nums">
-              {displayWeight(m.grams, unit)}
+              {displayTotalWeight(m.grams)}
             </div>
           </div>
         ))}
@@ -354,7 +353,7 @@ function StackedPackBar({
         <div className="bg-outline/40" style={{ width: `${wornPct}%` }} aria-label="Worn" />
       </div>
       <span className="w-20 shrink-0 text-right text-[11px] font-mono tabular-nums text-outline">
-        {displayWeight(total, unit)}
+        {displayTotalWeight(total)}
       </span>
     </div>
   );
