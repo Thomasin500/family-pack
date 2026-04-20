@@ -379,30 +379,33 @@ _Features pushed out of the near-term plan. Still in spec, revisit when the need
 
 ## Summary
 
-| Phase    | Theme                                                | Features | Cumulative               |
-| -------- | ---------------------------------------------------- | -------- | ------------------------ |
-| **1-4**  | Foundation through core                              | ~30      | ~30/140 (21%) — **DONE** |
-| **4.5**  | Quick wins + fixes                                   | ~20      | ~50 (36%) — **DONE**     |
-| **8**    | Tech debt (core)                                     | 5        | ~55 (39%) — **DONE**     |
-| **4.6**  | Beta-ready polish                                    | ~18      | ~73 (52%) — **DONE**     |
-| **4.7**  | Quick wins & polish                                  | ~15      | ~88 (63%) — **DONE**     |
-| **7**    | Gear Pool + Drag-and-drop (M1–M6) + security audit   | ~10      | ~98 (70%) — **DONE**     |
-| **5**    | Trip stats & visualization                           | 7        | ~105 (75%)               |
-| **5.5**  | Dashboard refresh                                    | 3        | ~108 (77%)               |
-| **6**    | Party view & loadout                                 | 5        | ~113 (81%)               |
-| **8b**   | Polish (mobile, sharing)                             | 3        | ~116 (83%)               |
-| **8.5**  | Location, weather, alerts                            | 5        | ~121 (86%)               |
-| **9**    | Intelligence & readiness                             | 6        | ~127 (91%)               |
-| **10**   | Import/export + advanced (+ cut list, details modal) | 8        | ~135 (96%)               |
-| **10.5** | Kid accounts (login, restricted perms, kids mode)    | 5        | ~140 (100%)              |
-| **11**   | Community & scale                                    | 8        | ~148 (106%)              |
-| **12**   | AI copilot                                           | 7        | ~155 (111%)              |
+| Phase    | Theme                                                 | Features | Cumulative               |
+| -------- | ----------------------------------------------------- | -------- | ------------------------ |
+| **1-4**  | Foundation through core                               | ~30      | ~30/140 (21%) — **DONE** |
+| **4.5**  | Quick wins + fixes                                    | ~20      | ~50 (36%) — **DONE**     |
+| **8**    | Tech debt (core)                                      | 5        | ~55 (39%) — **DONE**     |
+| **4.6**  | Beta-ready polish                                     | ~18      | ~73 (52%) — **DONE**     |
+| **4.7**  | Quick wins & polish                                   | ~15      | ~88 (63%) — **DONE**     |
+| **7**    | Gear Pool + Drag-and-drop (M1–M6) + security audit    | ~10      | ~98 (70%) — **DONE**     |
+| **5**    | Trip stats & visualization (insights, tags, trends)   | ~14      | ~112 (80%) — **DONE**    |
+| **5.1**  | Polish & bug pass (lb-totals, editors, delete-anyway) | ~15      | ~127 (91%) — **DONE**    |
+| **5.5**  | Dashboard refresh                                     | 3        | ~130 (93%) — **NEXT**    |
+| **6**    | Party view & loadout                                  | 5        | ~135 (96%)               |
+| **8b**   | Polish (mobile, sharing)                              | 3        | ~138 (99%)               |
+| **8.5**  | Location, weather, alerts                             | 5        | ~143 (102%)              |
+| **9**    | Intelligence & readiness                              | 6        | ~149 (106%)              |
+| **10**   | Import/export + advanced (+ cut list, details modal)  | 8        | ~157 (112%)              |
+| **10.5** | Kid accounts (login, restricted perms, kids mode)     | 5        | ~162 (116%)              |
+| **11**   | Community & scale                                     | 8        | ~170 (121%)              |
+| **12**   | AI copilot                                            | 7        | ~177 (126%)              |
 
-Phase 7 (Gear Pool + drag-and-drop) shipped April 16-17 — six milestones M1-M6 plus eight cross-household security holes closed plus uniform mutation error toasts across every hook in the app. Cut list and item details modal moved out to Phase 10 (not load-bearing for the drag-and-drop loadout builder).
+Phase 5 shipped April 19-20 — trip insights (the differentiator), stats panel with bar/pie charts, shared balance viz, smart trip tags, personal-vs-shared chip, pack-class colored tiles, trip metadata schema + edit dialog, base-weight-over-time trend, distance/elevation trend. Followed by a 5.1 polish pass that pinned totals to lb, added editable household name + member weight section on settings, fixed weight-editor hit targets, rewrote delete-anyway flow, handled last-member-remove, exposed per-member owner picker on Add Item, upgraded the category editor, and confirmed destructive resets.
+
+Phase 7 (Gear Pool + drag-and-drop) shipped April 16-17 — six milestones M1-M6 plus eight cross-household security holes closed plus uniform mutation error toasts across every hook in the app.
 
 Phase 4.6 (beta-ready polish) shipped April 16 — household settings, roadmap page + suggestions, unified trip flow, collapsible categories, click-outside editors, confirm dialogs, trip workspace scroll, security headers + schema hygiene, and more.
 
-Phases 5-6 are where the app becomes visually distinctive — stats panels, weight balance, party view, pack class labels. Some pack-class UI landed in 4.6 already via household settings.
+Phase 6 (Party view & loadout) is the next big visual payoff — silhouette cards, item slots per zone, campsite cluster for shared gear, dog variant.
 
 ---
 

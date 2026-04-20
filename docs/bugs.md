@@ -58,6 +58,8 @@
 
 ## Recently fixed (kept for memory)
 
+- **Category editor icons always visible + full 10-color palette on add.** Edit/Delete buttons on each category row no longer hide until hover. The add-category row now shows the same 10 preset colors the edit row does (was 5). Applies in both the Household Settings inline editor and the closet's CategoryManager dialog.
+- **Reset settings to defaults now confirms first.** Centered destructive dialog with copy calling out which fields are and aren't affected (household name / members / categories / gear stay put).
 - **Trip totals always render in lb.** Base / Total Carried / Skin-Out on every pack card, trip-tile per-person Base/Carry columns, stats-panel Household Totals, StackedPackBar per-pack total, SharedBalanceViz per-person shared weight, PersonalSharedChip tooltip, and the Loadout Modal header all force-render in lb regardless of the nav unit toggle. Items still flip with the toggle — only totals are pinned.
 - **Editable household name.** `/app/settings/household` has a Name section with the same auto-save + per-section pill pattern as pack class / carry tiers. Dashboard header now greets `Welcome back to <Household Name>`. Uses a derived-state draft pattern so a cold load of the settings page doesn't blank the input.
 - **Members &amp; body weight section on Household Settings.** Inline weight edit per member with the same click-outside + dirty-warning pattern as the dashboard. Gated client-side to self-or-managed (matches the API 403 on cross-adult edits).
