@@ -234,8 +234,14 @@ export function CategoryEditor({ categories, items }: CategoryEditorProps) {
                   {count} {count === 1 ? "item" : "items"}
                 </span>
               </div>
-              <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                <Button variant="ghost" size="icon-xs" onClick={() => startEdit(cat)} title="Edit">
+              <div className="flex items-center gap-1">
+                <Button
+                  variant="ghost"
+                  size="icon-xs"
+                  onClick={() => startEdit(cat)}
+                  title="Edit"
+                  className="text-outline hover:text-foreground"
+                >
                   <Pencil className="size-3" />
                 </Button>
                 <Button
@@ -243,7 +249,7 @@ export function CategoryEditor({ categories, items }: CategoryEditorProps) {
                   size="icon-xs"
                   onClick={() => handleDelete(cat)}
                   title="Delete"
-                  className="text-destructive"
+                  className="text-outline hover:text-destructive"
                 >
                   <Trash2 className="size-3" />
                 </Button>
@@ -257,14 +263,15 @@ export function CategoryEditor({ categories, items }: CategoryEditorProps) {
         onSubmit={handleCreate}
         className="flex items-center gap-2 pt-4 border-t border-outline-variant/10"
       >
-        <div className="flex gap-1 shrink-0">
-          {PRESET_COLORS.slice(0, 5).map((c) => (
+        <div className="flex flex-wrap gap-1 shrink-0">
+          {PRESET_COLORS.map((c) => (
             <button
               key={c}
               type="button"
               className={`size-4 rounded-full border-2 ${newColor === c ? "border-foreground" : "border-transparent"}`}
               style={{ backgroundColor: c }}
               onClick={() => setNewColor(c)}
+              aria-label={`Color ${c}`}
             />
           ))}
         </div>

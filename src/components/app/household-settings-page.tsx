@@ -303,7 +303,16 @@ export function HouseholdSettingsPage() {
     }
   }
 
-  function handleReset() {
+  async function handleReset() {
+    const ok = await confirm({
+      title: "Reset settings to defaults?",
+      description:
+        "Pack class tiers, human carry thresholds, and pet carry thresholds will all be restored to the app defaults. Your household name, members, categories, and gear are not affected.",
+      confirmLabel: "Reset to defaults",
+      destructive: true,
+    });
+    if (!ok) return;
+
     const resetPack = {
       ultralight: gramsToLbStr(DEFAULT_SETTINGS.packClassGrams.ultralight),
       lightweight: gramsToLbStr(DEFAULT_SETTINGS.packClassGrams.lightweight),
