@@ -221,7 +221,15 @@ function InlineEditItem({
   if (!editing) {
     return (
       <div className="space-y-0.5">
-        <button type="button" className="text-left cursor-text group/name" onClick={startEditing}>
+        {/* Full-width button + generous padding so the whole name column is a
+         * click-to-edit surface (not just the text). Matches the LighterPack-
+         * speed mental model. */}
+        <button
+          type="button"
+          className="block w-full text-left py-1 -my-1 cursor-text group/name rounded hover:bg-surface-low/50 transition-colors"
+          onClick={startEditing}
+          aria-label={`Edit ${item.name}`}
+        >
           <div className="font-bold text-foreground">{item.name}</div>
           {(item.brand || item.model) && (
             <div className="text-xs text-outline">

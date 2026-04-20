@@ -153,18 +153,35 @@ export function PackColumn({ pack, tripId, checklistMode = false, allPacks }: Pa
     updatePackItem.mutate({ packId: pack.id, itemId: packItemId, isChecked: checked });
   }
 
+  // Base weight ramps green→red by pack class (humans only — pets don't have
+  // a base-weight class). Carried ramps by body-weight % (shared with the
+  // %BW tile + human silhouette).
+  const resolvedSettings = resolveSettings(householdSettings);
+  const baseColor =
+    user?.role === "pet"
+      ? "text-primary"
+      : packClassColor(packClass(baseWeight, resolvedSettings.packClassGrams));
+  const carriedColor =
+    user?.bodyWeightKg && user.bodyWeightKg > 0
+      ? getCarryWarning(
+          bodyWeightPercent(totalCarried, user.bodyWeightKg),
+          user.role ?? "adult",
+          householdSettings
+        ).color
+      : "";
+
   const statsFooter = (
     <div className="p-3">
       <div className="grid grid-cols-2 gap-2">
         <div className="rounded-lg bg-surface-low p-3">
           <div className="text-[10px] font-bold uppercase text-outline">Base Weight</div>
-          <div className="text-lg font-extrabold tabular-nums">
+          <div className={`text-lg font-extrabold tabular-nums ${baseColor}`}>
             {displayTotalWeight(baseWeight)}
           </div>
         </div>
         <div className="rounded-lg bg-surface-low p-3">
           <div className="text-[10px] font-bold uppercase text-outline">Total Carried</div>
-          <div className="text-lg font-extrabold tabular-nums">
+          <div className={`text-lg font-extrabold tabular-nums ${carriedColor}`}>
             {displayTotalWeight(totalCarried)}
           </div>
         </div>

@@ -13,10 +13,18 @@ import {
 } from "lucide-react";
 import { useClickOutside } from "@/hooks/use-click-outside";
 
-export type SortMode = "type" | "name" | "name-desc" | "weight-asc" | "weight-desc" | "manual";
+export type SortMode =
+  | "type"
+  | "type-desc"
+  | "name"
+  | "name-desc"
+  | "weight-asc"
+  | "weight-desc"
+  | "manual";
 
 const OPTIONS: { value: SortMode; label: string; Icon: typeof Shirt }[] = [
-  { value: "type", label: "Worn / Carried / Consumable", Icon: Shirt },
+  { value: "type", label: "Worn → Carried → Consumable", Icon: Shirt },
+  { value: "type-desc", label: "Consumable → Carried → Worn", Icon: Shirt },
   { value: "name", label: "Name A → Z", Icon: ArrowDownAZ },
   { value: "name-desc", label: "Name Z → A", Icon: ArrowUpAZ },
   { value: "weight-asc", label: "Weight, light → heavy", Icon: ArrowUpWideNarrow },
@@ -120,6 +128,14 @@ export function sortItems<
   if (mode === "type") {
     copy.sort((a, b) => {
       const r = typeRank(a) - typeRank(b);
+      if (r !== 0) return r;
+      return a.name.localeCompare(b.name);
+    });
+    return copy;
+  }
+  if (mode === "type-desc") {
+    copy.sort((a, b) => {
+      const r = typeRank(b) - typeRank(a);
       if (r !== 0) return r;
       return a.name.localeCompare(b.name);
     });

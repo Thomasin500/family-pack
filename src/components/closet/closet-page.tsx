@@ -187,11 +187,16 @@ export function ClosetPage() {
           const tabItems = searchQuery.trim()
             ? ownerItems.filter((i: any) => {
                 const q = searchQuery.toLowerCase();
+                // Promote worn/carried/consumable/stackable flags into the
+                // search corpus — typing "worn" should surface flagged gear.
+                const typeLabel = i.isWorn ? "worn" : i.isConsumable ? "consumable" : "carried";
+                const flagLabels = [typeLabel, i.allowMultiple ? "stackable" : ""].filter(Boolean);
                 return (
                   i.name?.toLowerCase().includes(q) ||
                   i.brand?.toLowerCase().includes(q) ||
                   i.model?.toLowerCase().includes(q) ||
-                  i.category?.name?.toLowerCase().includes(q)
+                  i.category?.name?.toLowerCase().includes(q) ||
+                  flagLabels.some((l) => l.includes(q))
                 );
               })
             : ownerItems;

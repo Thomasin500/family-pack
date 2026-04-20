@@ -71,43 +71,36 @@ export function TripStatsPanel({ trip }: TripStatsPanelProps) {
   const totalItems = stats.packs.reduce((s, p) => s + p.itemCount, 0);
   const hasData = totalItems > 0;
 
-  const summary = (
-    <div className="flex items-center gap-3 text-sm">
-      <BarChart3 className="size-4 text-outline" />
-      <span className="font-bold">Trip Stats</span>
-      {hasData && (
-        <span className="text-outline">
-          {insights.length > 0 && (
-            <>
-              <InsightBadgeRow insights={insights} />
-              {" · "}
-            </>
-          )}
-          {tags.length} {tags.length === 1 ? "tag" : "tags"} · {stats.packs.length}{" "}
-          {stats.packs.length === 1 ? "pack" : "packs"} ·{" "}
-          <span className="font-mono tabular-nums">
-            {displayTotalWeight(stats.householdCarriedGrams)}
-          </span>{" "}
-          total
-        </span>
-      )}
-    </div>
-  );
-
   return (
     <section className="rounded-xl border border-outline-variant/10 bg-card overflow-hidden">
       <button
         type="button"
         onClick={handleToggleOpen}
-        className="w-full flex items-center justify-between px-4 py-3 hover:bg-surface-high transition-colors cursor-pointer select-none"
+        className="w-full flex items-center gap-3 px-4 py-3 hover:bg-surface-high transition-colors cursor-pointer select-none text-sm"
         aria-expanded={open}
         aria-controls="trip-stats-body"
       >
-        {summary}
-        {open ? (
-          <ChevronUp className="size-4 text-outline" />
-        ) : (
-          <ChevronDown className="size-4 text-outline" />
+        {/* Chevron on the left to match Gear Pool + closet categories + pack columns. */}
+        <span className="text-outline">
+          {open ? <ChevronUp className="size-4" /> : <ChevronDown className="size-4" />}
+        </span>
+        <BarChart3 className="size-4 text-outline" />
+        <span className="font-bold">Trip Stats</span>
+        {hasData && (
+          <span className="text-outline">
+            {insights.length > 0 && (
+              <>
+                <InsightBadgeRow insights={insights} />
+                {" · "}
+              </>
+            )}
+            {tags.length} {tags.length === 1 ? "tag" : "tags"} · {stats.packs.length}{" "}
+            {stats.packs.length === 1 ? "pack" : "packs"} ·{" "}
+            <span className="font-mono tabular-nums">
+              {displayTotalWeight(stats.householdCarriedGrams)}
+            </span>{" "}
+            total
+          </span>
         )}
       </button>
       {open && (
