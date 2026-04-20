@@ -17,7 +17,7 @@ import { useHousehold } from "@/hooks/use-household";
 import { useWeightUnit } from "@/components/providers/weight-unit-provider";
 import { computeTripStats } from "@/lib/trip-stats";
 import { gramsToLb } from "@/lib/weight";
-import { TrendingDown, Calendar } from "lucide-react";
+import { TrendingDown, Calendar, Mountain } from "lucide-react";
 import type { Trip, User } from "@/types";
 
 interface TrendPoint {
@@ -144,7 +144,141 @@ export function BaseWeightTrend() {
       </div>
 
       {showAll && <TripList points={points} unit={unit} />}
+
+      <TripMetricsTrend trips={trips as Trip[] | undefined} />
     </section>
+  );
+}
+
+// ── Distance / Elevation trend ───────────────────────────────────────────────
+
+interface MetricsPoint {
+  tripId: string;
+  tripName: string;
+  date: string;
+  iso: number;
+  distance: number | null;
+  elevation: number | null;
+}
+
+/**
+ * Distance (mi) + elevation gain (ft) per trip, for trips that have the
+ * metadata filled in. Rendered below the base-weight chart on the dashboard
+ * so all trend visuals live together. Hidden until ≥ 2 trips with the data.
+ */
+function TripMetricsTrend({ trips }: { trips: Trip[] | undefined }) {
+  const points = useMemo<MetricsPoint[]>(() => {
+    if (!trips) return [];
+    const withMetric = trips
+      .filter(
+        (t) =>
+          t.startDate &&
+          ((t.distanceMiles ?? null) !== null || (t.elevationGainFt ?? null) !== null)
+      )
+      .sort((a, b) => {
+        const da = a.startDate ? new Date(a.startDate).getTime() : 0;
+        const db = b.startDate ? new Date(b.startDate).getTime() : 0;
+        return da - db;
+      });
+    return withMetric.map((t) => ({
+      tripId: t.id,
+      tripName: t.name,
+      date: formatShort(t.startDate),
+      iso: t.startDate ? new Date(t.startDate).getTime() : 0,
+      distance: t.distanceMiles ?? null,
+      elevation: t.elevationGainFt ?? null,
+    }));
+  }, [trips]);
+
+  if (points.length < 2) return null;
+
+  const hasDistance = points.some((p) => p.distance !== null);
+  const hasElevation = points.some((p) => p.elevation !== null);
+
+  return (
+    <div className="mt-6 pt-6 border-t border-outline-variant/10">
+      <header className="mb-3">
+        <h3 className="text-xs font-bold uppercase tracking-widest text-outline flex items-center gap-2">
+          <Mountain className="size-3.5" />
+          Distance &amp; Elevation
+        </h3>
+        <p className="text-[11px] text-outline mt-1">
+          Across {points.length} trips with planned metadata.
+        </p>
+      </header>
+
+      <div className="h-40 -ml-3">
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart data={points} margin={{ top: 4, right: 16, bottom: 0, left: 0 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke="var(--outline)" opacity={0.15} />
+            <XAxis
+              dataKey="date"
+              tick={{ fontSize: 11, fill: "var(--outline)" }}
+              axisLine={{ stroke: "var(--outline)", opacity: 0.3 }}
+              tickLine={false}
+            />
+            <YAxis
+              yAxisId="distance"
+              orientation="left"
+              tick={{ fontSize: 11, fill: "var(--outline)" }}
+              axisLine={{ stroke: "var(--outline)", opacity: 0.3 }}
+              tickLine={false}
+              width={32}
+              tickFormatter={(v) => `${v}mi`}
+            />
+            <YAxis
+              yAxisId="elevation"
+              orientation="right"
+              tick={{ fontSize: 11, fill: "var(--outline)" }}
+              axisLine={{ stroke: "var(--outline)", opacity: 0.3 }}
+              tickLine={false}
+              width={48}
+              tickFormatter={(v) => `${Math.round(v / 1000)}k ft`}
+            />
+            <Tooltip
+              contentStyle={{
+                background: "var(--popover)",
+                border: "1px solid var(--outline-variant)",
+                borderRadius: 8,
+                fontSize: 12,
+              }}
+              formatter={(value, name) => {
+                if (name === "Distance") return [`${value} mi`, name];
+                if (name === "Elevation Gain") return [`${value} ft`, name];
+                return [value, name];
+              }}
+            />
+            <Legend wrapperStyle={{ fontSize: 11 }} />
+            {hasDistance && (
+              <Line
+                yAxisId="distance"
+                type="monotone"
+                dataKey="distance"
+                name="Distance"
+                stroke="#3b82f6"
+                strokeWidth={2}
+                dot={{ r: 3 }}
+                activeDot={{ r: 5 }}
+                connectNulls
+              />
+            )}
+            {hasElevation && (
+              <Line
+                yAxisId="elevation"
+                type="monotone"
+                dataKey="elevation"
+                name="Elevation Gain"
+                stroke="#f97316"
+                strokeWidth={2}
+                dot={{ r: 3 }}
+                activeDot={{ r: 5 }}
+                connectNulls
+              />
+            )}
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
+    </div>
   );
 }
 

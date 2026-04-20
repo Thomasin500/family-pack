@@ -2,7 +2,7 @@
 
 > Active bugs and UX issues. Fix as time allows, prioritize by user impact.
 
-**Last updated:** April 19, 2026
+**Last updated:** April 20, 2026
 
 ---
 
@@ -10,47 +10,25 @@
 
 ### Weight Units
 
-- [ ] **Separate unit settings for totals vs individual items** — Right now the unit toggle changes everything at once. Goal: totals stay in lb (or a chosen "totals unit") while individual item weights can be viewed in oz/g/etc. Two-axis preference: `itemsUnit` + `totalsUnit`. **Deferred past Phase 5** — touches too many surfaces to bundle with stats work.
-- [ ] **Trip totals should always render in lb (interim fix)** — Until the full items/totals split lands, every trip pack total (Base / Carried / Skin-Out) + trip-tile totals should force-render in lb regardless of the nav unit toggle. The nav toggle would then only flip _item_ weights. Tactical fix that keeps totals readable.
+- [ ] **Separate unit settings for totals vs individual items (fully configurable)** — Totals now always render in lb (Apr 20). The long-term goal is a two-axis preference: `itemsUnit` + `totalsUnit`, where users can flip totals to kg or lb independently of items. Deferred to Phase 11.
 
 ### Gear Closet — inline editing
 
 - [ ] **Notes edits don't trigger the unsaved-changes warning.** Typing in the notes field without changing other fields lets you click outside and silently lose the edit. Notes should participate in `isDirty`.
 - [ ] **`allowMultiple` toggle isn't part of the unsaved-changes warning either.** Flipping the Layers icon while the row is in edit mode should mark the row dirty.
-- [ ] **Save / Cancel buttons on the inline weight editor have no hit target.** Clicking on them does nothing — they appear to render but no click handler fires (or the click target is too small / is intercepted). Verify with the closet item-table weight cell.
-- [ ] **Can't delete closet items that are in a trip pack.** The API returns a 409 with a trip count, and the UI is supposed to offer "Delete Anyway" — that flow is currently either not showing or not firing the force delete. Re-verify the path.
-- [ ] **Add/edit item owner picker only offers `shared` vs `personal`.** Should show every household member by name (+ Shared). Inline edit already does this (see `owner dropdown`); the create dialog lags behind.
-- [ ] **Click on a row should start edit, with a larger edit surface.** Currently requires clicking the pencil / specific cells. Click-anywhere-to-edit + larger inputs would match the LighterPack-speed mental model we're aiming at.
-- [ ] **Search in the closet doesn't match on worn / carried / consumable.** Users expect to search "worn" or "consumable" and see flagged items. Index those booleans into the search corpus, or expose them as pills.
-- [ ] **Searching in the closet doesn't surface other members' / shared items.** Should at least be toggleable — "include everyone's gear" checkbox, with results flagged "in Partner's closet" / "Shared".
+- [ ] **Searching in the closet doesn't surface other members' / shared items.** Should at least be toggleable — "include everyone's gear" checkbox, with results flagged "in Partner's closet" / "Shared". (Flag search added Apr 20 for worn/carried/consumable/stackable; cross-owner still TODO.)
 
 ### Trips — pack UX
 
-- [ ] **Can't remove every trip member.** Deleting the last member fails silently (or leaves a trip with no packs). Either allow 0-member trips or offer a "Delete trip?" fallback when deleting the last member.
-- [ ] **Pack stats collapse lives on the right side.** The chevron / toggle should move to the left edge of the pack header to match every other collapsible in the app (Gear Pool, closet categories).
-- [ ] **Base weight + Total Carried tiles aren't color-coded like % Body Wt.** Once pack class is computed we can apply the same green → red ramp to the Base Weight number. Total Carried could use the carry-warning ramp.
 - [ ] **Body-weight % on the chart should be hoverable** (current tooltip only on the pack card). Applies to the per-person bar in the Trip Stats panel and the Base-Weight-Over-Time line chart.
 
 ### Sorting
 
-- [ ] **No descending option for worn / carried type sort.** The `type` sort mode always groups worn → carried → consumable. There should be a way to flip direction.
-- [ ] **Sorting UX redesign — single-button toggle.** Instead of 5 sort modes (type, name↑, name↓, weight↑, weight↓), collapse into "Sort by X" with a separate direction toggle. Applies to closet + pack columns.
+- [ ] **Sorting UX redesign — single-button toggle.** Instead of 6 sort modes (type asc/desc, name↑, name↓, weight↑, weight↓), collapse into "Sort by X" with a separate direction toggle. Applies to closet + pack columns. (type-desc option added Apr 20 so direction is now flippable; the full redesign is still pending.)
 
 ### Trip stats polish (Phase 5 follow-ups)
 
 - [ ] **Clicking a pack-total tile should drill down.** Click Base Weight → small dropdown showing the categories + weights that compose it. Click Total Carried → shows all non-worn items. Click Skin-Out → shows the remainder (worn items). Keeps the stats inline without forcing the full stats panel open.
-
-### Nav / theme polish
-
-- [ ] **Unit pill should grow on hover.** Currently only gets a subtle border change — a tiny scale-up would make the affordance clearer.
-- [ ] **Fonts feel a touch small.** Bump body copy one step across the app (closet rows, pack rows, dashboard metadata). Headings are fine.
-- [ ] **Replace the nav paw-print icon with the settings gear.** The paw in the nav has outlived its usefulness now that pets are managed through `PetDialog`.
-- [ ] **Remove the "Breaking In" veterancy tag?** It fires after 1–2 trips and often feels redundant. Consider collapsing to 4 levels: New / Trusted / Veteran / Legendary.
-
-### Household
-
-- [ ] **Household name isn't editable, and isn't visible on the dashboard.** Make it editable on `/app/settings/household`, show it as the dashboard header ("Welcome back to <Household Name>"), and consider showing it in the trip overview.
-- [ ] **Edit-member body weight belongs in Household Settings too.** It's currently only on the dashboard. `/app/settings/household` should have a member list with inline weight edit (matches where Add Pet already lives).
 
 ---
 
@@ -80,6 +58,22 @@
 
 ## Recently fixed (kept for memory)
 
+- **Trip totals always render in lb.** Base / Total Carried / Skin-Out on every pack card, trip-tile per-person Base/Carry columns, stats-panel Household Totals, StackedPackBar per-pack total, SharedBalanceViz per-person shared weight, PersonalSharedChip tooltip, and the Loadout Modal header all force-render in lb regardless of the nav unit toggle. Items still flip with the toggle — only totals are pinned.
+- **Editable household name.** `/app/settings/household` has a Name section with the same auto-save + per-section pill pattern as pack class / carry tiers. Dashboard header now greets `Welcome back to <Household Name>`. Uses a derived-state draft pattern so a cold load of the settings page doesn't blank the input.
+- **Members &amp; body weight section on Household Settings.** Inline weight edit per member with the same click-outside + dirty-warning pattern as the dashboard. Gated client-side to self-or-managed (matches the API 403 on cross-adult edits).
+- **Drop "Breaking In" veterancy tier.** Four levels now: New / Trusted (1-5 trips) / Veteran (6-10) / Legendary (11+). Less noisy for gear that's only been on a trip or two.
+- **Weight editor gains Save &amp; Cancel icon buttons.** Previously only "Save or cancel" was a plain text hint — now green ✓ and gray ✕ icon buttons next to the input. The larger row editor's Save/Cancel got promoted from text-only links to proper Buttons with icons.
+- **Delete-anyway flow for closet items in use.** Rewrote to use `mutateAsync` + try/catch so the 409 `tripCount` response reliably opens the confirm dialog and the force-delete retry fires.
+- **Can't remove the last trip member.** The member-remove X used to silently hide when only one member was left. It now always renders and, when pressed on the last member, offers to delete the trip instead. A trip needs ≥ 1 member.
+- **Add Item owner picker is per-member.** The create dialog used to only offer Personal / Shared; it now shows Me / Partner / Birch / Shared (and pre-selects the active closet tab), matching the inline-edit dropdown.
+- **Trip Stats panel chevron on the left.** Matches Gear Pool, closet categories, and pack columns. No more outlier collapsible on the right.
+- **Base Weight &amp; Total Carried tiles are color-coded.** Pack class ramp (green → red) on Base; carry-warning ramp on Total Carried. Ties to the same palette as % Body Wt.
+- **Click-anywhere-to-edit on closet rows.** The name/brand button is now full-width with a soft hover highlight and comfortable padding — click any empty space in the name column to open edit mode.
+- **Closet search matches worn / carried / consumable / stackable.** Typing "worn" or "stackable" surfaces flagged gear.
+- **Type-sort descending direction.** Sort menu now offers `Consumable → Carried → Worn` alongside the default `Worn → Carried → Consumable`.
+- **Phase 5 complete.** Trip Insights, Stats Panel, Trip Tags, Category Charts (bar/pie toggle), Shared Balance viz, Base/Consumable/Worn stacked bar, Base-Weight-Over-Time trend, Distance/Elevation trend, Personal-vs-Shared chip — all shipped.
+- **Nav unit pill scales up on hover** and its tooltip now calls out that pack totals stay in lb.
+- **Body font bumped one step (1.0625rem / ~17px)** across closet rows, pack rows, and dashboard metadata. Headings unchanged.
 - **Light theme picked up a subtle warm-brown tint.** After a too-sage pass and a too-tan pass, settled on a near-original off-white ramp with R > G throughout, plus a small overall darken so it doesn't glare.
 - **Dark theme lightened further and pushed toward sage.** Two passes today — first +6-8 points across the ramp, then another +8 with a green bias. Primary accent warmed up. Same moody personality, much easier on the eyes.
 - **Pack class labels on pack headers.** Humans show Ultralight / Lightweight / Traditional / Heavy under their name in the pack column header, color-coded on the same green → red ramp. Pets show Trail Runner / Trail Partner / Pack Dog / Overloaded derived from carry %. Both use household-settings tiers.
