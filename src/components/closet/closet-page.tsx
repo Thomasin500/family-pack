@@ -230,6 +230,12 @@ export function ClosetPage() {
             : (activeTabDef?.ownerId ?? currentUser?.id ?? "")
         }
         householdId={householdData?.household?.id ?? ""}
+        owners={owners}
+        defaultOwnerKey={
+          activeTabDef?.ownerType === "shared"
+            ? "__shared__"
+            : (activeTabDef?.ownerId ?? currentUser?.id ?? "")
+        }
       />
     </div>
   );

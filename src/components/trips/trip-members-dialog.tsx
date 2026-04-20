@@ -1,7 +1,8 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useHousehold } from "@/hooks/use-household";
-import { useAddTripMember, useRemoveTripMember } from "@/hooks/use-trips";
+import { useAddTripMember, useRemoveTripMember, useDeleteTrip } from "@/hooks/use-trips";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -25,7 +26,9 @@ export function TripMembersDialog({
   const { data: household } = useHousehold();
   const addMember = useAddTripMember();
   const removeMember = useRemoveTripMember();
+  const deleteTrip = useDeleteTrip();
   const confirm = useConfirm();
+  const router = useRouter();
 
   const allMembers = household?.members ?? [];
   const onTrip = allMembers.filter((m: any) => currentMemberIds.includes(m.id));
@@ -41,6 +44,28 @@ export function TripMembersDialog({
   }
 
   async function handleRemove(userId: string, name: string) {
+    // Removing the last member would leave an empty trip with no packs — offer
+    // to delete the trip instead of silently hiding the remove button.
+    if (onTrip.length <= 1) {
+      const ok = await confirm({
+        title: `${name} is the only member — delete the trip?`,
+        description:
+          "A trip needs at least one member. Removing the last one would leave it empty, so we'll delete the trip instead. This can't be undone.",
+        confirmLabel: "Delete Trip",
+        destructive: true,
+      });
+      if (ok) {
+        deleteTrip.mutate(tripId, {
+          onSuccess: () => {
+            toast.success("Trip deleted");
+            onOpenChange(false);
+            router.push("/app/trips");
+          },
+        });
+      }
+      return;
+    }
+
     const ok = await confirm({
       title: `Remove ${name} from trip?`,
       description: "Their pack and everything in it will be deleted from this trip.",
@@ -83,17 +108,19 @@ export function TripMembersDialog({
                     </Badge>
                   </div>
                 </div>
-                {onTrip.length > 1 && (
-                  <Button
-                    variant="ghost"
-                    size="icon-xs"
-                    onClick={() => handleRemove(member.id, member.name)}
-                    className="text-destructive"
-                    title="Remove from trip"
-                  >
-                    <X className="size-3" />
-                  </Button>
-                )}
+                <Button
+                  variant="ghost"
+                  size="icon-xs"
+                  onClick={() => handleRemove(member.id, member.name)}
+                  className="text-destructive"
+                  title={
+                    onTrip.length <= 1
+                      ? "Last member — removing will delete the trip"
+                      : "Remove from trip"
+                  }
+                >
+                  <X className="size-3" />
+                </Button>
               </div>
             ))}
           </div>

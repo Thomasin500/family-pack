@@ -31,13 +31,28 @@ interface Category {
   sortOrder: number;
 }
 
+export interface AddItemOwnerOption {
+  /** Stable key — user.id, or "__shared__" for the household. */
+  value: string;
+  label: string;
+  ownerType: "personal" | "shared";
+  ownerId: string; // user.id, or household.id for shared
+}
+
 interface AddItemDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   categories: Category[];
   defaultOwnerType?: "personal" | "shared";
+  /** The personal owner used when `owners` isn't supplied (legacy callers). */
   personalOwnerId: string;
   householdId: string;
+  /** Full per-member owner list. When provided the dialog renders a per-member
+   *  picker (Me / Partner / Birch / Shared) instead of the Personal/Shared
+   *  binary. Matches the inline-edit owner dropdown. */
+  owners?: AddItemOwnerOption[];
+  /** Pre-selects this owner (matches the active closet tab). */
+  defaultOwnerKey?: string;
 }
 
 type ItemType = "base" | "worn" | "consumable";
@@ -49,6 +64,8 @@ export function AddItemDialog({
   defaultOwnerType = "personal",
   personalOwnerId,
   householdId,
+  owners,
+  defaultOwnerKey,
 }: AddItemDialogProps) {
   const createItem = useCreateItem();
   const { unit } = useWeightUnit();
@@ -61,6 +78,10 @@ export function AddItemDialog({
   const [categoryId, setCategoryId] = useState("");
   const [itemType, setItemType] = useState<ItemType>("base");
   const [ownerType, setOwnerType] = useState<"personal" | "shared">(defaultOwnerType);
+  // Per-member owner key — only used when `owners` is provided.
+  const initialOwnerKey =
+    defaultOwnerKey ?? (defaultOwnerType === "shared" ? "__shared__" : personalOwnerId);
+  const [ownerKey, setOwnerKey] = useState<string>(initialOwnerKey);
 
   const resetForm = useCallback(() => {
     setName("");
@@ -70,13 +91,28 @@ export function AddItemDialog({
     setCategoryId("");
     setItemType("base");
     setOwnerType(defaultOwnerType);
-  }, [defaultOwnerType]);
+    setOwnerKey(
+      defaultOwnerKey ?? (defaultOwnerType === "shared" ? "__shared__" : personalOwnerId)
+    );
+  }, [defaultOwnerType, defaultOwnerKey, personalOwnerId]);
 
   const handleSubmit = useCallback(
     (e: React.FormEvent) => {
       e.preventDefault();
       const parsedWeight = parseFloat(weightInput);
       if (!name.trim() || isNaN(parsedWeight)) return;
+
+      // Resolve ownerType + ownerId — prefer the per-member picker if it's
+      // wired up, fall back to the legacy binary shape otherwise.
+      let resolvedType: "personal" | "shared" = ownerType;
+      let resolvedId: string = ownerType === "shared" ? householdId : personalOwnerId;
+      if (owners && owners.length > 0) {
+        const chosen = owners.find((o) => o.value === ownerKey);
+        if (chosen) {
+          resolvedType = chosen.ownerType;
+          resolvedId = chosen.ownerId;
+        }
+      }
 
       createItem.mutate(
         {
@@ -85,8 +121,8 @@ export function AddItemDialog({
           model: model.trim(),
           weightGrams: inputToGrams(parsedWeight, unit),
           categoryId: categoryId || undefined,
-          ownerType,
-          ownerId: ownerType === "shared" ? householdId : personalOwnerId,
+          ownerType: resolvedType,
+          ownerId: resolvedId,
           isWorn: itemType === "worn",
           isConsumable: itemType === "consumable",
         },
@@ -107,6 +143,8 @@ export function AddItemDialog({
       categoryId,
       itemType,
       ownerType,
+      ownerKey,
+      owners,
       personalOwnerId,
       householdId,
       createItem,
@@ -221,21 +259,37 @@ export function AddItemDialog({
             </Select>
           </div>
 
-          {/* Owner type */}
+          {/* Owner — per-member when callers supply the owners list, else
+              falls back to the Personal/Shared binary. */}
           <div className="grid gap-2">
             <Label>Owner</Label>
-            <Select
-              value={ownerType}
-              onValueChange={(v) => setOwnerType(v as "personal" | "shared")}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="personal">Personal</SelectItem>
-                <SelectItem value="shared">Shared</SelectItem>
-              </SelectContent>
-            </Select>
+            {owners && owners.length > 0 ? (
+              <Select value={ownerKey} onValueChange={setOwnerKey}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {owners.map((o) => (
+                    <SelectItem key={o.value} value={o.value}>
+                      {o.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            ) : (
+              <Select
+                value={ownerType}
+                onValueChange={(v) => setOwnerType(v as "personal" | "shared")}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="personal">Personal</SelectItem>
+                  <SelectItem value="shared">Shared</SelectItem>
+                </SelectContent>
+              </Select>
+            )}
           </div>
 
           <DialogFooter>

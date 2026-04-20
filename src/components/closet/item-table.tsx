@@ -35,6 +35,8 @@ import {
   GripVertical,
   ChevronsUpDown,
   Layers,
+  Check,
+  X,
 } from "lucide-react";
 import { CategorySortMenu, sortItems, type SortMode } from "@/components/ui/sort-menu";
 import { useConfirm } from "@/components/providers/confirm-provider";
@@ -335,20 +337,20 @@ function InlineEditItem({
           <span />
         )}
         <div className="flex gap-1.5">
-          <button
+          <Button
             type="button"
-            className="text-[10px] text-outline hover:text-foreground"
+            variant="ghost"
+            size="sm"
+            className="h-7 gap-1 text-xs"
             onClick={() => setEditing(false)}
           >
+            <X className="size-3.5" />
             Cancel
-          </button>
-          <button
-            type="button"
-            className="text-[10px] font-bold text-primary hover:text-primary/80"
-            onClick={commit}
-          >
+          </Button>
+          <Button type="button" size="sm" className="h-7 gap-1 text-xs" onClick={commit}>
+            <Check className="size-3.5" />
             Save
-          </button>
+          </Button>
         </div>
       </div>
     </div>
@@ -441,9 +443,22 @@ function InlineEditWeight({
         }}
       />
       <span className="text-xs text-outline">{unitSuffix(unit)}</span>
-      {dirtyError && (
-        <span className="text-[10px] font-bold text-destructive ml-1">Save or cancel</span>
-      )}
+      <button
+        type="button"
+        onClick={commit}
+        title="Save (Enter)"
+        className="inline-flex size-6 items-center justify-center rounded-md text-primary hover:bg-primary/10 cursor-pointer"
+      >
+        <Check className="size-3.5" />
+      </button>
+      <button
+        type="button"
+        onClick={() => setEditing(false)}
+        title="Cancel (Esc)"
+        className="inline-flex size-6 items-center justify-center rounded-md text-outline hover:text-foreground hover:bg-surface-high cursor-pointer"
+      >
+        <X className="size-3.5" />
+      </button>
     </div>
   );
 }
@@ -596,23 +611,25 @@ export function ItemTable({ items, categories, owners = [], readOnly = false }: 
                 onUpdateType={(id, isWorn, isConsumable) =>
                   updateItem.mutate({ id, isWorn, isConsumable })
                 }
-                onDelete={(id, force) => {
-                  deleteItem.mutate(
-                    { id, force },
-                    {
-                      onError: async (err: any) => {
-                        if (err?.tripCount) {
-                          const ok = await confirm({
-                            title: "Delete item in use?",
-                            description: `This item is in ${err.tripCount} trip pack${err.tripCount === 1 ? "" : "s"}. Deleting will remove it from those trips.`,
-                            confirmLabel: "Delete Anyway",
-                            destructive: true,
-                          });
-                          if (ok) deleteItem.mutate({ id, force: true });
-                        }
-                      },
+                onDelete={async (id, force) => {
+                  try {
+                    await deleteItem.mutateAsync({ id, force });
+                  } catch (err) {
+                    // API returns 409 with `tripCount` when the item is in a
+                    // trip pack. Offer a force-delete path.
+                    const e = err as { tripCount?: number };
+                    if (e?.tripCount && !force) {
+                      const ok = await confirm({
+                        title: "Delete item in use?",
+                        description: `This item is in ${e.tripCount} trip pack${e.tripCount === 1 ? "" : "s"}. Deleting will remove it from those trips.`,
+                        confirmLabel: "Delete Anyway",
+                        destructive: true,
+                      });
+                      if (ok) {
+                        await deleteItem.mutateAsync({ id, force: true });
+                      }
                     }
-                  );
+                  }
                 }}
               />
             );
