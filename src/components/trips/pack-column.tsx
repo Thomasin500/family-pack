@@ -85,6 +85,8 @@ export function PackColumn({ pack, tripId, checklistMode = false, allPacks }: Pa
   let baseWeight = 0;
   let totalCarried = 0;
   let skinOut = 0;
+  let personalCarried = 0;
+  let sharedCarried = 0;
 
   for (const pi of packItems) {
     const w = (pi.item?.weightGrams ?? 0) * (pi.quantity ?? 1);
@@ -100,8 +102,16 @@ export function PackColumn({ pack, tripId, checklistMode = false, allPacks }: Pa
       if (!isConsumable) {
         baseWeight += w;
       }
+      if (pi.item?.ownerType === "shared") {
+        sharedCarried += w;
+      } else {
+        personalCarried += w;
+      }
     }
   }
+
+  const personalPct = totalCarried > 0 ? Math.round((personalCarried / totalCarried) * 100) : null;
+  const sharedPct = personalPct !== null ? 100 - personalPct : null;
 
   const [loadoutOpen, setLoadoutOpen] = useState(false);
   const [addDialogOpen, setAddDialogOpen] = useState(false);
@@ -144,40 +154,53 @@ export function PackColumn({ pack, tripId, checklistMode = false, allPacks }: Pa
   }
 
   const statsFooter = (
-    <div className="grid grid-cols-2 gap-2 p-3">
-      <div className="rounded-lg bg-surface-low p-3">
-        <div className="text-[10px] font-bold uppercase text-outline">Base Weight</div>
-        <div className="text-lg font-extrabold tabular-nums">{displayWeight(baseWeight, unit)}</div>
-      </div>
-      <div className="rounded-lg bg-surface-low p-3">
-        <div className="text-[10px] font-bold uppercase text-outline">Total Carried</div>
-        <div className="text-lg font-extrabold tabular-nums">
-          {displayWeight(totalCarried, unit)}
+    <div className="p-3">
+      <div className="grid grid-cols-2 gap-2">
+        <div className="rounded-lg bg-surface-low p-3">
+          <div className="text-[10px] font-bold uppercase text-outline">Base Weight</div>
+          <div className="text-lg font-extrabold tabular-nums">
+            {displayWeight(baseWeight, unit)}
+          </div>
+        </div>
+        <div className="rounded-lg bg-surface-low p-3">
+          <div className="text-[10px] font-bold uppercase text-outline">Total Carried</div>
+          <div className="text-lg font-extrabold tabular-nums">
+            {displayWeight(totalCarried, unit)}
+          </div>
+        </div>
+        <div className="rounded-lg bg-surface-low p-3">
+          <div className="text-[10px] font-bold uppercase text-outline">Skin-Out</div>
+          <div className="text-lg font-extrabold tabular-nums">{displayWeight(skinOut, unit)}</div>
+        </div>
+        <div className="rounded-lg bg-surface-low p-3">
+          <div className="text-[10px] font-bold uppercase text-outline">% Body Wt</div>
+          {user?.bodyWeightKg && user.bodyWeightKg > 0 ? (
+            (() => {
+              const percent = bodyWeightPercent(totalCarried, user.bodyWeightKg);
+              const warning = getCarryWarning(percent, user.role ?? "adult", householdSettings);
+              return (
+                <CarryPercentWithLegend
+                  percent={percent}
+                  color={warning.color}
+                  role={user.role ?? "adult"}
+                  settings={householdSettings}
+                />
+              );
+            })()
+          ) : (
+            <div className="text-lg font-extrabold tabular-nums text-outline">--</div>
+          )}
         </div>
       </div>
-      <div className="rounded-lg bg-surface-low p-3">
-        <div className="text-[10px] font-bold uppercase text-outline">Skin-Out</div>
-        <div className="text-lg font-extrabold tabular-nums">{displayWeight(skinOut, unit)}</div>
-      </div>
-      <div className="rounded-lg bg-surface-low p-3">
-        <div className="text-[10px] font-bold uppercase text-outline">% Body Wt</div>
-        {user?.bodyWeightKg && user.bodyWeightKg > 0 ? (
-          (() => {
-            const percent = bodyWeightPercent(totalCarried, user.bodyWeightKg);
-            const warning = getCarryWarning(percent, user.role ?? "adult", householdSettings);
-            return (
-              <CarryPercentWithLegend
-                percent={percent}
-                color={warning.color}
-                role={user.role ?? "adult"}
-                settings={householdSettings}
-              />
-            );
-          })()
-        ) : (
-          <div className="text-lg font-extrabold tabular-nums text-outline">--</div>
-        )}
-      </div>
+      {personalPct !== null && sharedPct !== null && (
+        <PersonalSharedChip
+          personalPct={personalPct}
+          sharedPct={sharedPct}
+          personalGrams={personalCarried}
+          sharedGrams={sharedCarried}
+          unit={unit}
+        />
+      )}
     </div>
   );
 
@@ -641,6 +664,49 @@ function PackClassBadge({
       title="Pack class, based on base weight. Tiers configurable in Household Settings."
     >
       {packClassLabel(cls)}
+    </div>
+  );
+}
+
+/**
+ * Inline "72% personal · 28% shared" breakdown below the pack totals. Shows
+ * the fraction of carried weight that comes from shared household gear vs the
+ * user's own items. Hover reveals exact grams. Skipped when carried is 0.
+ */
+function PersonalSharedChip({
+  personalPct,
+  sharedPct,
+  personalGrams,
+  sharedGrams,
+  unit,
+}: {
+  personalPct: number;
+  sharedPct: number;
+  personalGrams: number;
+  sharedGrams: number;
+  unit: DisplayUnit;
+}) {
+  return (
+    <div
+      className="mt-2 flex items-center gap-2 text-[11px] text-outline"
+      title={`Personal: ${displayWeight(personalGrams, unit)} · Shared: ${displayWeight(sharedGrams, unit)}`}
+    >
+      <div className="flex h-1.5 flex-1 overflow-hidden rounded-full bg-surface-low">
+        <div
+          className="bg-primary/60"
+          style={{ width: `${personalPct}%` }}
+          aria-label={`${personalPct}% personal`}
+        />
+        <div
+          className="bg-primary-container"
+          style={{ width: `${sharedPct}%` }}
+          aria-label={`${sharedPct}% shared`}
+        />
+      </div>
+      <span className="tabular-nums whitespace-nowrap">
+        <span className="font-bold text-foreground">{personalPct}%</span> personal ·{" "}
+        <span className="font-bold text-foreground">{sharedPct}%</span> shared
+      </span>
     </div>
   );
 }

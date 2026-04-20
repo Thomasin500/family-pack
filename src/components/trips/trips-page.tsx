@@ -17,16 +17,18 @@ import {
 import { MapPin, Calendar, Users, Plus, Copy, Trash2, Search, Backpack } from "lucide-react";
 import { toast } from "sonner";
 import { useConfirm } from "@/components/providers/confirm-provider";
-import { displayWeight } from "@/lib/weight";
+import { displayWeight, bodyWeightPercent } from "@/lib/weight";
 import { useWeightUnit } from "@/components/providers/weight-unit-provider";
 import { useHousehold } from "@/hooks/use-household";
 import { packClass, packClassColor, resolveSettings } from "@/lib/household-settings";
+import { getCarryWarning } from "@/lib/carry-warnings";
 import type { HouseholdSettings } from "@/db/schema";
 
 interface PackWeights {
   userId: string;
   name: string;
   role: "adult" | "child" | "pet";
+  bodyWeightKg: number | null;
   base: number;
   carried: number;
 }
@@ -43,18 +45,25 @@ function baseWeightColorClass(
 function PackWeightRow({
   firstName,
   role,
+  bodyWeightKg,
   base,
   carried,
   unit,
   settings,
+  householdSettings,
 }: {
   firstName: string;
   role: "adult" | "child" | "pet";
+  bodyWeightKg: number | null;
   base: number;
   carried: number;
   unit: ReturnType<typeof useWeightUnit>["unit"];
   settings: ReturnType<typeof resolveSettings>;
+  householdSettings: HouseholdSettings | null | undefined;
 }) {
+  const bwPercent = bodyWeightKg ? bodyWeightPercent(carried, bodyWeightKg) : null;
+  const bwColor =
+    bwPercent !== null ? getCarryWarning(bwPercent, role, householdSettings).color : null;
   return (
     <>
       <span className="font-bold text-sm truncate">
@@ -66,8 +75,16 @@ function PackWeightRow({
       >
         {displayWeight(base, unit)}
       </span>
-      <span className="font-mono tabular-nums text-sm text-right">
+      <span className="font-mono tabular-nums text-sm text-right whitespace-nowrap">
         {displayWeight(carried, unit)}
+        {bwPercent !== null && (
+          <span
+            className={`ml-1.5 font-mono tabular-nums text-[10px] ${bwColor ?? "text-outline/60"}`}
+            title="% of body weight"
+          >
+            {bwPercent.toFixed(0)}%
+          </span>
+        )}
       </span>
     </>
   );
@@ -91,6 +108,7 @@ function computePerPackWeights(trip: any): PackWeights[] {
       userId: pack.userId,
       name: pack.user?.name ?? "—",
       role: pack.user?.role ?? "adult",
+      bodyWeightKg: pack.user?.bodyWeightKg ?? null,
       base,
       carried,
     });
@@ -315,10 +333,17 @@ export function TripsPage() {
                                 key={p.userId}
                                 firstName={firstName}
                                 role={p.role}
+                                bodyWeightKg={p.bodyWeightKg}
                                 base={p.base}
                                 carried={p.carried}
                                 unit={unit}
                                 settings={settings}
+                                householdSettings={
+                                  householdData?.household?.settings as
+                                    | HouseholdSettings
+                                    | null
+                                    | undefined
+                                }
                               />
                             );
                           })}

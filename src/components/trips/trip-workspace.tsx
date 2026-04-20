@@ -31,13 +31,23 @@ const GearPool = dynamic(() => import("./gear-pool").then((m) => m.GearPool), {
   ssr: false,
 });
 import { useUpdateTrip } from "@/hooks/use-trips";
-import { MapPin, Calendar, Pencil, CheckCircle2, RotateCcw, Users } from "lucide-react";
+import {
+  MapPin,
+  Calendar,
+  Pencil,
+  CheckCircle2,
+  RotateCcw,
+  Users,
+  Route,
+  Mountain,
+} from "lucide-react";
 import { useEffect, useState, useCallback } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { useWeightUnit } from "@/components/providers/weight-unit-provider";
 import { EditTripDialog } from "./edit-trip-dialog";
 import { TripMembersDialog } from "./trip-members-dialog";
+import { TripStatsPanel } from "./trip-stats-panel";
 import Link from "next/link";
 
 interface TripWorkspaceProps {
@@ -281,7 +291,7 @@ export function TripWorkspace({ tripId }: TripWorkspaceProps) {
                   <Users className="size-4 text-outline" />
                 </Button>
               </div>
-              <div className="flex items-center gap-4 mt-1 text-sm text-outline">
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1 text-sm text-outline">
                 {trip.location && (
                   <span className="flex items-center gap-1">
                     <MapPin className="size-3.5" />
@@ -293,6 +303,25 @@ export function TripWorkspace({ tripId }: TripWorkspaceProps) {
                     <Calendar className="size-3.5" />
                     {formatDate(trip.startDate)}
                     {trip.endDate && ` \u2013 ${formatDate(trip.endDate)}`}
+                  </span>
+                )}
+                {typeof trip.distanceMiles === "number" && trip.distanceMiles > 0 && (
+                  <span className="flex items-center gap-1">
+                    <Route className="size-3.5" />
+                    {trip.distanceMiles} mi
+                  </span>
+                )}
+                {typeof trip.elevationGainFt === "number" && trip.elevationGainFt > 0 && (
+                  <span
+                    className="flex items-center gap-1"
+                    title={
+                      trip.elevationHighFt
+                        ? `High point: ${trip.elevationHighFt.toLocaleString()} ft`
+                        : undefined
+                    }
+                  >
+                    <Mountain className="size-3.5" />
+                    {trip.elevationGainFt.toLocaleString()} ft gain
                   </span>
                 )}
               </div>
@@ -377,6 +406,10 @@ export function TripWorkspace({ tripId }: TripWorkspaceProps) {
               />
             </div>
           )}
+          <div className="mb-6">
+            <TripStatsPanel trip={trip} />
+          </div>
+
           {manyPacks ? (
             <div
               className="grid grid-flow-col auto-cols-[minmax(320px,1fr)] gap-8 overflow-x-auto pb-4 -mx-6 px-6 snap-x snap-mandatory"

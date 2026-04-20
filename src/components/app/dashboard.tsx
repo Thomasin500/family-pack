@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Loader2, Copy, Check, PawPrint, Backpack, Map, Pencil } from "lucide-react";
 import { useClickOutside } from "@/hooks/use-click-outside";
 import { PetDialog } from "./pet-dialog";
+import { BaseWeightTrend } from "./base-weight-trend";
 
 export function Dashboard() {
   const { data, isLoading } = useHousehold();
@@ -83,6 +84,9 @@ export function Dashboard() {
               </button>
             </Link>
           </div>
+
+          {/* Base-weight trend across trips — hidden until there are ≥ 2 trips */}
+          <BaseWeightTrend />
         </div>
 
         {/* Right column — sidebar */}

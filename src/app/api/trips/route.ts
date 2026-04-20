@@ -37,8 +37,20 @@ export async function POST(req: NextRequest) {
   try {
     const user = await getAuthenticatedUser();
 
-    const { name, description, startDate, endDate, location, season, terrain, memberIds } =
-      createTripSchema.parse(await req.json());
+    const {
+      name,
+      description,
+      startDate,
+      endDate,
+      location,
+      season,
+      terrain,
+      distanceMiles,
+      elevationGainFt,
+      elevationHighFt,
+      durationDays,
+      memberIds,
+    } = createTripSchema.parse(await req.json());
 
     // Verify every memberId belongs to the caller's household.
     const householdMembers = await db
@@ -59,6 +71,10 @@ export async function POST(req: NextRequest) {
         location: location ?? null,
         season: season ?? null,
         terrain: terrain ?? null,
+        distanceMiles: distanceMiles ?? null,
+        elevationGainFt: elevationGainFt ?? null,
+        elevationHighFt: elevationHighFt ?? null,
+        durationDays: durationDays ?? null,
         householdId: user.householdId!,
         createdByUserId: user.id,
       })

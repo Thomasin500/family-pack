@@ -209,11 +209,16 @@ export const ROADMAP: RoadmapPhase[] = [
     name: "Phase 8 · Trip Stats & Visualization",
     status: "next",
     summary:
-      "Where the app stops feeling like a spreadsheet. Stats panel, shared-weight balance, smart trip tags, charts.",
+      "Where the app stops feeling like a spreadsheet. Insights, stats panel, shared-weight balance, smart trip tags, charts.",
     features: [
       {
+        title: "Trip insights",
+        description:
+          "3–5 actionable one-liners computed from pack contents — heaviest item, shared-gear imbalance, distance-to-next-pack-class. No competitor does this.",
+      },
+      {
         title: "Trip stats panel",
-        description: "Collapsible; per-person weight, category bars, shared balance",
+        description: "Collapsible bottom drawer; per-person weight, category bars, shared balance",
       },
       {
         title: "Shared weight balance indicator",
@@ -221,7 +226,7 @@ export const ROADMAP: RoadmapPhase[] = [
       },
       {
         title: "Personal vs shared % per pack",
-        description: "Inline badge — '72% personal, 28% shared'",
+        description: "Inline chip — '72% personal, 28% shared'. Cheapest wedge in the phase.",
       },
       {
         title: "Smart trip tags",

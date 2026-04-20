@@ -35,6 +35,9 @@ interface EditTripDialogProps {
     startDate?: string | null;
     endDate?: string | null;
     terrain?: string | null;
+    distanceMiles?: number | null;
+    elevationGainFt?: number | null;
+    elevationHighFt?: number | null;
   };
 }
 
@@ -65,6 +68,22 @@ function EditTripForm({
   const [startDate, setStartDate] = useState(toDateInputValue(trip.startDate));
   const [endDate, setEndDate] = useState(toDateInputValue(trip.endDate));
   const [terrain, setTerrain] = useState(trip.terrain ?? "");
+  const [distance, setDistance] = useState(
+    trip.distanceMiles != null ? String(trip.distanceMiles) : ""
+  );
+  const [elevGain, setElevGain] = useState(
+    trip.elevationGainFt != null ? String(trip.elevationGainFt) : ""
+  );
+  const [elevHigh, setElevHigh] = useState(
+    trip.elevationHighFt != null ? String(trip.elevationHighFt) : ""
+  );
+
+  function parseIntOrNull(v: string): number | null {
+    const trimmed = v.trim();
+    if (!trimmed) return null;
+    const n = parseInt(trimmed, 10);
+    return Number.isFinite(n) && n >= 0 ? n : null;
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -77,6 +96,9 @@ function EditTripForm({
       startDate: startDate || null,
       endDate: endDate || null,
       terrain: terrain.trim() || null,
+      distanceMiles: parseIntOrNull(distance),
+      elevationGainFt: parseIntOrNull(elevGain),
+      elevationHighFt: parseIntOrNull(elevHigh),
     });
 
     onClose();
@@ -124,6 +146,45 @@ function EditTripForm({
             value={endDate}
             min={startDate || undefined}
             onChange={(e) => setEndDate(e.target.value)}
+          />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-3 gap-3">
+        <div className="space-y-2">
+          <Label htmlFor="edit-trip-distance">Distance (mi)</Label>
+          <Input
+            id="edit-trip-distance"
+            type="number"
+            inputMode="numeric"
+            min={0}
+            placeholder="e.g. 24"
+            value={distance}
+            onChange={(e) => setDistance(e.target.value)}
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="edit-trip-elev-gain">Elev Gain (ft)</Label>
+          <Input
+            id="edit-trip-elev-gain"
+            type="number"
+            inputMode="numeric"
+            min={0}
+            placeholder="e.g. 4200"
+            value={elevGain}
+            onChange={(e) => setElevGain(e.target.value)}
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="edit-trip-elev-high">High Point (ft)</Label>
+          <Input
+            id="edit-trip-elev-high"
+            type="number"
+            inputMode="numeric"
+            min={0}
+            placeholder="e.g. 11200"
+            value={elevHigh}
+            onChange={(e) => setElevHigh(e.target.value)}
           />
         </div>
       </div>

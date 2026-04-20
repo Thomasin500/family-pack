@@ -82,6 +82,10 @@ export interface Trip {
   terrain: string | null;
   tempRangeLowF: number | null;
   tempRangeHighF: number | null;
+  distanceMiles: number | null;
+  elevationGainFt: number | null;
+  elevationHighFt: number | null;
+  durationDays: number | null;
   isActive: boolean;
   completedAt: string | null;
   householdId: string;

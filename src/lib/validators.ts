@@ -122,7 +122,11 @@ export const createTripSchema = z.object({
   endDate: z.string().optional(),
   location: z.string().max(200).optional(),
   season: z.enum(["spring", "summer", "fall", "winter"]).optional(),
-  terrain: z.string().max(200).optional(),
+  terrain: z.string().max(2000).optional(),
+  distanceMiles: z.number().int().nonnegative().optional(),
+  elevationGainFt: z.number().int().nonnegative().optional(),
+  elevationHighFt: z.number().int().nonnegative().optional(),
+  durationDays: z.number().int().nonnegative().optional(),
   memberIds: z.array(z.string().uuid()).min(1, "At least one member required"),
 });
 
@@ -133,9 +137,13 @@ export const updateTripSchema = z.object({
   endDate: z.string().nullable().optional(),
   location: z.string().max(200).nullable().optional(),
   season: z.enum(["spring", "summer", "fall", "winter"]).nullable().optional(),
-  terrain: z.string().max(200).nullable().optional(),
+  terrain: z.string().max(2000).nullable().optional(),
   tempRangeLowF: z.number().int().nullable().optional(),
   tempRangeHighF: z.number().int().nullable().optional(),
+  distanceMiles: z.number().int().nonnegative().nullable().optional(),
+  elevationGainFt: z.number().int().nonnegative().nullable().optional(),
+  elevationHighFt: z.number().int().nonnegative().nullable().optional(),
+  durationDays: z.number().int().nonnegative().nullable().optional(),
   isActive: z.boolean().optional(),
   completedAt: z.preprocess(
     (v) => (typeof v === "string" ? new Date(v) : v),

@@ -239,6 +239,13 @@ export const trips = pgTable("trip", {
   terrain: text("terrain"),
   tempRangeLowF: integer("temp_range_low_f"),
   tempRangeHighF: integer("temp_range_high_f"),
+  // Phase 8 metadata expansion — planned distance/elevation/duration. All
+  // nullable so the form stays optional and the Phase 5 charts can show
+  // trend lines as soon as users start filling them in.
+  distanceMiles: integer("distance_miles"),
+  elevationGainFt: integer("elevation_gain_ft"),
+  elevationHighFt: integer("elevation_high_ft"),
+  durationDays: integer("duration_days"),
   isActive: boolean("is_active").default(true),
   completedAt: timestamp("completed_at"),
   householdId: uuid("household_id")
